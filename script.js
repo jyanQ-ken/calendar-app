@@ -1,5 +1,36 @@
 const STORAGE_KEY = "calendarAppData";
 const ARCHIVE_KEY = "completedTasksData";
+const THEME_KEY = "themePreference";
+
+const themeToggleBtn = document.getElementById("themeToggle");
+
+function effectiveTheme() {
+  const stored = localStorage.getItem(THEME_KEY);
+  if (stored === "dark" || stored === "light") return stored;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
+
+function updateThemeToggleLabel() {
+  themeToggleBtn.textContent = effectiveTheme() === "dark" ? "☀️ ライトモード" : "🌙 ダークモード";
+}
+
+function applyStoredTheme() {
+  const stored = localStorage.getItem(THEME_KEY);
+  if (stored === "dark" || stored === "light") {
+    document.documentElement.setAttribute("data-theme", stored);
+  } else {
+    document.documentElement.removeAttribute("data-theme");
+  }
+  updateThemeToggleLabel();
+}
+
+themeToggleBtn.addEventListener("click", () => {
+  const next = effectiveTheme() === "dark" ? "light" : "dark";
+  localStorage.setItem(THEME_KEY, next);
+  applyStoredTheme();
+});
+
+applyStoredTheme();
 
 let openPanelCount = 0;
 function lockBackgroundScroll() {

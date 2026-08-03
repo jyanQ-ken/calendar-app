@@ -1,3 +1,104 @@
+:root {
+  --bg-page: #f4f5f7;
+  --bg-card: #ffffff;
+  --bg-input: #ffffff;
+  --bg-btn: #fafafa;
+  --bg-btn-hover: #eeeeee;
+  --bg-hover-accent: #f0f5ff;
+  --bg-toolbar: #f7f8fa;
+  --text-main: #222222;
+  --text-secondary: #666666;
+  --text-hint: #888888;
+  --text-faint: #999999;
+  --text-info: #555555;
+  --text-strong-secondary: #333333;
+  --border-color: #e0e0e0;
+  --border-input: #cccccc;
+  --border-soft: #eeeeee;
+  --border-medium: #dddddd;
+  --border-list: #f0f0f0;
+  --accent: #4a7dfc;
+  --accent-soft-bg: #e8efff;
+  --holiday-bg: #ffb3c6;
+  --national-color: #e00000;
+  --national-label-color: #b3003c;
+  --today-ring: #ffc107;
+  --habit-done-bg: #4caf50;
+  --delete-color: #cc3333;
+  --schedule-color: #2a5db0;
+  --shadow-soft: rgba(0,0,0,0.08);
+  --shadow-panel: rgba(0,0,0,0.2);
+  --shadow-overlay: rgba(0,0,0,0.4);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg-page: #14161b;
+    --bg-card: #1e2129;
+    --bg-input: #262a33;
+    --bg-btn: #2a2f38;
+    --bg-btn-hover: #343a45;
+    --bg-hover-accent: #253048;
+    --bg-toolbar: #22262e;
+    --text-main: #e8e8ea;
+    --text-secondary: #b3b7bf;
+    --text-hint: #9297a1;
+    --text-faint: #8a8d94;
+    --text-info: #a3a7ae;
+    --text-strong-secondary: #d4d6da;
+    --border-color: #3a3f4a;
+    --border-input: #454b57;
+    --border-soft: #2e323b;
+    --border-medium: #454b57;
+    --border-list: #2e323b;
+    --accent: #6f97ff;
+    --accent-soft-bg: #263257;
+    --holiday-bg: #5c2735;
+    --national-color: #ff6b6b;
+    --national-label-color: #ff8f8f;
+    --today-ring: #ffc107;
+    --habit-done-bg: #3f8a45;
+    --delete-color: #ff7a7a;
+    --schedule-color: #7fa8f0;
+    --shadow-soft: rgba(0,0,0,0.4);
+    --shadow-panel: rgba(0,0,0,0.6);
+    --shadow-overlay: rgba(0,0,0,0.6);
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg-page: #14161b;
+  --bg-card: #1e2129;
+  --bg-input: #262a33;
+  --bg-btn: #2a2f38;
+  --bg-btn-hover: #343a45;
+  --bg-hover-accent: #253048;
+  --bg-toolbar: #22262e;
+  --text-main: #e8e8ea;
+  --text-secondary: #b3b7bf;
+  --text-hint: #9297a1;
+  --text-faint: #8a8d94;
+  --text-info: #a3a7ae;
+  --text-strong-secondary: #d4d6da;
+  --border-color: #3a3f4a;
+  --border-input: #454b57;
+  --border-soft: #2e323b;
+  --border-medium: #454b57;
+  --border-list: #2e323b;
+  --accent: #6f97ff;
+  --accent-soft-bg: #263257;
+  --holiday-bg: #5c2735;
+  --national-color: #ff6b6b;
+  --national-label-color: #ff8f8f;
+  --today-ring: #ffc107;
+  --habit-done-bg: #3f8a45;
+  --delete-color: #ff7a7a;
+  --schedule-color: #7fa8f0;
+  --shadow-soft: rgba(0,0,0,0.4);
+  --shadow-panel: rgba(0,0,0,0.6);
+  --shadow-overlay: rgba(0,0,0,0.6);
+}
+
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
@@ -9,11 +110,12 @@ html, body {
 
 body {
   font-family: "Hiragino Sans", "Meiryo", sans-serif;
-  background: #f4f5f7;
+  background: var(--bg-page);
   margin: 0;
   padding: 12px;
-  color: #222;
+  color: var(--text-main);
   overscroll-behavior-y: none;
+  transition: background 0.2s, color 0.2s;
 }
 
 body.panel-open {
@@ -23,16 +125,17 @@ body.panel-open {
 .app {
   max-width: 700px;
   margin: 0 auto;
-  background: #fff;
+  background: var(--bg-card);
   border-radius: 10px;
   padding: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 8px var(--shadow-soft);
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: 6px;
   margin-bottom: 12px;
 }
 
@@ -44,14 +147,36 @@ body.panel-open {
 .header button {
   padding: 8px 12px;
   min-height: 40px;
-  border: 1px solid #ccc;
-  background: #fafafa;
+  border: 1px solid var(--border-input);
+  background: var(--bg-btn);
+  color: var(--text-main);
   border-radius: 6px;
   cursor: pointer;
 }
 
 .header button:hover {
-  background: #eee;
+  background: var(--bg-btn-hover);
+}
+
+.theme-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+}
+
+#themeToggle {
+  padding: 8px 12px;
+  min-height: 40px;
+  font-size: 0.9rem;
+  border: 1px solid var(--border-input);
+  background: var(--bg-btn);
+  color: var(--text-main);
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+#themeToggle:hover {
+  background: var(--bg-btn-hover);
 }
 
 .weekdays {
@@ -59,16 +184,16 @@ body.panel-open {
   grid-template-columns: repeat(7, 1fr);
   text-align: center;
   font-weight: bold;
-  color: #666;
+  color: var(--text-secondary);
   margin-bottom: 4px;
 }
 
 .weekdays div:first-child {
-  color: #e00000;
+  color: var(--national-color);
 }
 
 .weekdays div:last-child {
-  color: #1a5fd6;
+  color: var(--schedule-color);
 }
 
 .calendar-grid {
@@ -79,10 +204,11 @@ body.panel-open {
 
 .day-cell {
   min-height: 70px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid var(--border-color);
   border-radius: 6px;
   padding: 4px;
-  background: #fff;
+  background: var(--bg-card);
+  color: var(--text-main);
   display: flex;
   flex-direction: column;
   font-size: 0.85rem;
@@ -90,7 +216,7 @@ body.panel-open {
 }
 
 .day-cell:hover {
-  background: #f0f5ff;
+  background: var(--bg-hover-accent);
 }
 
 .day-cell.empty {
@@ -100,11 +226,11 @@ body.panel-open {
 }
 
 .day-cell.holiday {
-  background: #ffb3c6;
+  background: var(--holiday-bg);
 }
 
 .day-cell.today {
-  box-shadow: inset 0 0 0 3px #ffc107;
+  box-shadow: inset 0 0 0 3px var(--today-ring);
 }
 
 .day-cell .day-number {
@@ -112,18 +238,18 @@ body.panel-open {
 }
 
 .day-cell.national .day-number {
-  color: #e00000;
+  color: var(--national-color);
 }
 
 .day-cell .holiday-label {
   font-size: 0.65rem;
-  color: #b3003c;
+  color: var(--national-label-color);
   font-weight: bold;
 }
 
 .day-cell .national-label {
   font-size: 0.65rem;
-  color: #e00000;
+  color: var(--national-color);
   font-weight: bold;
 }
 
@@ -135,12 +261,12 @@ body.panel-open {
 .day-cell .day-info {
   margin-top: auto;
   font-size: 0.7rem;
-  color: #555;
+  color: var(--text-info);
 }
 
 .day-cell .day-schedule {
   font-size: 0.7rem;
-  color: #2a5db0;
+  color: var(--schedule-color);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -149,7 +275,7 @@ body.panel-open {
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.4);
+  background: var(--shadow-overlay);
 }
 
 .overlay.hidden {
@@ -162,7 +288,8 @@ body.panel-open {
   bottom: 0;
   top: auto;
   transform: translateX(-50%);
-  background: #fff;
+  background: var(--bg-card);
+  color: var(--text-main);
   border-radius: 16px 16px 0 0;
   padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
   width: 100%;
@@ -172,7 +299,7 @@ body.panel-open {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
-  box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
+  box-shadow: 0 -4px 20px var(--shadow-panel);
 }
 
 .panel.hidden {
@@ -193,7 +320,7 @@ body.panel-open {
   min-width: 44px;
   min-height: 44px;
   cursor: pointer;
-  color: #888;
+  color: var(--text-hint);
 }
 
 .holiday-toggle {
@@ -224,8 +351,8 @@ body.panel-open {
 }
 
 .toolbar-group {
-  background: #f7f8fa;
-  border: 1px solid #eee;
+  background: var(--bg-toolbar);
+  border: 1px solid var(--border-soft);
   border-radius: 8px;
   padding: 8px 10px;
   margin-bottom: 8px;
@@ -234,7 +361,7 @@ body.panel-open {
 .toolbar-group-label {
   display: block;
   font-size: 0.7rem;
-  color: #888;
+  color: var(--text-hint);
   margin-bottom: 6px;
 }
 
@@ -247,14 +374,15 @@ body.panel-open {
 .link-buttons button {
   padding: 8px 14px;
   min-height: 40px;
-  border: 1px solid #ccc;
-  background: #fff;
+  border: 1px solid var(--border-input);
+  background: var(--bg-card);
+  color: var(--text-main);
   border-radius: 6px;
   cursor: pointer;
 }
 
 .link-buttons button:hover {
-  background: #eee;
+  background: var(--bg-btn-hover);
 }
 
 .mark-mode-buttons {
@@ -272,20 +400,21 @@ body.panel-open {
   padding: 8px 10px;
   min-height: 40px;
   flex: 1;
-  border: 2px solid #ddd;
-  background: #fafafa;
+  border: 2px solid var(--border-medium);
+  background: var(--bg-btn);
+  color: var(--text-main);
   border-radius: 8px;
   cursor: pointer;
 }
 
 .mode-btn.active {
-  border-color: #4a7dfc;
-  background: #e8efff;
+  border-color: var(--accent);
+  background: var(--accent-soft-bg);
 }
 
 .mode-hint {
   font-size: 0.8rem;
-  color: #4a7dfc;
+  color: var(--accent);
   margin: 0 0 8px;
 }
 
@@ -295,13 +424,13 @@ body.panel-open {
 
 .archive-item-date {
   font-size: 0.75rem;
-  color: #888;
+  color: var(--text-hint);
   margin-right: 6px;
 }
 
 .section {
   margin-top: 16px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--border-soft);
   padding-top: 12px;
 }
 
@@ -316,8 +445,10 @@ body.panel-open {
   padding: 8px;
   min-height: 40px;
   font-size: 1rem;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-input);
   border-radius: 6px;
+  background: var(--bg-input);
+  color: var(--text-main);
 }
 
 .task-input-row button,
@@ -325,7 +456,7 @@ body.panel-open {
   padding: 8px 14px;
   min-height: 40px;
   border: none;
-  background: #4a7dfc;
+  background: var(--accent);
   color: #fff;
   border-radius: 6px;
   cursor: pointer;
@@ -342,12 +473,12 @@ body.panel-open {
   align-items: center;
   gap: 8px;
   padding: 8px 0;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid var(--border-list);
 }
 
 .task-list li.done span {
   text-decoration: line-through;
-  color: #999;
+  color: var(--text-faint);
 }
 
 .task-list li input[type="checkbox"] {
@@ -361,13 +492,13 @@ body.panel-open {
   padding: 8px 10px;
   background: none;
   border: none;
-  color: #c33;
+  color: var(--delete-color);
   cursor: pointer;
 }
 
 .task-list-heading {
   font-weight: bold;
-  color: #666;
+  color: var(--text-secondary);
   margin: 12px 0 4px;
   padding: 0;
   list-style: none;
@@ -385,21 +516,20 @@ body.panel-open {
 
 .diary-item {
   padding: 12px 4px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-soft);
   cursor: pointer;
 }
 
 .diary-item:hover {
-  background: #f0f5ff;
+  background: var(--bg-hover-accent);
 }
 
 .diary-item-text {
   margin-top: 4px;
   white-space: pre-wrap;
   font-size: 0.9rem;
-  color: #333;
+  color: var(--text-strong-secondary);
 }
-
 
 .money-month-nav {
   display: flex;
@@ -411,8 +541,9 @@ body.panel-open {
 .money-month-nav button {
   padding: 8px 12px;
   min-height: 40px;
-  border: 1px solid #ccc;
-  background: #fafafa;
+  border: 1px solid var(--border-input);
+  background: var(--bg-btn);
+  color: var(--text-main);
   border-radius: 6px;
   cursor: pointer;
 }
@@ -422,7 +553,7 @@ body.panel-open {
 }
 
 .money-summary {
-  background: #f7f8fa;
+  background: var(--bg-toolbar);
   border-radius: 8px;
   padding: 8px 12px;
   margin-bottom: 10px;
@@ -437,7 +568,7 @@ body.panel-open {
 
 .money-summary-row.total {
   font-weight: bold;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid var(--border-medium);
   margin-top: 4px;
   padding-top: 6px;
 }
@@ -448,7 +579,7 @@ body.panel-open {
 
 .category-editor-wrap summary {
   font-size: 0.85rem;
-  color: #4a7dfc;
+  color: var(--accent);
   cursor: pointer;
   padding: 4px 0;
 }
@@ -464,8 +595,10 @@ body.panel-open {
   padding: 8px;
   min-height: 40px;
   font-size: 1rem;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-input);
   border-radius: 6px;
+  background: var(--bg-input);
+  color: var(--text-main);
 }
 
 .date-add-row {
@@ -479,15 +612,17 @@ body.panel-open {
   padding: 8px;
   min-height: 40px;
   font-size: 1rem;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-input);
   border-radius: 6px;
+  background: var(--bg-input);
+  color: var(--text-main);
 }
 
 .date-add-row button {
   padding: 8px 14px;
   min-height: 40px;
   border: none;
-  background: #4a7dfc;
+  background: var(--accent);
   color: #fff;
   border-radius: 6px;
   cursor: pointer;
@@ -498,17 +633,17 @@ body.panel-open {
   align-items: center;
   justify-content: space-between;
   padding: 10px 4px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid var(--border-soft);
   cursor: pointer;
 }
 
 .money-entry-row:hover {
-  background: #f0f5ff;
+  background: var(--bg-hover-accent);
 }
 
 .money-entry-amount {
   font-weight: bold;
-  color: #333;
+  color: var(--text-main);
 }
 
 .day-fields {
@@ -534,9 +669,11 @@ body.panel-open {
   padding: 8px;
   min-height: 40px;
   font-size: 1rem;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-input);
   border-radius: 6px;
   text-align: right;
+  background: var(--bg-input);
+  color: var(--text-main);
 }
 
 .day-field-row input[type="checkbox"] {
@@ -552,8 +689,9 @@ body.panel-open {
   padding: 14px 16px;
   min-height: 52px;
   font-size: 1rem;
-  border: 2px solid #ddd;
-  background: #fafafa;
+  border: 2px solid var(--border-medium);
+  background: var(--bg-btn);
+  color: var(--text-main);
   border-radius: 10px;
   cursor: pointer;
   transition: background 0.15s, border-color 0.15s, color 0.15s;
@@ -561,12 +699,12 @@ body.panel-open {
 
 .habit-toggle .habit-toggle-mark {
   font-size: 0.9rem;
-  color: #999;
+  color: var(--text-faint);
 }
 
 .habit-toggle.done {
-  background: #4caf50;
-  border-color: #4caf50;
+  background: var(--habit-done-bg);
+  border-color: var(--habit-done-bg);
   color: #fff;
 }
 
@@ -581,7 +719,7 @@ body.panel-open {
   padding: 10px;
   min-height: 44px;
   border: none;
-  background: #4a7dfc;
+  background: var(--accent);
   color: #fff;
   border-radius: 6px;
   font-size: 1rem;
@@ -601,7 +739,7 @@ body.panel-open {
   margin: 4px 0;
   font-size: 0.9rem;
   line-height: 1.6;
-  color: #333;
+  color: var(--text-strong-secondary);
 }
 
 .help-content ul {
@@ -609,12 +747,12 @@ body.panel-open {
   padding-left: 20px;
   font-size: 0.9rem;
   line-height: 1.6;
-  color: #333;
+  color: var(--text-strong-secondary);
 }
 
 .export-hint {
   font-size: 0.8rem;
-  color: #555;
+  color: var(--text-info);
   margin: 8px 0;
 }
 
@@ -622,10 +760,12 @@ body.panel-open {
   width: 100%;
   padding: 8px;
   font-size: 0.85rem;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-input);
   border-radius: 6px;
   resize: vertical;
   font-family: monospace;
+  background: var(--bg-input);
+  color: var(--text-main);
 }
 
 .export-buttons {
@@ -639,7 +779,7 @@ body.panel-open {
   padding: 8px 12px;
   min-height: 40px;
   border: none;
-  background: #4a7dfc;
+  background: var(--accent);
   color: #fff;
   border-radius: 6px;
   cursor: pointer;
@@ -649,8 +789,10 @@ body.panel-open {
   width: 100%;
   padding: 8px;
   font-size: 1rem;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-input);
   border-radius: 6px;
   resize: vertical;
   font-family: inherit;
+  background: var(--bg-input);
+  color: var(--text-main);
 }
