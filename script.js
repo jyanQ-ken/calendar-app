@@ -52,6 +52,19 @@ const diaryPanel = document.getElementById("diaryPanel");
 const closeDiaryPanelBtn = document.getElementById("closeDiaryPanel");
 const diaryListEl = document.getElementById("diaryListEl");
 
+const openExportBtn = document.getElementById("openExport");
+const exportOverlay = document.getElementById("exportOverlay");
+const exportPanel = document.getElementById("exportPanel");
+const closeExportPanelBtn = document.getElementById("closeExportPanel");
+const exportText = document.getElementById("exportText");
+const copyExportBtn = document.getElementById("copyExportBtn");
+const downloadExportBtn = document.getElementById("downloadExportBtn");
+
+const openHelpBtn = document.getElementById("openHelp");
+const helpOverlay = document.getElementById("helpOverlay");
+const helpPanel = document.getElementById("helpPanel");
+const closeHelpPanelBtn = document.getElementById("closeHelpPanel");
+
 const modeButtons = document.querySelectorAll(".mode-btn");
 const modeHintLabel = document.getElementById("modeHintLabel");
 let activeMode = null; // "holiday" | "star" | "heart" | "smile" | null (null = オフ)
@@ -610,6 +623,82 @@ nextMonthBtn.addEventListener("click", () => {
   }
   renderCalendar();
 });
+
+function csvEscape(value) {
+  const text = value == null ? "" : String(value);
+  if (/[",\n]/.test(text)) {
+    return `"${text.replace(/"/g, '""')}"`;
+  }
+  return text;
+}
+
+function generateCsv() {
+  const data = loadData();
+  const rows = [["日付", "予定", "メモ"].join(",")];
+  Object.keys(data).sort().forEach(key => {
+    const dayData = getDayData(data, key);
+    const schedule = (dayData.schedule || []).join(" / ");
+    const memo = dayData.memo || "";
+    if (!schedule && !memo.trim()) return;
+    rows.push([csvEscape(key), csvEscape(schedule), csvEscape(memo)].join(","));
+  });
+  return rows.join("\n");
+}
+
+openExportBtn.addEventListener("click", () => {
+  exportText.value = generateCsv();
+  exportOverlay.classList.remove("hidden");
+  exportPanel.classList.remove("hidden");
+  lockBackgroundScroll();
+});
+
+function closeExportPanel() {
+  exportOverlay.classList.add("hidden");
+  exportPanel.classList.add("hidden");
+  unlockBackgroundScroll();
+}
+
+closeExportPanelBtn.addEventListener("click", closeExportPanel);
+exportOverlay.addEventListener("click", closeExportPanel);
+
+copyExportBtn.addEventListener("click", async () => {
+  exportText.select();
+  try {
+    await navigator.clipboard.writeText(exportText.value);
+  } catch (e) {
+    document.execCommand("copy");
+  }
+  copyExportBtn.textContent = "コピーしました";
+  setTimeout(() => { copyExportBtn.textContent = "コピーする"; }, 1200);
+});
+
+downloadExportBtn.addEventListener("click", () => {
+  const bom = "﻿";
+  const blob = new Blob([bom + exportText.value], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "calendar-memo.csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+openHelpBtn.addEventListener("click", () => {
+  helpOverlay.classList.remove("hidden");
+  helpPanel.classList.remove("hidden");
+  lockBackgroundScroll();
+});
+
+function closeHelpPanel() {
+  helpOverlay.classList.add("hidden");
+  helpPanel.classList.add("hidden");
+  unlockBackgroundScroll();
+}
+
+closeHelpPanelBtn.addEventListener("click", closeHelpPanel);
+helpOverlay.addEventListener("click", closeHelpPanel);
 
 function init() {
   const today = new Date();
