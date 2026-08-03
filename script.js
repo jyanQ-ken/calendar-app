@@ -108,6 +108,10 @@ const downloadExportBtn = document.getElementById("downloadExportBtn");
 const bulkDeleteFrom = document.getElementById("bulkDeleteFrom");
 const bulkDeleteTo = document.getElementById("bulkDeleteTo");
 const bulkDeleteBtn = document.getElementById("bulkDeleteBtn");
+const exportCheckSchedule = document.getElementById("exportCheckSchedule");
+const exportCheckMemo = document.getElementById("exportCheckMemo");
+const exportCheckMoney = document.getElementById("exportCheckMoney");
+const exportCheckHabit = document.getElementById("exportCheckHabit");
 
 const openMoneyBtn = document.getElementById("openMoney");
 const moneyOverlay = document.getElementById("moneyOverlay");
@@ -889,10 +893,16 @@ function csvEscape(value) {
   return text;
 }
 
-function generateCsv() {
+function generateCsv(options) {
+  const opts = options || {};
+  const includeSchedule = opts.schedule !== false;
+  const includeMemo = opts.memo !== false;
+  const includeMoney = opts.money !== false;
+  const includeHabit = opts.habit !== false;
+
   const data = loadData();
-  const moneyData = loadMoneyData();
-  const habitData = loadHabitData();
+  const moneyData = includeMoney ? loadMoneyData() : {};
+  const habitData = includeHabit ? loadHabitData() : {};
   const habitNames = loadHabitNames();
 
   const allKeys = new Set([
@@ -901,33 +911,56 @@ function generateCsv() {
     ...Object.keys(habitData),
   ]);
 
-  const rows = [["日付", "予定", "メモ", "お金(合計)", "習慣"].join(",")];
+  const header = ["日付"];
+  if (includeSchedule) header.push("予定");
+  if (includeMemo) header.push("メモ");
+  if (includeMoney) header.push("お金(合計)");
+  if (includeHabit) header.push("習慣");
+  const rows = [header.join(",")];
+
   Array.from(allKeys).sort().forEach(key => {
     const dayData = getDayData(data, key);
-    const schedule = (dayData.schedule || []).join(" / ");
-    const memo = dayData.memo || "";
+    const schedule = includeSchedule ? (dayData.schedule || []).join(" / ") : "";
+    const memo = includeMemo ? (dayData.memo || "") : "";
 
-    const moneyRow = moneyData[key];
+    const moneyRow = includeMoney ? moneyData[key] : null;
     const moneyTotal = moneyRow ? moneyRow.reduce((sum, v) => sum + (Number(v) || 0), 0) : 0;
 
-    const habitRow = habitData[key];
+    const habitRow = includeHabit ? habitData[key] : null;
     const doneHabits = habitRow ? habitNames.filter((name, index) => habitRow[index] && name).join(" / ") : "";
 
     if (!schedule && !memo.trim() && !moneyTotal && !doneHabits) return;
-    rows.push([
-      csvEscape(key),
-      csvEscape(schedule),
-      csvEscape(memo),
-      csvEscape(moneyTotal || ""),
-      csvEscape(doneHabits),
-    ].join(","));
+
+    const row = [csvEscape(key)];
+    if (includeSchedule) row.push(csvEscape(schedule));
+    if (includeMemo) row.push(csvEscape(memo));
+    if (includeMoney) row.push(csvEscape(moneyTotal || ""));
+    if (includeHabit) row.push(csvEscape(doneHabits));
+    rows.push(row.join(","));
   });
   return rows.join("\n");
 }
 
+function currentExportOptions() {
+  return {
+    schedule: exportCheckSchedule.checked,
+    memo: exportCheckMemo.checked,
+    money: exportCheckMoney.checked,
+    habit: exportCheckHabit.checked,
+  };
+}
+
+function refreshExportText() {
+  exportText.value = generateCsv(currentExportOptions());
+}
+
+[exportCheckSchedule, exportCheckMemo, exportCheckMoney, exportCheckHabit].forEach(cb => {
+  cb.addEventListener("change", refreshExportText);
+});
+
 openExportBtn.addEventListener("click", () => {
   closeMenuPanel();
-  exportText.value = generateCsv();
+  refreshExportText();
   exportOverlay.classList.remove("hidden");
   exportPanel.classList.remove("hidden");
   lockBackgroundScroll();
@@ -1020,7 +1053,7 @@ bulkDeleteBtn.addEventListener("click", () => {
 
   bulkDeleteFrom.value = "";
   bulkDeleteTo.value = "";
-  exportText.value = generateCsv();
+  refreshExportText();
   renderCalendar();
   alert("削除しました");
 });

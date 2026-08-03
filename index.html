@@ -209,6 +209,13 @@
     <h2>記録の書き出し(CSV)</h2>
     <button id="closeExportPanel">×</button>
   </div>
+  <p class="export-hint">書き出す項目を選べます(不要な項目は外せます)。</p>
+  <div class="export-item-checks">
+    <label><input type="checkbox" id="exportCheckSchedule" checked> 予定</label>
+    <label><input type="checkbox" id="exportCheckMemo" checked> メモ</label>
+    <label><input type="checkbox" id="exportCheckMoney" checked> お金</label>
+    <label><input type="checkbox" id="exportCheckHabit" checked> 習慣</label>
+  </div>
   <p class="export-hint">下の内容を全部コピーして、他のアプリ(メモ・メール・Excelなど)に貼り付けられます。ファイルとして保存することもできます。</p>
   <textarea id="exportText" rows="10" readonly></textarea>
   <div class="export-buttons">

@@ -720,6 +720,14 @@ body.panel-open {
   cursor: pointer;
 }
 
+.export-item-checks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
 .schedule-search-input {
   width: 100%;
   box-sizing: border-box;
