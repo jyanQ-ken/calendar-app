@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>かんたんカレンダー</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app">
+  <header class="header">
+    <button id="prevMonth">&lt; 前の月</button>
+    <h1 id="monthLabel"></h1>
+    <button id="nextMonth">次の月 &gt;</button>
+  </header>
+
+  <div class="toolbar-group">
+    <span class="toolbar-group-label">印をつける</span>
+    <div class="mark-mode-buttons">
+      <button type="button" class="mode-btn off-btn" data-mode="off">🖐 オフ</button>
+      <button type="button" class="mode-btn" data-mode="holiday">休</button>
+      <button type="button" class="mode-btn" data-mode="national">祝</button>
+      <button type="button" class="mode-btn" data-mode="star">⭐</button>
+      <button type="button" class="mode-btn" data-mode="heart">💗</button>
+      <button type="button" class="mode-btn" data-mode="smile">😊</button>
+    </div>
+  </div>
+
+  <div class="toolbar-group">
+    <span class="toolbar-group-label">記録を見る・管理する</span>
+    <div class="link-buttons">
+      <button id="openTaskArchive">タスク一覧</button>
+      <button id="openDiaryList">日記一覧</button>
+      <button id="openMoney">家計簿</button>
+      <button id="openHabit">習慣化</button>
+    </div>
+  </div>
+  <p id="modeHint" class="mode-hint"><span id="modeHintLabel"></span></p>
+
+  <div class="weekdays">
+    <div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div>
+  </div>
+
+  <div id="calendarGrid" class="calendar-grid"></div>
+</div>
+
+<div id="overlay" class="overlay hidden"></div>
+<div id="panel" class="panel hidden">
+  <div class="panel-header">
+    <h2 id="panelDate"></h2>
+    <button id="closePanel">×</button>
+  </div>
+
+  <label class="holiday-toggle">
+    <input type="checkbox" id="holidayCheck">
+    休みの日にする
+  </label>
+
+  <label class="holiday-toggle">
+    <input type="checkbox" id="nationalCheck">
+    祝日にする（日付を赤字に）
+  </label>
+
+  <div class="mark-checks">
+    <label><input type="checkbox" id="markStar"> ⭐</label>
+    <label><input type="checkbox" id="markHeart"> 💗</label>
+    <label><input type="checkbox" id="markSmile"> 😊</label>
+  </div>
+
+  <section class="section">
+    <h3>予定</h3>
+    <div class="task-input-row">
+      <input type="text" id="scheduleInput" placeholder="新しい予定を入力">
+      <button id="addSchedule">追加</button>
+    </div>
+    <ul id="scheduleList" class="task-list"></ul>
+  </section>
+
+  <section class="section">
+    <h3>タスク</h3>
+    <div class="task-input-row">
+      <input type="text" id="taskInput" placeholder="新しいタスクを入力">
+      <button id="addTask">追加</button>
+    </div>
+    <ul id="taskList" class="task-list"></ul>
+  </section>
+
+  <section class="section">
+    <h3>メモ・日記</h3>
+    <textarea id="diaryText" rows="5" placeholder="今日のこと、自由に書いてください"></textarea>
+    <button id="saveDiary">メモ・日記を保存</button>
+  </section>
+</div>
+
+<div id="archiveOverlay" class="overlay hidden"></div>
+<div id="archivePanel" class="panel hidden">
+  <div class="panel-header">
+    <h2>タスク一覧(完了済み)</h2>
+    <button id="closeArchivePanel">×</button>
+  </div>
+  <ul id="archiveList" class="task-list"></ul>
+</div>
+
+<div id="diaryOverlay" class="overlay hidden"></div>
+<div id="diaryPanel" class="panel hidden">
+  <div class="panel-header">
+    <h2>日記・メモ一覧</h2>
+    <button id="closeDiaryPanel">×</button>
+  </div>
+  <ul id="diaryListEl" class="diary-list"></ul>
+</div>
+
+<div id="moneyOverlay" class="overlay hidden"></div>
+<div id="moneyPanel" class="panel hidden">
+  <div class="panel-header">
+    <h2>家計簿の記録</h2>
+    <button id="closeMoneyPanel">×</button>
+  </div>
+
+  <div class="money-month-nav">
+    <button id="prevMoneyMonth">&lt; 前の月</button>
+    <span id="moneyMonthLabel"></span>
+    <button id="nextMoneyMonth">次の月 &gt;</button>
+  </div>
+
+  <p class="money-hint">表の見出し（項目名）はクリックして自由に書き換えられます</p>
+
+  <div class="money-table-wrap">
+    <table id="moneyTable" class="money-table"></table>
+  </div>
+</div>
+
+<div id="habitOverlay" class="overlay hidden"></div>
+<div id="habitPanel" class="panel hidden">
+  <div class="panel-header">
+    <h2>習慣化の記録</h2>
+    <button id="closeHabitPanel">×</button>
+  </div>
+
+  <div class="money-month-nav">
+    <button id="prevHabitMonth">&lt; 前の月</button>
+    <span id="habitMonthLabel"></span>
+    <button id="nextHabitMonth">次の月 &gt;</button>
+  </div>
+
+  <p class="money-hint">表の見出し（項目名）はクリックして自由に書き換えられます</p>
+
+  <div class="money-table-wrap">
+    <table id="habitTable" class="money-table"></table>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
