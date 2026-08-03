@@ -16,6 +16,10 @@
     <button id="themeToggle" class="icon-btn" type="button"></button>
   </header>
 
+  <div class="schedule-list-buttons">
+    <button id="openScheduleList" class="schedule-list-btn">📋 予定一覧</button>
+  </div>
+
   <div class="mark-mode-buttons compact">
     <button type="button" class="mode-btn off-btn" data-mode="off">オフ</button>
     <button type="button" class="mode-btn" data-mode="holiday">休</button>
@@ -86,7 +90,7 @@
 
   <section class="section">
     <h3>メモ</h3>
-    <textarea id="diaryText" rows="5" placeholder="今日のこと、自由に書いてください"></textarea>
+    <textarea id="diaryText" rows="5" placeholder="今日のこと、メモ、日記"></textarea>
     <button id="saveDiary">メモを保存</button>
   </section>
 </div>
@@ -98,6 +102,15 @@
     <button id="closeArchivePanel">×</button>
   </div>
   <ul id="archiveList" class="task-list"></ul>
+</div>
+
+<div id="scheduleListOverlay" class="overlay hidden"></div>
+<div id="scheduleListPanel" class="panel hidden">
+  <div class="panel-header">
+    <h2>予定一覧</h2>
+    <button id="closeScheduleListPanel">×</button>
+  </div>
+  <ul id="scheduleListAll" class="task-list"></ul>
 </div>
 
 <div id="diaryOverlay" class="overlay hidden"></div>

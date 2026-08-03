@@ -79,6 +79,12 @@ const archivePanel = document.getElementById("archivePanel");
 const closeArchivePanelBtn = document.getElementById("closeArchivePanel");
 const archiveList = document.getElementById("archiveList");
 
+const openScheduleListBtn = document.getElementById("openScheduleList");
+const scheduleListOverlay = document.getElementById("scheduleListOverlay");
+const scheduleListPanel = document.getElementById("scheduleListPanel");
+const closeScheduleListPanelBtn = document.getElementById("closeScheduleListPanel");
+const scheduleListAll = document.getElementById("scheduleListAll");
+
 const openDiaryListBtn = document.getElementById("openDiaryList");
 const diaryOverlay = document.getElementById("diaryOverlay");
 const diaryPanel = document.getElementById("diaryPanel");
@@ -642,6 +648,82 @@ function closeArchivePanel() {
 
 closeArchivePanelBtn.addEventListener("click", closeArchivePanel);
 archiveOverlay.addEventListener("click", closeArchivePanel);
+
+function deleteScheduleFromList(dayKey, index) {
+  const data = loadData();
+  const dayData = getDayData(data, dayKey);
+  dayData.schedule.splice(index, 1);
+  data[dayKey] = dayData;
+  saveData(data);
+  renderScheduleListAll();
+}
+
+function renderScheduleListAll() {
+  const data = loadData();
+  const todayKey = dateKey(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+
+  const entries = Object.keys(data)
+    .filter(key => data[key].schedule && data[key].schedule.length > 0)
+    .sort((a, b) => a.localeCompare(b));
+
+  scheduleListAll.innerHTML = "";
+
+  let hasAny = false;
+  entries.forEach(dayKey => {
+    data[dayKey].schedule.forEach((text, index) => {
+      hasAny = true;
+      const li = document.createElement("li");
+      if (dayKey === todayKey) li.classList.add("today-item");
+
+      const dateSpan = document.createElement("span");
+      dateSpan.className = "archive-item-date";
+      dateSpan.textContent = dayKey;
+
+      const textSpan = document.createElement("span");
+      textSpan.textContent = text;
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "delete-task";
+      deleteBtn.textContent = "削除";
+      deleteBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        deleteScheduleFromList(dayKey, index);
+      });
+
+      li.appendChild(dateSpan);
+      li.appendChild(textSpan);
+      li.appendChild(deleteBtn);
+      li.addEventListener("click", () => {
+        closeScheduleListPanel();
+        openPanel(dayKey);
+      });
+      scheduleListAll.appendChild(li);
+    });
+  });
+
+  if (!hasAny) {
+    const li = document.createElement("li");
+    li.textContent = "予定はまだありません";
+    scheduleListAll.appendChild(li);
+  }
+}
+
+openScheduleListBtn.addEventListener("click", () => {
+  closeMenuPanel();
+  renderScheduleListAll();
+  scheduleListOverlay.classList.remove("hidden");
+  scheduleListPanel.classList.remove("hidden");
+  lockBackgroundScroll();
+});
+
+function closeScheduleListPanel() {
+  scheduleListOverlay.classList.add("hidden");
+  scheduleListPanel.classList.add("hidden");
+  unlockBackgroundScroll();
+}
+
+closeScheduleListPanelBtn.addEventListener("click", closeScheduleListPanel);
+scheduleListOverlay.addEventListener("click", closeScheduleListPanel);
 
 function renderDiaryList() {
   const data = loadData();

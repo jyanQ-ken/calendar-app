@@ -413,6 +413,31 @@ body.panel-open {
   background: var(--bg-btn-hover);
 }
 
+.schedule-list-buttons {
+  margin-bottom: 8px;
+}
+
+.schedule-list-btn {
+  width: 100%;
+  padding: 10px;
+  min-height: 40px;
+  border: none;
+  border-radius: 4px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: bold;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.schedule-list-btn:hover {
+  filter: brightness(0.95);
+}
+
+.task-list li.today-item {
+  background: var(--accent-soft-bg);
+}
+
 .mark-mode-buttons {
   display: flex;
   flex-wrap: wrap;
