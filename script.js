@@ -112,6 +112,7 @@ const exportCheckSchedule = document.getElementById("exportCheckSchedule");
 const exportCheckMemo = document.getElementById("exportCheckMemo");
 const exportCheckMoney = document.getElementById("exportCheckMoney");
 const exportCheckHabit = document.getElementById("exportCheckHabit");
+const exportCheckTask = document.getElementById("exportCheckTask");
 
 const openMoneyBtn = document.getElementById("openMoney");
 const moneyOverlay = document.getElementById("moneyOverlay");
@@ -899,16 +900,25 @@ function generateCsv(options) {
   const includeMemo = opts.memo !== false;
   const includeMoney = opts.money !== false;
   const includeHabit = opts.habit !== false;
+  const includeTask = opts.task !== false;
 
   const data = loadData();
   const moneyData = includeMoney ? loadMoneyData() : {};
   const habitData = includeHabit ? loadHabitData() : {};
   const habitNames = loadHabitNames();
+  const archive = includeTask ? loadArchive() : [];
+
+  const archiveByDate = {};
+  archive.forEach(item => {
+    if (!archiveByDate[item.date]) archiveByDate[item.date] = [];
+    archiveByDate[item.date].push(item.text);
+  });
 
   const allKeys = new Set([
     ...Object.keys(data),
     ...Object.keys(moneyData),
     ...Object.keys(habitData),
+    ...Object.keys(archiveByDate),
   ]);
 
   const header = ["日付"];
@@ -916,6 +926,8 @@ function generateCsv(options) {
   if (includeMemo) header.push("メモ");
   if (includeMoney) header.push("お金(合計)");
   if (includeHabit) header.push("習慣");
+  if (includeTask) header.push("タスク(未完了)");
+  if (includeTask) header.push("タスク(完了済み)");
   const rows = [header.join(",")];
 
   Array.from(allKeys).sort().forEach(key => {
@@ -929,13 +941,18 @@ function generateCsv(options) {
     const habitRow = includeHabit ? habitData[key] : null;
     const doneHabits = habitRow ? habitNames.filter((name, index) => habitRow[index] && name).join(" / ") : "";
 
-    if (!schedule && !memo.trim() && !moneyTotal && !doneHabits) return;
+    const pendingTasks = includeTask ? (dayData.tasks || []).map(t => t.text).join(" / ") : "";
+    const doneTasks = includeTask ? (archiveByDate[key] || []).join(" / ") : "";
+
+    if (!schedule && !memo.trim() && !moneyTotal && !doneHabits && !pendingTasks && !doneTasks) return;
 
     const row = [csvEscape(key)];
     if (includeSchedule) row.push(csvEscape(schedule));
     if (includeMemo) row.push(csvEscape(memo));
     if (includeMoney) row.push(csvEscape(moneyTotal || ""));
     if (includeHabit) row.push(csvEscape(doneHabits));
+    if (includeTask) row.push(csvEscape(pendingTasks));
+    if (includeTask) row.push(csvEscape(doneTasks));
     rows.push(row.join(","));
   });
   return rows.join("\n");
@@ -947,6 +964,7 @@ function currentExportOptions() {
     memo: exportCheckMemo.checked,
     money: exportCheckMoney.checked,
     habit: exportCheckHabit.checked,
+    task: exportCheckTask.checked,
   };
 }
 
@@ -954,7 +972,7 @@ function refreshExportText() {
   exportText.value = generateCsv(currentExportOptions());
 }
 
-[exportCheckSchedule, exportCheckMemo, exportCheckMoney, exportCheckHabit].forEach(cb => {
+[exportCheckSchedule, exportCheckMemo, exportCheckMoney, exportCheckHabit, exportCheckTask].forEach(cb => {
   cb.addEventListener("change", refreshExportText);
 });
 
