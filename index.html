@@ -123,6 +123,18 @@
     <h2>メモ一覧</h2>
     <button id="closeDiaryPanel">×</button>
   </div>
+
+  <details class="category-editor-wrap">
+    <summary>期間を指定して一括削除する</summary>
+    <div class="bulk-delete-row">
+      <input type="date" id="diaryBulkFrom">
+      <span>〜</span>
+      <input type="date" id="diaryBulkTo">
+      <button id="diaryBulkDeleteBtn">削除する</button>
+    </div>
+    <p class="export-hint">指定した期間(両端を含む)のメモがすべて削除されます。元に戻せないので注意してください。</p>
+  </details>
+
   <ul id="diaryListEl" class="diary-list"></ul>
 </div>
 

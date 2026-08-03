@@ -720,6 +720,36 @@ body.panel-open {
   cursor: pointer;
 }
 
+.bulk-delete-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 8px 0;
+}
+
+.bulk-delete-row input[type="date"] {
+  flex: 1;
+  min-width: 120px;
+  padding: 8px;
+  min-height: 40px;
+  font-size: 0.95rem;
+  border: 1px solid var(--border-input);
+  border-radius: 3px;
+  background: var(--bg-input);
+  color: var(--text-main);
+}
+
+.bulk-delete-row button {
+  padding: 8px 14px;
+  min-height: 40px;
+  border: none;
+  background: #e00000;
+  color: #fff;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
 .money-entry-row {
   display: flex;
   align-items: center;
