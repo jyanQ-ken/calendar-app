@@ -1,3 +1,9 @@
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  });
+}
+
 const STORAGE_KEY = "calendarAppData";
 const ARCHIVE_KEY = "completedTasksData";
 const THEME_KEY = "themePreference";
@@ -615,6 +621,23 @@ function renderArchiveList() {
     const textSpan = document.createElement("span");
     textSpan.textContent = item.text;
 
+    const restoreBtn = document.createElement("button");
+    restoreBtn.className = "delete-task";
+    restoreBtn.textContent = "未完了に戻す";
+    restoreBtn.addEventListener("click", () => {
+      const current = loadArchive();
+      current.splice(index, 1);
+      saveArchive(current);
+
+      const data = loadData();
+      const dayData = getDayData(data, item.date);
+      dayData.tasks.push({ text: item.text, done: false });
+      data[item.date] = dayData;
+      saveData(data);
+
+      renderArchiveList();
+    });
+
     const deleteBtn = document.createElement("button");
     deleteBtn.className = "delete-task";
     deleteBtn.textContent = "完全に削除";
@@ -627,6 +650,7 @@ function renderArchiveList() {
 
     li.appendChild(dateSpan);
     li.appendChild(textSpan);
+    li.appendChild(restoreBtn);
     li.appendChild(deleteBtn);
     archiveList.appendChild(li);
   });
