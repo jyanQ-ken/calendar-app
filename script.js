@@ -11,7 +11,9 @@ function effectiveTheme() {
 }
 
 function updateThemeToggleLabel() {
-  themeToggleBtn.textContent = effectiveTheme() === "dark" ? "☀️ ライトモード" : "🌙 ダークモード";
+  const isDark = effectiveTheme() === "dark";
+  themeToggleBtn.textContent = isDark ? "☀️" : "🌙";
+  themeToggleBtn.title = isDark ? "ライトモードに切り替え" : "ダークモードに切り替え";
 }
 
 function applyStoredTheme() {
@@ -145,6 +147,10 @@ let habitYear;
 let habitMonth; // 0-11
 let habitEditingDateKey = null;
 
+function closeMenuPanel() {
+  // ハンバーガーメニューは廃止済み。各パネルを開く前の後始末として呼ばれるため関数だけ残している。
+}
+
 const openHelpBtn = document.getElementById("openHelp");
 const helpOverlay = document.getElementById("helpOverlay");
 const helpPanel = document.getElementById("helpPanel");
@@ -152,6 +158,7 @@ const closeHelpPanelBtn = document.getElementById("closeHelpPanel");
 
 const modeButtons = document.querySelectorAll(".mode-btn");
 const modeHintLabel = document.getElementById("modeHintLabel");
+const modeHint = document.getElementById("modeHint");
 let activeMode = null; // "holiday" | "star" | "heart" | "smile" | null (null = オフ)
 
 const MODE_LABELS = { holiday: "休み", national: "祝日", star: "⭐", heart: "💗", smile: "😊" };
@@ -310,15 +317,21 @@ function setActiveMode(mode) {
   });
   if (activeMode === "national") {
     modeHintLabel.textContent = "選択中: 祝日 ／ このアプリは祝日を自動判定しません。日本の暦を見ながら、祝日の日付を自分でタップして赤字にしてください";
+    modeHint.classList.remove("hidden");
   } else if (activeMode) {
     modeHintLabel.textContent = `選択中: ${MODE_LABELS[activeMode]} ／ 日付をタップするとON/OFFが切り替わります`;
+    modeHint.classList.remove("hidden");
   } else {
-    modeHintLabel.textContent = "日付をタップすると詳細(予定・タスク・メモ)を開けます";
+    modeHintLabel.textContent = "";
+    modeHint.classList.add("hidden");
   }
 }
 
 modeButtons.forEach(btn => {
-  btn.addEventListener("click", () => setActiveMode(btn.dataset.mode));
+  btn.addEventListener("click", () => {
+    setActiveMode(btn.dataset.mode);
+    closeMenuPanel();
+  });
 });
 
 setActiveMode("off");
@@ -614,6 +627,7 @@ function renderArchiveList() {
 }
 
 openTaskArchiveBtn.addEventListener("click", () => {
+  closeMenuPanel();
   renderArchiveList();
   archiveOverlay.classList.remove("hidden");
   archivePanel.classList.remove("hidden");
@@ -680,6 +694,7 @@ function renderDiaryList() {
 }
 
 openDiaryListBtn.addEventListener("click", () => {
+  closeMenuPanel();
   renderDiaryList();
   diaryOverlay.classList.remove("hidden");
   diaryPanel.classList.remove("hidden");
@@ -735,6 +750,7 @@ function generateCsv() {
 }
 
 openExportBtn.addEventListener("click", () => {
+  closeMenuPanel();
   exportText.value = generateCsv();
   exportOverlay.classList.remove("hidden");
   exportPanel.classList.remove("hidden");
@@ -775,6 +791,7 @@ downloadExportBtn.addEventListener("click", () => {
 });
 
 openHelpBtn.addEventListener("click", () => {
+  closeMenuPanel();
   helpOverlay.classList.remove("hidden");
   helpPanel.classList.remove("hidden");
   lockBackgroundScroll();
@@ -953,6 +970,7 @@ moneyAddEntryBtn.addEventListener("click", () => {
 });
 
 openMoneyBtn.addEventListener("click", () => {
+  closeMenuPanel();
   moneyYear = currentYear;
   moneyMonth = currentMonth;
   renderMoneyCategoryEditor();
@@ -1150,6 +1168,7 @@ habitAddEntryBtn.addEventListener("click", () => {
 });
 
 openHabitBtn.addEventListener("click", () => {
+  closeMenuPanel();
   habitYear = currentYear;
   habitMonth = currentMonth;
   renderHabitCategoryEditor();

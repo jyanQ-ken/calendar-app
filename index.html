@@ -10,44 +10,31 @@
 
 <div class="app">
   <header class="header">
-    <button id="prevMonth">&lt; 前の月</button>
+    <button id="prevMonth" class="icon-btn" aria-label="前の月">‹</button>
     <h1 id="monthLabel"></h1>
-    <button id="nextMonth">次の月 &gt;</button>
+    <button id="nextMonth" class="icon-btn" aria-label="次の月">›</button>
+    <button id="themeToggle" class="icon-btn" type="button"></button>
   </header>
-  <div class="theme-row">
-    <button id="themeToggle" type="button"></button>
+
+  <div class="mark-mode-buttons compact">
+    <button type="button" class="mode-btn off-btn" data-mode="off">オフ</button>
+    <button type="button" class="mode-btn" data-mode="holiday">休</button>
+    <button type="button" class="mode-btn" data-mode="national">祝</button>
+    <button type="button" class="mode-btn" data-mode="star">⭐</button>
+    <button type="button" class="mode-btn" data-mode="heart">💗</button>
+    <button type="button" class="mode-btn" data-mode="smile">😊</button>
   </div>
 
-  <div class="toolbar-group">
-    <span class="toolbar-group-label">印をつける</span>
-    <div class="mark-mode-buttons">
-      <button type="button" class="mode-btn off-btn" data-mode="off">🖐 オフ</button>
-      <button type="button" class="mode-btn" data-mode="holiday">休</button>
-      <button type="button" class="mode-btn" data-mode="national">祝</button>
-      <button type="button" class="mode-btn" data-mode="star">⭐</button>
-      <button type="button" class="mode-btn" data-mode="heart">💗</button>
-      <button type="button" class="mode-btn" data-mode="smile">😊</button>
-    </div>
+  <div class="link-buttons compact">
+    <button id="openTaskArchive">タスク</button>
+    <button id="openDiaryList">メモ</button>
+    <button id="openMoney">家計簿</button>
+    <button id="openHabit">習慣</button>
+    <button id="openExport">書出</button>
+    <button id="openHelp">?</button>
   </div>
 
-  <div class="toolbar-group">
-    <span class="toolbar-group-label">記録を見る・管理する</span>
-    <div class="link-buttons">
-      <button id="openTaskArchive">タスク一覧</button>
-      <button id="openDiaryList">メモ一覧</button>
-      <button id="openMoney">家計簿</button>
-      <button id="openHabit">習慣</button>
-      <button id="openExport">書き出す</button>
-    </div>
-  </div>
-
-  <div class="toolbar-group">
-    <span class="toolbar-group-label">このアプリについて</span>
-    <div class="link-buttons">
-      <button id="openHelp">使い方・注意点</button>
-    </div>
-  </div>
-  <p id="modeHint" class="mode-hint"><span id="modeHintLabel"></span></p>
+  <p id="modeHint" class="mode-hint hidden"><span id="modeHintLabel"></span></p>
 
   <div class="weekdays">
     <div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div>
