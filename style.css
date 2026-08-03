@@ -720,6 +720,19 @@ body.panel-open {
   cursor: pointer;
 }
 
+.schedule-search-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px;
+  min-height: 40px;
+  font-size: 1rem;
+  border: 1px solid var(--border-input);
+  border-radius: 3px;
+  background: var(--bg-input);
+  color: var(--text-main);
+  margin-bottom: 8px;
+}
+
 .bulk-delete-row {
   display: flex;
   align-items: center;

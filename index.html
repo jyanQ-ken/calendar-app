@@ -114,6 +114,7 @@
     <h2>予定一覧</h2>
     <button id="closeScheduleListPanel">×</button>
   </div>
+  <input type="text" id="scheduleSearchInput" class="schedule-search-input" placeholder="予定をキーワードで探す">
   <ul id="scheduleListAll" class="task-list"></ul>
 </div>
 
@@ -205,7 +206,7 @@
 <div id="exportOverlay" class="overlay hidden"></div>
 <div id="exportPanel" class="panel hidden">
   <div class="panel-header">
-    <h2>予定・メモの書き出し(CSV)</h2>
+    <h2>記録の書き出し(CSV)</h2>
     <button id="closeExportPanel">×</button>
   </div>
   <p class="export-hint">下の内容を全部コピーして、他のアプリ(メモ・メール・Excelなど)に貼り付けられます。ファイルとして保存することもできます。</p>
@@ -216,14 +217,14 @@
   </div>
 
   <details class="category-editor-wrap">
-    <summary>期間を指定して予定・メモを一括削除する</summary>
+    <summary>期間を指定してまとめて削除する</summary>
     <div class="bulk-delete-row">
       <input type="date" id="bulkDeleteFrom">
       <span>〜</span>
       <input type="date" id="bulkDeleteTo">
       <button id="bulkDeleteBtn">削除する</button>
     </div>
-    <p class="export-hint">指定した期間(両端を含む)の予定・メモがすべて削除されます。元に戻せないので、先に上のコピー・ファイル保存で控えを残してから行うと安心です。</p>
+    <p class="export-hint">指定した期間(両端を含む)の予定・メモ・お金・習慣の記録・完了済みタスクが、まとめて削除されます。元に戻せないので、先に上のコピー・ファイル保存で控えを残してから行うと安心です。</p>
   </details>
 </div>
 
@@ -247,7 +248,7 @@
       <li>ブラウザの「履歴・データを消去」をすると、入力した内容も消えてしまいます</li>
       <li>他の端末とは自動で同期されません</li>
     </ul>
-    <p>大事な予定やメモは、「書き出す」ボタンからCSVファイルとして保存しておくと安心です。</p>
+    <p>大事な予定・メモ・お金・習慣の記録は、「書出」ボタンからCSVファイルとして保存しておくと安心です。</p>
 
     <h3>ネットがないところでも使える?</h3>
     <p>一度ネットがつながっている状態でこのアプリを開いておくと、その内容がスマホやパソコンの中に保存され、次回からは<strong>ネットに繋がっていない状態(電波が届かない・機内モードなど)でも表示・入力ができます</strong>。ただし、初めて開く時と、アプリを更新した直後の1回目は、ネットに繋がった状態で開いてください。</p>

@@ -90,6 +90,7 @@ const scheduleListOverlay = document.getElementById("scheduleListOverlay");
 const scheduleListPanel = document.getElementById("scheduleListPanel");
 const closeScheduleListPanelBtn = document.getElementById("closeScheduleListPanel");
 const scheduleListAll = document.getElementById("scheduleListAll");
+const scheduleSearchInput = document.getElementById("scheduleSearchInput");
 
 const openDiaryListBtn = document.getElementById("openDiaryList");
 const diaryOverlay = document.getElementById("diaryOverlay");
@@ -157,7 +158,7 @@ const saveHabitDayBtn = document.getElementById("saveHabitDayBtn");
 
 const HABIT_KEY = "habitEntriesData";
 const HABIT_NAMES_KEY = "habitNamesData";
-const DEFAULT_HABITS = ["運動", "読書", "早起き", "水分補給", "勉強"];
+const DEFAULT_HABITS = ["運動", "読書", "早起き", "ストレッチ", "勉強"];
 let habitYear;
 let habitMonth; // 0-11
 let habitEditingDateKey = null;
@@ -685,62 +686,105 @@ function deleteScheduleFromList(dayKey, index) {
   renderScheduleListAll();
 }
 
+function appendScheduleItem(dayKey, text, index, todayKey) {
+  const li = document.createElement("li");
+  if (dayKey === todayKey) li.classList.add("today-item");
+
+  const dateSpan = document.createElement("span");
+  dateSpan.className = "archive-item-date";
+  dateSpan.textContent = dayKey;
+
+  const textSpan = document.createElement("span");
+  textSpan.textContent = text;
+
+  const deleteBtn = document.createElement("button");
+  deleteBtn.className = "delete-task";
+  deleteBtn.textContent = "削除";
+  deleteBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    deleteScheduleFromList(dayKey, index);
+  });
+
+  li.appendChild(dateSpan);
+  li.appendChild(textSpan);
+  li.appendChild(deleteBtn);
+  li.addEventListener("click", () => {
+    closeScheduleListPanel();
+    openPanel(dayKey);
+  });
+  scheduleListAll.appendChild(li);
+}
+
 function renderScheduleListAll() {
   const data = loadData();
   const todayKey = dateKey(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+  const keyword = scheduleSearchInput.value.trim();
 
   const entries = Object.keys(data)
-    .filter(key => data[key].schedule && data[key].schedule.length > 0)
+    .filter(key => {
+      const schedule = data[key].schedule;
+      if (!schedule || schedule.length === 0) return false;
+      if (!keyword) return true;
+      return schedule.some(text => text.includes(keyword));
+    })
     .sort((a, b) => a.localeCompare(b));
 
   scheduleListAll.innerHTML = "";
 
-  let hasAny = false;
+  const upcomingHeading = document.createElement("li");
+  upcomingHeading.className = "task-list-heading";
+  upcomingHeading.textContent = "これからの予定";
+  scheduleListAll.appendChild(upcomingHeading);
+
+  let hasUpcoming = false;
   entries.forEach(dayKey => {
+    if (dayKey < todayKey) return;
     data[dayKey].schedule.forEach((text, index) => {
-      hasAny = true;
-      const li = document.createElement("li");
-      if (dayKey === todayKey) li.classList.add("today-item");
-
-      const dateSpan = document.createElement("span");
-      dateSpan.className = "archive-item-date";
-      dateSpan.textContent = dayKey;
-
-      const textSpan = document.createElement("span");
-      textSpan.textContent = text;
-
-      const deleteBtn = document.createElement("button");
-      deleteBtn.className = "delete-task";
-      deleteBtn.textContent = "削除";
-      deleteBtn.addEventListener("click", (e) => {
-        e.stopPropagation();
-        deleteScheduleFromList(dayKey, index);
-      });
-
-      li.appendChild(dateSpan);
-      li.appendChild(textSpan);
-      li.appendChild(deleteBtn);
-      li.addEventListener("click", () => {
-        closeScheduleListPanel();
-        openPanel(dayKey);
-      });
-      scheduleListAll.appendChild(li);
+      if (keyword && !text.includes(keyword)) return;
+      hasUpcoming = true;
+      appendScheduleItem(dayKey, text, index, todayKey);
     });
   });
-
-  if (!hasAny) {
+  if (!hasUpcoming) {
     const li = document.createElement("li");
-    li.textContent = "予定はまだありません";
+    li.textContent = "これからの予定はありません";
+    scheduleListAll.appendChild(li);
+  }
+
+  const pastHeading = document.createElement("li");
+  pastHeading.className = "task-list-heading";
+  pastHeading.textContent = "過去の予定";
+  scheduleListAll.appendChild(pastHeading);
+
+  let hasPast = false;
+  entries
+    .filter(dayKey => dayKey < todayKey)
+    .sort((a, b) => b.localeCompare(a))
+    .forEach(dayKey => {
+      data[dayKey].schedule.forEach((text, index) => {
+        if (keyword && !text.includes(keyword)) return;
+        hasPast = true;
+        appendScheduleItem(dayKey, text, index, todayKey);
+      });
+    });
+  if (!hasPast) {
+    const li = document.createElement("li");
+    li.textContent = "過去の予定はありません";
     scheduleListAll.appendChild(li);
   }
 }
 
 openScheduleListBtn.addEventListener("click", () => {
   closeMenuPanel();
+  scheduleSearchInput.value = "";
   renderScheduleListAll();
   scheduleListOverlay.classList.remove("hidden");
   scheduleListPanel.classList.remove("hidden");
   lockBackgroundScroll();
+});
+
+scheduleSearchInput.addEventListener("input", () => {
+  renderScheduleListAll();
 });
 
 function closeScheduleListPanel() {
@@ -847,13 +891,36 @@ function csvEscape(value) {
 
 function generateCsv() {
   const data = loadData();
-  const rows = [["日付", "予定", "メモ"].join(",")];
-  Object.keys(data).sort().forEach(key => {
+  const moneyData = loadMoneyData();
+  const habitData = loadHabitData();
+  const habitNames = loadHabitNames();
+
+  const allKeys = new Set([
+    ...Object.keys(data),
+    ...Object.keys(moneyData),
+    ...Object.keys(habitData),
+  ]);
+
+  const rows = [["日付", "予定", "メモ", "お金(合計)", "習慣"].join(",")];
+  Array.from(allKeys).sort().forEach(key => {
     const dayData = getDayData(data, key);
     const schedule = (dayData.schedule || []).join(" / ");
     const memo = dayData.memo || "";
-    if (!schedule && !memo.trim()) return;
-    rows.push([csvEscape(key), csvEscape(schedule), csvEscape(memo)].join(","));
+
+    const moneyRow = moneyData[key];
+    const moneyTotal = moneyRow ? moneyRow.reduce((sum, v) => sum + (Number(v) || 0), 0) : 0;
+
+    const habitRow = habitData[key];
+    const doneHabits = habitRow ? habitNames.filter((name, index) => habitRow[index] && name).join(" / ") : "";
+
+    if (!schedule && !memo.trim() && !moneyTotal && !doneHabits) return;
+    rows.push([
+      csvEscape(key),
+      csvEscape(schedule),
+      csvEscape(memo),
+      csvEscape(moneyTotal || ""),
+      csvEscape(doneHabits),
+    ].join(","));
   });
   return rows.join("\n");
 }
@@ -892,7 +959,7 @@ downloadExportBtn.addEventListener("click", () => {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = "calendar-memo.csv";
+  a.download = "calendar-data.csv";
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
@@ -912,25 +979,45 @@ bulkDeleteBtn.addEventListener("click", () => {
   }
 
   const data = loadData();
-  const targetKeys = Object.keys(data).filter(key => {
-    if (key < from || key > to) return false;
+  const moneyData = loadMoneyData();
+  const habitData = loadHabitData();
+  const archive = loadArchive();
+
+  const inRange = key => key >= from && key <= to;
+
+  const scheduleMemoKeys = Object.keys(data).filter(key => {
+    if (!inRange(key)) return false;
     const d = data[key];
     return (d.schedule && d.schedule.length > 0) || (d.memo && d.memo.trim() !== "");
   });
+  const moneyKeys = Object.keys(moneyData).filter(inRange);
+  const habitKeys = Object.keys(habitData).filter(inRange);
+  const archiveEntries = archive.filter(item => inRange(item.date));
 
-  if (targetKeys.length === 0) {
-    alert("指定した期間に予定・メモはありませんでした");
+  const totalCount = scheduleMemoKeys.length + moneyKeys.length + habitKeys.length + archiveEntries.length;
+
+  if (totalCount === 0) {
+    alert("指定した期間には削除できる記録がありませんでした");
     return;
   }
 
-  const ok = confirm(`${from}〜${to}の予定・メモ（対象${targetKeys.length}日分）を削除します。元に戻せませんが、よろしいですか?`);
+  const ok = confirm(`${from}〜${to}の予定・メモ・お金・習慣・完了済みタスクの記録をまとめて削除します。元に戻せませんが、よろしいですか?`);
   if (!ok) return;
 
-  targetKeys.forEach(key => {
+  scheduleMemoKeys.forEach(key => {
     data[key].schedule = [];
     data[key].memo = "";
   });
   saveData(data);
+
+  moneyKeys.forEach(key => { delete moneyData[key]; });
+  saveMoneyData(moneyData);
+
+  habitKeys.forEach(key => { delete habitData[key]; });
+  saveHabitData(habitData);
+
+  saveArchive(archive.filter(item => !inRange(item.date)));
+
   bulkDeleteFrom.value = "";
   bulkDeleteTo.value = "";
   exportText.value = generateCsv();
