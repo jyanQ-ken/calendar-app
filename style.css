@@ -103,6 +103,10 @@ body.panel-open {
   background: #ffb3c6;
 }
 
+.day-cell.today {
+  box-shadow: inset 0 0 0 3px #ffc107;
+}
+
 .day-cell .day-number {
   font-weight: bold;
 }
@@ -396,6 +400,193 @@ body.panel-open {
   color: #333;
 }
 
+
+.money-month-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+.money-month-nav button {
+  padding: 8px 12px;
+  min-height: 40px;
+  border: 1px solid #ccc;
+  background: #fafafa;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.money-month-nav span {
+  font-weight: bold;
+}
+
+.money-summary {
+  background: #f7f8fa;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+.money-summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 0;
+}
+
+.money-summary-row.total {
+  font-weight: bold;
+  border-top: 1px solid #ddd;
+  margin-top: 4px;
+  padding-top: 6px;
+}
+
+.category-editor-wrap {
+  margin-bottom: 10px;
+}
+
+.category-editor-wrap summary {
+  font-size: 0.85rem;
+  color: #4a7dfc;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.category-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.category-editor input {
+  padding: 8px;
+  min-height: 40px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.date-add-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.date-add-row input[type="date"] {
+  flex: 1;
+  padding: 8px;
+  min-height: 40px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.date-add-row button {
+  padding: 8px 14px;
+  min-height: 40px;
+  border: none;
+  background: #4a7dfc;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.money-entry-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 4px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+}
+
+.money-entry-row:hover {
+  background: #f0f5ff;
+}
+
+.money-entry-amount {
+  font-weight: bold;
+  color: #333;
+}
+
+.day-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.day-field-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.day-field-row label {
+  flex: 1;
+  font-size: 1rem;
+}
+
+.day-field-row input[type="number"] {
+  width: 100px;
+  padding: 8px;
+  min-height: 40px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  text-align: right;
+}
+
+.day-field-row input[type="checkbox"] {
+  width: 26px;
+  height: 26px;
+}
+
+.habit-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 14px 16px;
+  min-height: 52px;
+  font-size: 1rem;
+  border: 2px solid #ddd;
+  background: #fafafa;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.habit-toggle .habit-toggle-mark {
+  font-size: 0.9rem;
+  color: #999;
+}
+
+.habit-toggle.done {
+  background: #4caf50;
+  border-color: #4caf50;
+  color: #fff;
+}
+
+.habit-toggle.done .habit-toggle-mark {
+  color: #fff;
+  font-weight: bold;
+}
+
+#saveMoneyDayBtn,
+#saveHabitDayBtn {
+  width: 100%;
+  padding: 10px;
+  min-height: 44px;
+  border: none;
+  background: #4a7dfc;
+  color: #fff;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+}
 
 .help-content h3 {
   margin: 16px 0 4px;

@@ -60,6 +60,60 @@ const exportText = document.getElementById("exportText");
 const copyExportBtn = document.getElementById("copyExportBtn");
 const downloadExportBtn = document.getElementById("downloadExportBtn");
 
+const openMoneyBtn = document.getElementById("openMoney");
+const moneyOverlay = document.getElementById("moneyOverlay");
+const moneyPanel = document.getElementById("moneyPanel");
+const closeMoneyPanelBtn = document.getElementById("closeMoneyPanel");
+const prevMoneyMonthBtn = document.getElementById("prevMoneyMonth");
+const nextMoneyMonthBtn = document.getElementById("nextMoneyMonth");
+const moneyMonthLabel = document.getElementById("moneyMonthLabel");
+const moneySummary = document.getElementById("moneySummary");
+const moneyCategoryEditor = document.getElementById("moneyCategoryEditor");
+const moneyDateInput = document.getElementById("moneyDateInput");
+const moneyAddEntryBtn = document.getElementById("moneyAddEntryBtn");
+const moneyList = document.getElementById("moneyList");
+
+const moneyDayOverlay = document.getElementById("moneyDayOverlay");
+const moneyDayPanel = document.getElementById("moneyDayPanel");
+const closeMoneyDayPanelBtn = document.getElementById("closeMoneyDayPanel");
+const moneyDayDate = document.getElementById("moneyDayDate");
+const moneyDayFields = document.getElementById("moneyDayFields");
+const saveMoneyDayBtn = document.getElementById("saveMoneyDayBtn");
+
+const MONEY_KEY = "moneyEntriesData";
+const MONEY_CATEGORIES_KEY = "moneyCategoriesData";
+const DEFAULT_CATEGORIES = ["食費", "日用品", "交通費", "娯楽", "その他"];
+let moneyYear;
+let moneyMonth; // 0-11
+let moneyEditingDateKey = null;
+
+const openHabitBtn = document.getElementById("openHabit");
+const habitOverlay = document.getElementById("habitOverlay");
+const habitPanel = document.getElementById("habitPanel");
+const closeHabitPanelBtn = document.getElementById("closeHabitPanel");
+const prevHabitMonthBtn = document.getElementById("prevHabitMonth");
+const nextHabitMonthBtn = document.getElementById("nextHabitMonth");
+const habitMonthLabel = document.getElementById("habitMonthLabel");
+const habitSummary = document.getElementById("habitSummary");
+const habitCategoryEditor = document.getElementById("habitCategoryEditor");
+const habitDateInput = document.getElementById("habitDateInput");
+const habitAddEntryBtn = document.getElementById("habitAddEntryBtn");
+const habitList = document.getElementById("habitList");
+
+const habitDayOverlay = document.getElementById("habitDayOverlay");
+const habitDayPanel = document.getElementById("habitDayPanel");
+const closeHabitDayPanelBtn = document.getElementById("closeHabitDayPanel");
+const habitDayDate = document.getElementById("habitDayDate");
+const habitDayFields = document.getElementById("habitDayFields");
+const saveHabitDayBtn = document.getElementById("saveHabitDayBtn");
+
+const HABIT_KEY = "habitEntriesData";
+const HABIT_NAMES_KEY = "habitNamesData";
+const DEFAULT_HABITS = ["運動", "読書", "早起き", "水分補給", "勉強"];
+let habitYear;
+let habitMonth; // 0-11
+let habitEditingDateKey = null;
+
 const openHelpBtn = document.getElementById("openHelp");
 const helpOverlay = document.getElementById("helpOverlay");
 const helpPanel = document.getElementById("helpPanel");
@@ -118,6 +172,7 @@ function renderCalendar() {
   const data = loadData();
   const firstDayOfWeek = new Date(currentYear, currentMonth, 1).getDay();
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+  const todayKey = dateKey(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
 
   for (let i = 0; i < firstDayOfWeek; i++) {
     const empty = document.createElement("div");
@@ -130,7 +185,10 @@ function renderCalendar() {
     const dayData = getDayData(data, key);
 
     const cell = document.createElement("div");
-    cell.className = "day-cell" + (dayData.holiday ? " holiday" : "") + (dayData.national ? " national" : "");
+    cell.className = "day-cell"
+      + (dayData.holiday ? " holiday" : "")
+      + (dayData.national ? " national" : "")
+      + (key === todayKey ? " today" : "");
 
     const numberEl = document.createElement("div");
     numberEl.className = "day-number";
@@ -699,6 +757,404 @@ function closeHelpPanel() {
 
 closeHelpPanelBtn.addEventListener("click", closeHelpPanel);
 helpOverlay.addEventListener("click", closeHelpPanel);
+
+function loadCategories() {
+  const raw = localStorage.getItem(MONEY_CATEGORIES_KEY);
+  return raw ? JSON.parse(raw) : DEFAULT_CATEGORIES.slice();
+}
+
+function saveCategories(categories) {
+  localStorage.setItem(MONEY_CATEGORIES_KEY, JSON.stringify(categories));
+}
+
+function loadMoneyData() {
+  const raw = localStorage.getItem(MONEY_KEY);
+  return raw ? JSON.parse(raw) : {};
+}
+
+function saveMoneyData(data) {
+  localStorage.setItem(MONEY_KEY, JSON.stringify(data));
+}
+
+function renderMoneyCategoryEditor() {
+  const categories = loadCategories();
+  moneyCategoryEditor.innerHTML = "";
+  categories.forEach((name, index) => {
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = name;
+    input.placeholder = `項目${index + 1}`;
+    input.addEventListener("change", () => {
+      const current = loadCategories();
+      current[index] = input.value.trim();
+      saveCategories(current);
+      renderMoneyList();
+    });
+    moneyCategoryEditor.appendChild(input);
+  });
+}
+
+function renderMoneySummary() {
+  const categories = loadCategories();
+  const data = loadMoneyData();
+  const daysInMonth = new Date(moneyYear, moneyMonth + 1, 0).getDate();
+  const totals = categories.map(() => 0);
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const key = dateKey(moneyYear, moneyMonth, day);
+    const row = data[key];
+    if (!row) continue;
+    categories.forEach((_, index) => {
+      totals[index] += Number(row[index]) || 0;
+    });
+  }
+
+  moneySummary.innerHTML = "";
+  let grandTotal = 0;
+  categories.forEach((name, index) => {
+    if (!name) return;
+    grandTotal += totals[index];
+    const row = document.createElement("div");
+    row.className = "money-summary-row";
+    row.innerHTML = `<span>${name}</span><span>${totals[index].toLocaleString()}円</span>`;
+    moneySummary.appendChild(row);
+  });
+  const totalRow = document.createElement("div");
+  totalRow.className = "money-summary-row total";
+  totalRow.innerHTML = `<span>今月の合計</span><span>${grandTotal.toLocaleString()}円</span>`;
+  moneySummary.appendChild(totalRow);
+}
+
+function renderMoneyList() {
+  moneyMonthLabel.textContent = `${moneyYear}年 ${moneyMonth + 1}月`;
+  const categories = loadCategories();
+  const data = loadMoneyData();
+  const daysInMonth = new Date(moneyYear, moneyMonth + 1, 0).getDate();
+
+  moneyList.innerHTML = "";
+  let hasEntry = false;
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const key = dateKey(moneyYear, moneyMonth, day);
+    const row = data[key];
+    if (!row) continue;
+    const dayTotal = row.reduce((sum, v) => sum + (Number(v) || 0), 0);
+    if (dayTotal <= 0) continue;
+    hasEntry = true;
+
+    const li = document.createElement("li");
+    li.className = "money-entry-row";
+    const dateSpan = document.createElement("span");
+    dateSpan.textContent = key;
+    const amountSpan = document.createElement("span");
+    amountSpan.className = "money-entry-amount";
+    amountSpan.textContent = `${dayTotal.toLocaleString()}円`;
+    li.appendChild(dateSpan);
+    li.appendChild(amountSpan);
+    li.addEventListener("click", () => openMoneyDayPanel(key));
+    moneyList.appendChild(li);
+  }
+
+  if (!hasEntry) {
+    const li = document.createElement("li");
+    li.textContent = "この月の記録はまだありません";
+    moneyList.appendChild(li);
+  }
+
+  renderMoneySummary();
+}
+
+function openMoneyDayPanel(key) {
+  moneyEditingDateKey = key;
+  const categories = loadCategories();
+  const data = loadMoneyData();
+  const row = data[key] || [];
+
+  moneyDayDate.textContent = key;
+  moneyDayFields.innerHTML = "";
+  categories.forEach((name, index) => {
+    const fieldRow = document.createElement("div");
+    fieldRow.className = "day-field-row";
+    const label = document.createElement("label");
+    label.textContent = name || `項目${index + 1}`;
+    const input = document.createElement("input");
+    input.type = "number";
+    input.min = "0";
+    input.dataset.index = index;
+    input.value = row[index] ? row[index] : "";
+    fieldRow.appendChild(label);
+    fieldRow.appendChild(input);
+    moneyDayFields.appendChild(fieldRow);
+  });
+
+  moneyDayOverlay.classList.remove("hidden");
+  moneyDayPanel.classList.remove("hidden");
+  lockBackgroundScroll();
+}
+
+function closeMoneyDayPanel() {
+  moneyDayOverlay.classList.add("hidden");
+  moneyDayPanel.classList.add("hidden");
+  moneyEditingDateKey = null;
+  unlockBackgroundScroll();
+}
+
+saveMoneyDayBtn.addEventListener("click", () => {
+  if (!moneyEditingDateKey) return;
+  const inputs = moneyDayFields.querySelectorAll("input[type=number]");
+  const row = [];
+  inputs.forEach(input => {
+    row[Number(input.dataset.index)] = Number(input.value) > 0 ? Number(input.value) : 0;
+  });
+  const data = loadMoneyData();
+  data[moneyEditingDateKey] = row;
+  saveMoneyData(data);
+  closeMoneyDayPanel();
+  renderMoneyList();
+});
+
+closeMoneyDayPanelBtn.addEventListener("click", closeMoneyDayPanel);
+moneyDayOverlay.addEventListener("click", closeMoneyDayPanel);
+
+moneyAddEntryBtn.addEventListener("click", () => {
+  if (!moneyDateInput.value) return;
+  openMoneyDayPanel(moneyDateInput.value);
+});
+
+openMoneyBtn.addEventListener("click", () => {
+  moneyYear = currentYear;
+  moneyMonth = currentMonth;
+  renderMoneyCategoryEditor();
+  renderMoneyList();
+  moneyDateInput.value = dateKey(currentYear, currentMonth, new Date().getDate());
+  moneyOverlay.classList.remove("hidden");
+  moneyPanel.classList.remove("hidden");
+  lockBackgroundScroll();
+});
+
+function closeMoneyPanel() {
+  moneyOverlay.classList.add("hidden");
+  moneyPanel.classList.add("hidden");
+  unlockBackgroundScroll();
+}
+
+closeMoneyPanelBtn.addEventListener("click", closeMoneyPanel);
+moneyOverlay.addEventListener("click", closeMoneyPanel);
+
+prevMoneyMonthBtn.addEventListener("click", () => {
+  moneyMonth--;
+  if (moneyMonth < 0) {
+    moneyMonth = 11;
+    moneyYear--;
+  }
+  renderMoneyList();
+});
+
+nextMoneyMonthBtn.addEventListener("click", () => {
+  moneyMonth++;
+  if (moneyMonth > 11) {
+    moneyMonth = 0;
+    moneyYear++;
+  }
+  renderMoneyList();
+});
+
+function loadHabitNames() {
+  const raw = localStorage.getItem(HABIT_NAMES_KEY);
+  return raw ? JSON.parse(raw) : DEFAULT_HABITS.slice();
+}
+
+function saveHabitNames(names) {
+  localStorage.setItem(HABIT_NAMES_KEY, JSON.stringify(names));
+}
+
+function loadHabitData() {
+  const raw = localStorage.getItem(HABIT_KEY);
+  return raw ? JSON.parse(raw) : {};
+}
+
+function saveHabitData(data) {
+  localStorage.setItem(HABIT_KEY, JSON.stringify(data));
+}
+
+function renderHabitCategoryEditor() {
+  const names = loadHabitNames();
+  habitCategoryEditor.innerHTML = "";
+  names.forEach((name, index) => {
+    const input = document.createElement("input");
+    input.type = "text";
+    input.value = name;
+    input.placeholder = `習慣${index + 1}`;
+    input.addEventListener("change", () => {
+      const current = loadHabitNames();
+      current[index] = input.value.trim();
+      saveHabitNames(current);
+      renderHabitList();
+    });
+    habitCategoryEditor.appendChild(input);
+  });
+}
+
+function renderHabitSummary() {
+  const names = loadHabitNames();
+  const data = loadHabitData();
+  const daysInMonth = new Date(habitYear, habitMonth + 1, 0).getDate();
+  const totals = names.map(() => 0);
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const key = dateKey(habitYear, habitMonth, day);
+    const row = data[key];
+    if (!row) continue;
+    names.forEach((_, index) => {
+      if (row[index]) totals[index]++;
+    });
+  }
+
+  habitSummary.innerHTML = "";
+  names.forEach((name, index) => {
+    if (!name) return;
+    const row = document.createElement("div");
+    row.className = "money-summary-row";
+    row.innerHTML = `<span>${name}</span><span>${totals[index]}回</span>`;
+    habitSummary.appendChild(row);
+  });
+}
+
+function renderHabitList() {
+  habitMonthLabel.textContent = `${habitYear}年 ${habitMonth + 1}月`;
+  const names = loadHabitNames();
+  const data = loadHabitData();
+  const daysInMonth = new Date(habitYear, habitMonth + 1, 0).getDate();
+
+  habitList.innerHTML = "";
+  let hasEntry = false;
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const key = dateKey(habitYear, habitMonth, day);
+    const row = data[key];
+    if (!row) continue;
+    const doneNames = names.filter((name, index) => row[index] && name);
+    if (doneNames.length === 0) continue;
+    hasEntry = true;
+
+    const li = document.createElement("li");
+    li.className = "money-entry-row";
+    const dateSpan = document.createElement("span");
+    dateSpan.textContent = key;
+    const doneSpan = document.createElement("span");
+    doneSpan.className = "money-entry-amount";
+    doneSpan.textContent = doneNames.join(" / ");
+    li.appendChild(dateSpan);
+    li.appendChild(doneSpan);
+    li.addEventListener("click", () => openHabitDayPanel(key));
+    habitList.appendChild(li);
+  }
+
+  if (!hasEntry) {
+    const li = document.createElement("li");
+    li.textContent = "この月の記録はまだありません";
+    habitList.appendChild(li);
+  }
+
+  renderHabitSummary();
+}
+
+function openHabitDayPanel(key) {
+  habitEditingDateKey = key;
+  const names = loadHabitNames();
+  const data = loadHabitData();
+  const row = data[key] || [];
+
+  habitDayDate.textContent = key;
+  habitDayFields.innerHTML = "";
+  names.forEach((name, index) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "habit-toggle";
+    btn.dataset.index = index;
+    btn.dataset.done = row[index] ? "true" : "false";
+    if (row[index]) btn.classList.add("done");
+    btn.innerHTML = `<span>${name || `習慣${index + 1}`}</span><span class="habit-toggle-mark">${row[index] ? "達成 ✓" : "未達成"}</span>`;
+    btn.addEventListener("click", () => {
+      const isDone = btn.dataset.done === "true";
+      btn.dataset.done = isDone ? "false" : "true";
+      btn.classList.toggle("done", !isDone);
+      btn.querySelector(".habit-toggle-mark").textContent = isDone ? "未達成" : "達成 ✓";
+    });
+    habitDayFields.appendChild(btn);
+  });
+
+  habitDayOverlay.classList.remove("hidden");
+  habitDayPanel.classList.remove("hidden");
+  lockBackgroundScroll();
+}
+
+function closeHabitDayPanel() {
+  habitDayOverlay.classList.add("hidden");
+  habitDayPanel.classList.add("hidden");
+  habitEditingDateKey = null;
+  unlockBackgroundScroll();
+}
+
+saveHabitDayBtn.addEventListener("click", () => {
+  if (!habitEditingDateKey) return;
+  const buttons = habitDayFields.querySelectorAll(".habit-toggle");
+  const row = [];
+  buttons.forEach(btn => {
+    row[Number(btn.dataset.index)] = btn.dataset.done === "true";
+  });
+  const data = loadHabitData();
+  data[habitEditingDateKey] = row;
+  saveHabitData(data);
+  closeHabitDayPanel();
+  renderHabitList();
+});
+
+closeHabitDayPanelBtn.addEventListener("click", closeHabitDayPanel);
+habitDayOverlay.addEventListener("click", closeHabitDayPanel);
+
+habitAddEntryBtn.addEventListener("click", () => {
+  if (!habitDateInput.value) return;
+  openHabitDayPanel(habitDateInput.value);
+});
+
+openHabitBtn.addEventListener("click", () => {
+  habitYear = currentYear;
+  habitMonth = currentMonth;
+  renderHabitCategoryEditor();
+  renderHabitList();
+  habitDateInput.value = dateKey(currentYear, currentMonth, new Date().getDate());
+  habitOverlay.classList.remove("hidden");
+  habitPanel.classList.remove("hidden");
+  lockBackgroundScroll();
+});
+
+function closeHabitPanel() {
+  habitOverlay.classList.add("hidden");
+  habitPanel.classList.add("hidden");
+  unlockBackgroundScroll();
+}
+
+closeHabitPanelBtn.addEventListener("click", closeHabitPanel);
+habitOverlay.addEventListener("click", closeHabitPanel);
+
+prevHabitMonthBtn.addEventListener("click", () => {
+  habitMonth--;
+  if (habitMonth < 0) {
+    habitMonth = 11;
+    habitYear--;
+  }
+  renderHabitList();
+});
+
+nextHabitMonthBtn.addEventListener("click", () => {
+  habitMonth++;
+  if (habitMonth > 11) {
+    habitMonth = 0;
+    habitYear++;
+  }
+  renderHabitList();
+});
 
 function init() {
   const today = new Date();

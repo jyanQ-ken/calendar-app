@@ -32,6 +32,8 @@
     <div class="link-buttons">
       <button id="openTaskArchive">タスク一覧</button>
       <button id="openDiaryList">メモ一覧</button>
+      <button id="openMoney">家計簿</button>
+      <button id="openHabit">習慣</button>
       <button id="openExport">書き出す</button>
     </div>
   </div>
@@ -117,6 +119,82 @@
   <ul id="diaryListEl" class="diary-list"></ul>
 </div>
 
+<div id="moneyOverlay" class="overlay hidden"></div>
+<div id="moneyPanel" class="panel hidden">
+  <div class="panel-header">
+    <h2>家計簿</h2>
+    <button id="closeMoneyPanel">×</button>
+  </div>
+
+  <div class="money-month-nav">
+    <button id="prevMoneyMonth">&lt; 前の月</button>
+    <span id="moneyMonthLabel"></span>
+    <button id="nextMoneyMonth">次の月 &gt;</button>
+  </div>
+
+  <div id="moneySummary" class="money-summary"></div>
+
+  <details class="category-editor-wrap">
+    <summary>項目名を編集する</summary>
+    <div id="moneyCategoryEditor" class="category-editor"></div>
+  </details>
+
+  <div class="date-add-row">
+    <input type="date" id="moneyDateInput">
+    <button id="moneyAddEntryBtn">入力する</button>
+  </div>
+
+  <ul id="moneyList" class="task-list"></ul>
+</div>
+
+<div id="moneyDayOverlay" class="overlay hidden"></div>
+<div id="moneyDayPanel" class="panel hidden">
+  <div class="panel-header">
+    <h2 id="moneyDayDate"></h2>
+    <button id="closeMoneyDayPanel">×</button>
+  </div>
+  <div id="moneyDayFields" class="day-fields"></div>
+  <button id="saveMoneyDayBtn">保存</button>
+</div>
+
+<div id="habitOverlay" class="overlay hidden"></div>
+<div id="habitPanel" class="panel hidden">
+  <div class="panel-header">
+    <h2>習慣</h2>
+    <button id="closeHabitPanel">×</button>
+  </div>
+
+  <div class="money-month-nav">
+    <button id="prevHabitMonth">&lt; 前の月</button>
+    <span id="habitMonthLabel"></span>
+    <button id="nextHabitMonth">次の月 &gt;</button>
+  </div>
+
+  <div id="habitSummary" class="money-summary"></div>
+
+  <details class="category-editor-wrap">
+    <summary>項目名を編集する</summary>
+    <div id="habitCategoryEditor" class="category-editor"></div>
+  </details>
+
+  <div class="date-add-row">
+    <input type="date" id="habitDateInput">
+    <button id="habitAddEntryBtn">記録する</button>
+  </div>
+
+  <ul id="habitList" class="task-list"></ul>
+</div>
+
+<div id="habitDayOverlay" class="overlay hidden"></div>
+<div id="habitDayPanel" class="panel hidden">
+  <div class="panel-header">
+    <h2 id="habitDayDate"></h2>
+    <button id="closeHabitDayPanel">×</button>
+  </div>
+  <div id="habitDayFields" class="day-fields"></div>
+  <button id="saveHabitDayBtn">保存</button>
+</div>
+
 <div id="exportOverlay" class="overlay hidden"></div>
 <div id="exportPanel" class="panel hidden">
   <div class="panel-header">
@@ -141,6 +219,7 @@
   <div class="help-content">
     <h3>どんなアプリ?</h3>
     <p>Googleカレンダーのような高機能さはありませんが、そのぶんシンプルで分かりやすい「かんたんカレンダー」です。日付に休み・祝日・⭐💗😊の印をつけたり、予定・タスク・メモを書き込んだりできます。</p>
+    <p>ほかに「家計簿」「習慣」の記録機能もあります。日付を選んで金額やチェックを入力するだけのシンプルな作りで、月ごとの合計・回数も自動で確認できます。</p>
 
     <h3>データはどこに保存される?</h3>
     <p>入力した内容は、インターネット上のどこかのサーバーではなく、<strong>今使っているスマホやパソコンのブラウザの中(ローカルストレージ)</strong>だけに保存されます。外部に送信されることはないので、データが漏れる心配はありません。</p>
