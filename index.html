@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>かんたんカレンダー</title>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -31,9 +31,7 @@
     <span class="toolbar-group-label">記録を見る・管理する</span>
     <div class="link-buttons">
       <button id="openTaskArchive">タスク一覧</button>
-      <button id="openDiaryList">日記一覧</button>
-      <button id="openMoney">家計簿</button>
-      <button id="openHabit">習慣化</button>
+      <button id="openDiaryList">メモ一覧</button>
     </div>
   </div>
   <p id="modeHint" class="mode-hint"><span id="modeHintLabel"></span></p>
@@ -87,16 +85,16 @@
   </section>
 
   <section class="section">
-    <h3>メモ・日記</h3>
+    <h3>メモ</h3>
     <textarea id="diaryText" rows="5" placeholder="今日のこと、自由に書いてください"></textarea>
-    <button id="saveDiary">メモ・日記を保存</button>
+    <button id="saveDiary">メモを保存</button>
   </section>
 </div>
 
 <div id="archiveOverlay" class="overlay hidden"></div>
 <div id="archivePanel" class="panel hidden">
   <div class="panel-header">
-    <h2>タスク一覧(完了済み)</h2>
+    <h2>タスク一覧</h2>
     <button id="closeArchivePanel">×</button>
   </div>
   <ul id="archiveList" class="task-list"></ul>
@@ -105,50 +103,10 @@
 <div id="diaryOverlay" class="overlay hidden"></div>
 <div id="diaryPanel" class="panel hidden">
   <div class="panel-header">
-    <h2>日記・メモ一覧</h2>
+    <h2>メモ一覧</h2>
     <button id="closeDiaryPanel">×</button>
   </div>
   <ul id="diaryListEl" class="diary-list"></ul>
-</div>
-
-<div id="moneyOverlay" class="overlay hidden"></div>
-<div id="moneyPanel" class="panel hidden">
-  <div class="panel-header">
-    <h2>家計簿の記録</h2>
-    <button id="closeMoneyPanel">×</button>
-  </div>
-
-  <div class="money-month-nav">
-    <button id="prevMoneyMonth">&lt; 前の月</button>
-    <span id="moneyMonthLabel"></span>
-    <button id="nextMoneyMonth">次の月 &gt;</button>
-  </div>
-
-  <p class="money-hint">表の見出し（項目名）はクリックして自由に書き換えられます</p>
-
-  <div class="money-table-wrap">
-    <table id="moneyTable" class="money-table"></table>
-  </div>
-</div>
-
-<div id="habitOverlay" class="overlay hidden"></div>
-<div id="habitPanel" class="panel hidden">
-  <div class="panel-header">
-    <h2>習慣化の記録</h2>
-    <button id="closeHabitPanel">×</button>
-  </div>
-
-  <div class="money-month-nav">
-    <button id="prevHabitMonth">&lt; 前の月</button>
-    <span id="habitMonthLabel"></span>
-    <button id="nextHabitMonth">次の月 &gt;</button>
-  </div>
-
-  <p class="money-hint">表の見出し（項目名）はクリックして自由に書き換えられます</p>
-
-  <div class="money-table-wrap">
-    <table id="habitTable" class="money-table"></table>
-  </div>
 </div>
 
 <script src="script.js"></script>

@@ -1,6 +1,18 @@
 const STORAGE_KEY = "calendarAppData";
 const ARCHIVE_KEY = "completedTasksData";
 
+let openPanelCount = 0;
+function lockBackgroundScroll() {
+  openPanelCount++;
+  document.body.classList.add("panel-open");
+}
+function unlockBackgroundScroll() {
+  openPanelCount = Math.max(0, openPanelCount - 1);
+  if (openPanelCount === 0) {
+    document.body.classList.remove("panel-open");
+  }
+}
+
 let currentYear;
 let currentMonth; // 0-11
 let selectedDateKey = null;
@@ -39,36 +51,6 @@ const diaryOverlay = document.getElementById("diaryOverlay");
 const diaryPanel = document.getElementById("diaryPanel");
 const closeDiaryPanelBtn = document.getElementById("closeDiaryPanel");
 const diaryListEl = document.getElementById("diaryListEl");
-
-const openMoneyBtn = document.getElementById("openMoney");
-const moneyOverlay = document.getElementById("moneyOverlay");
-const moneyPanel = document.getElementById("moneyPanel");
-const closeMoneyPanelBtn = document.getElementById("closeMoneyPanel");
-const prevMoneyMonthBtn = document.getElementById("prevMoneyMonth");
-const nextMoneyMonthBtn = document.getElementById("nextMoneyMonth");
-const moneyMonthLabel = document.getElementById("moneyMonthLabel");
-const moneyTable = document.getElementById("moneyTable");
-
-const MONEY_KEY = "moneyEntriesData";
-const MONEY_CATEGORIES_KEY = "moneyCategoriesData";
-const DEFAULT_CATEGORIES = ["", "", "", "", ""];
-let moneyYear;
-let moneyMonth; // 0-11
-
-const openHabitBtn = document.getElementById("openHabit");
-const habitOverlay = document.getElementById("habitOverlay");
-const habitPanel = document.getElementById("habitPanel");
-const closeHabitPanelBtn = document.getElementById("closeHabitPanel");
-const prevHabitMonthBtn = document.getElementById("prevHabitMonth");
-const nextHabitMonthBtn = document.getElementById("nextHabitMonth");
-const habitMonthLabel = document.getElementById("habitMonthLabel");
-const habitTable = document.getElementById("habitTable");
-
-const HABIT_KEY = "habitEntriesData";
-const HABIT_NAMES_KEY = "habitNamesData";
-const DEFAULT_HABITS = ["", "", "", "", ""];
-let habitYear;
-let habitMonth; // 0-11
 
 const modeButtons = document.querySelectorAll(".mode-btn");
 const modeHintLabel = document.getElementById("modeHintLabel");
@@ -175,10 +157,17 @@ function renderCalendar() {
       }
     });
 
-    const infoParts = [];
     if (dayData.schedule && dayData.schedule.length > 0) {
-      infoParts.push(`予定 ${dayData.schedule.length}`);
+      const scheduleEl = document.createElement("div");
+      scheduleEl.className = "day-schedule";
+      const first = dayData.schedule[0];
+      const truncated = first.length > 8 ? first.slice(0, 8) + "…" : first;
+      const extra = dayData.schedule.length > 1 ? ` 他${dayData.schedule.length - 1}件` : "";
+      scheduleEl.textContent = truncated + extra;
+      cell.appendChild(scheduleEl);
     }
+
+    const infoParts = [];
     if (dayData.tasks && dayData.tasks.length > 0) {
       infoParts.push(`タスク ${dayData.tasks.length}`);
     }
@@ -249,11 +238,13 @@ function openPanel(key) {
 
   overlay.classList.remove("hidden");
   panel.classList.remove("hidden");
+  lockBackgroundScroll();
 }
 
 function closePanel() {
   overlay.classList.add("hidden");
   panel.classList.add("hidden");
+  unlockBackgroundScroll();
   selectedDateKey = null;
   renderCalendar();
 }
@@ -400,15 +391,92 @@ saveDiaryBtn.addEventListener("click", () => {
     d.memo = diaryText.value;
   });
   saveDiaryBtn.textContent = "保存しました";
-  setTimeout(() => { saveDiaryBtn.textContent = "メモ・日記を保存"; }, 1200);
+  setTimeout(() => { saveDiaryBtn.textContent = "メモを保存"; }, 1200);
 });
 
 closePanelBtn.addEventListener("click", closePanel);
 overlay.addEventListener("click", closePanel);
 
+function completeTaskFromList(dayKey, index) {
+  const data = loadData();
+  const dayData = getDayData(data, dayKey);
+  const task = dayData.tasks[index];
+  if (!task) return;
+  dayData.tasks.splice(index, 1);
+  data[dayKey] = dayData;
+  saveData(data);
+
+  const archive = loadArchive();
+  archive.push({ text: task.text, date: dayKey });
+  saveArchive(archive);
+
+  renderArchiveList();
+}
+
+function deleteTaskFromList(dayKey, index) {
+  const data = loadData();
+  const dayData = getDayData(data, dayKey);
+  dayData.tasks.splice(index, 1);
+  data[dayKey] = dayData;
+  saveData(data);
+  renderArchiveList();
+}
+
 function renderArchiveList() {
+  const data = loadData();
   const archive = loadArchive();
   archiveList.innerHTML = "";
+
+  const pendingEntries = Object.keys(data)
+    .filter(key => data[key].tasks && data[key].tasks.length > 0)
+    .sort((a, b) => a.localeCompare(b));
+
+  const pendingHeading = document.createElement("li");
+  pendingHeading.className = "task-list-heading";
+  pendingHeading.textContent = "未完了のタスク";
+  archiveList.appendChild(pendingHeading);
+
+  let hasPending = false;
+  pendingEntries.forEach(dayKey => {
+    data[dayKey].tasks.forEach((task, index) => {
+      hasPending = true;
+      const li = document.createElement("li");
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.checked = false;
+      checkbox.addEventListener("change", () => completeTaskFromList(dayKey, index));
+
+      const dateSpan = document.createElement("span");
+      dateSpan.className = "archive-item-date";
+      dateSpan.textContent = dayKey;
+
+      const textSpan = document.createElement("span");
+      textSpan.textContent = task.text;
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.className = "delete-task";
+      deleteBtn.textContent = "削除";
+      deleteBtn.addEventListener("click", () => deleteTaskFromList(dayKey, index));
+
+      li.appendChild(checkbox);
+      li.appendChild(dateSpan);
+      li.appendChild(textSpan);
+      li.appendChild(deleteBtn);
+      archiveList.appendChild(li);
+    });
+  });
+  if (!hasPending) {
+    const li = document.createElement("li");
+    li.textContent = "未完了のタスクはありません";
+    archiveList.appendChild(li);
+  }
+
+  const doneHeading = document.createElement("li");
+  doneHeading.className = "task-list-heading";
+  doneHeading.textContent = "完了済みのタスク";
+  archiveList.appendChild(doneHeading);
+
   if (archive.length === 0) {
     const li = document.createElement("li");
     li.textContent = "完了したタスクはまだありません";
@@ -417,6 +485,7 @@ function renderArchiveList() {
   }
   archive.forEach((item, index) => {
     const li = document.createElement("li");
+    li.classList.add("done");
 
     const dateSpan = document.createElement("span");
     dateSpan.className = "archive-item-date";
@@ -446,11 +515,13 @@ openTaskArchiveBtn.addEventListener("click", () => {
   renderArchiveList();
   archiveOverlay.classList.remove("hidden");
   archivePanel.classList.remove("hidden");
+  lockBackgroundScroll();
 });
 
 function closeArchivePanel() {
   archiveOverlay.classList.add("hidden");
   archivePanel.classList.add("hidden");
+  unlockBackgroundScroll();
 }
 
 closeArchivePanelBtn.addEventListener("click", closeArchivePanel);
@@ -465,7 +536,7 @@ function renderDiaryList() {
   diaryListEl.innerHTML = "";
   if (entries.length === 0) {
     const li = document.createElement("li");
-    li.textContent = "メモ・日記はまだありません";
+    li.textContent = "メモはまだありません";
     diaryListEl.appendChild(li);
     return;
   }
@@ -510,303 +581,17 @@ openDiaryListBtn.addEventListener("click", () => {
   renderDiaryList();
   diaryOverlay.classList.remove("hidden");
   diaryPanel.classList.remove("hidden");
+  lockBackgroundScroll();
 });
 
 function closeDiaryPanel() {
   diaryOverlay.classList.add("hidden");
   diaryPanel.classList.add("hidden");
+  unlockBackgroundScroll();
 }
 
 closeDiaryPanelBtn.addEventListener("click", closeDiaryPanel);
 diaryOverlay.addEventListener("click", closeDiaryPanel);
-
-function loadCategories() {
-  const raw = localStorage.getItem(MONEY_CATEGORIES_KEY);
-  return raw ? JSON.parse(raw) : DEFAULT_CATEGORIES.slice();
-}
-
-function saveCategories(categories) {
-  localStorage.setItem(MONEY_CATEGORIES_KEY, JSON.stringify(categories));
-}
-
-function loadMoneyData() {
-  const raw = localStorage.getItem(MONEY_KEY);
-  return raw ? JSON.parse(raw) : {};
-}
-
-function saveMoneyData(data) {
-  localStorage.setItem(MONEY_KEY, JSON.stringify(data));
-}
-
-function moneyDateKey(day) {
-  return `${moneyYear}-${String(moneyMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-}
-
-function renderMoneyTable() {
-  moneyMonthLabel.textContent = `${moneyYear}年 ${moneyMonth + 1}月`;
-  const categories = loadCategories();
-  const data = loadMoneyData();
-  const daysInMonth = new Date(moneyYear, moneyMonth + 1, 0).getDate();
-
-  moneyTable.innerHTML = "";
-
-  const headRow = document.createElement("tr");
-  const dateHeadTh = document.createElement("th");
-  dateHeadTh.textContent = "日付";
-  headRow.appendChild(dateHeadTh);
-  categories.forEach((name, index) => {
-    const th = document.createElement("th");
-    const input = document.createElement("input");
-    input.type = "text";
-    input.value = name;
-    input.placeholder = "項目名";
-    input.className = "category-name-input";
-    input.addEventListener("focus", () => { input.placeholder = ""; });
-    input.addEventListener("blur", () => { input.placeholder = "項目名"; });
-    input.addEventListener("change", () => {
-      const current = loadCategories();
-      current[index] = input.value.trim();
-      saveCategories(current);
-      renderMoneyTable();
-    });
-    th.appendChild(input);
-    headRow.appendChild(th);
-  });
-  moneyTable.appendChild(headRow);
-
-  const totals = categories.map(() => 0);
-
-  for (let day = 1; day <= daysInMonth; day++) {
-    const key = moneyDateKey(day);
-    const row = data[key] || [];
-    const tr = document.createElement("tr");
-
-    const dayTd = document.createElement("td");
-    dayTd.textContent = day;
-    tr.appendChild(dayTd);
-
-    categories.forEach((_, index) => {
-      const td = document.createElement("td");
-      const input = document.createElement("input");
-      input.type = "number";
-      input.min = "0";
-      input.className = "money-cell-input";
-      const value = row[index];
-      input.value = value ? value : "";
-      if (value) totals[index] += value;
-
-      input.addEventListener("change", () => {
-        const current = loadMoneyData();
-        const currentRow = current[key] || [];
-        const amount = Number(input.value);
-        currentRow[index] = amount > 0 ? amount : 0;
-        current[key] = currentRow;
-        saveMoneyData(current);
-        renderMoneyTable();
-      });
-
-      td.appendChild(input);
-      tr.appendChild(td);
-    });
-
-    moneyTable.appendChild(tr);
-  }
-
-  const totalRow = document.createElement("tr");
-  totalRow.className = "money-total-row";
-  const totalLabelTd = document.createElement("td");
-  totalLabelTd.textContent = "合計";
-  totalRow.appendChild(totalLabelTd);
-  let grandTotal = 0;
-  totals.forEach(t => {
-    grandTotal += t;
-    const td = document.createElement("td");
-    td.textContent = t;
-    totalRow.appendChild(td);
-  });
-  moneyTable.appendChild(totalRow);
-
-  const grandRow = document.createElement("tr");
-  grandRow.className = "money-total-row";
-  const grandLabelTd = document.createElement("td");
-  grandLabelTd.textContent = "総合計";
-  grandRow.appendChild(grandLabelTd);
-  const grandTd = document.createElement("td");
-  grandTd.colSpan = categories.length;
-  grandTd.textContent = `${grandTotal}円`;
-  grandRow.appendChild(grandTd);
-  moneyTable.appendChild(grandRow);
-}
-
-function openMoneyPanel() {
-  moneyYear = currentYear;
-  moneyMonth = currentMonth;
-  renderMoneyTable();
-  moneyOverlay.classList.remove("hidden");
-  moneyPanel.classList.remove("hidden");
-}
-
-function closeMoneyPanel() {
-  moneyOverlay.classList.add("hidden");
-  moneyPanel.classList.add("hidden");
-}
-
-openMoneyBtn.addEventListener("click", openMoneyPanel);
-closeMoneyPanelBtn.addEventListener("click", closeMoneyPanel);
-moneyOverlay.addEventListener("click", closeMoneyPanel);
-
-prevMoneyMonthBtn.addEventListener("click", () => {
-  moneyMonth--;
-  if (moneyMonth < 0) {
-    moneyMonth = 11;
-    moneyYear--;
-  }
-  renderMoneyTable();
-});
-
-nextMoneyMonthBtn.addEventListener("click", () => {
-  moneyMonth++;
-  if (moneyMonth > 11) {
-    moneyMonth = 0;
-    moneyYear++;
-  }
-  renderMoneyTable();
-});
-
-function loadHabitNames() {
-  const raw = localStorage.getItem(HABIT_NAMES_KEY);
-  return raw ? JSON.parse(raw) : DEFAULT_HABITS.slice();
-}
-
-function saveHabitNames(names) {
-  localStorage.setItem(HABIT_NAMES_KEY, JSON.stringify(names));
-}
-
-function loadHabitData() {
-  const raw = localStorage.getItem(HABIT_KEY);
-  return raw ? JSON.parse(raw) : {};
-}
-
-function saveHabitData(data) {
-  localStorage.setItem(HABIT_KEY, JSON.stringify(data));
-}
-
-function habitDateKey(day) {
-  return `${habitYear}-${String(habitMonth + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-}
-
-function renderHabitTable() {
-  habitMonthLabel.textContent = `${habitYear}年 ${habitMonth + 1}月`;
-  const names = loadHabitNames();
-  const data = loadHabitData();
-  const daysInMonth = new Date(habitYear, habitMonth + 1, 0).getDate();
-
-  habitTable.innerHTML = "";
-
-  const headRow = document.createElement("tr");
-  const dateHeadTh = document.createElement("th");
-  dateHeadTh.textContent = "日付";
-  headRow.appendChild(dateHeadTh);
-  names.forEach((name, index) => {
-    const th = document.createElement("th");
-    const input = document.createElement("input");
-    input.type = "text";
-    input.value = name;
-    input.placeholder = "項目名";
-    input.className = "category-name-input";
-    input.addEventListener("focus", () => { input.placeholder = ""; });
-    input.addEventListener("blur", () => { input.placeholder = "項目名"; });
-    input.addEventListener("change", () => {
-      const current = loadHabitNames();
-      current[index] = input.value.trim();
-      saveHabitNames(current);
-      renderHabitTable();
-    });
-    th.appendChild(input);
-    headRow.appendChild(th);
-  });
-  habitTable.appendChild(headRow);
-
-  const totals = names.map(() => 0);
-
-  for (let day = 1; day <= daysInMonth; day++) {
-    const key = habitDateKey(day);
-    const row = data[key] || [];
-    const tr = document.createElement("tr");
-
-    const dayTd = document.createElement("td");
-    dayTd.textContent = day;
-    tr.appendChild(dayTd);
-
-    names.forEach((_, index) => {
-      const td = document.createElement("td");
-      const done = !!row[index];
-      td.className = "habit-cell" + (done ? " habit-done" : "");
-      td.textContent = done ? "✓" : "";
-      if (done) totals[index]++;
-
-      td.addEventListener("click", () => {
-        const current = loadHabitData();
-        const currentRow = current[key] || [];
-        currentRow[index] = !currentRow[index];
-        current[key] = currentRow;
-        saveHabitData(current);
-        renderHabitTable();
-      });
-
-      tr.appendChild(td);
-    });
-
-    habitTable.appendChild(tr);
-  }
-
-  const totalRow = document.createElement("tr");
-  totalRow.className = "money-total-row";
-  const totalLabelTd = document.createElement("td");
-  totalLabelTd.textContent = "合計";
-  totalRow.appendChild(totalLabelTd);
-  totals.forEach(t => {
-    const td = document.createElement("td");
-    td.textContent = `${t}回`;
-    totalRow.appendChild(td);
-  });
-  habitTable.appendChild(totalRow);
-}
-
-function openHabitPanel() {
-  habitYear = currentYear;
-  habitMonth = currentMonth;
-  renderHabitTable();
-  habitOverlay.classList.remove("hidden");
-  habitPanel.classList.remove("hidden");
-}
-
-function closeHabitPanel() {
-  habitOverlay.classList.add("hidden");
-  habitPanel.classList.add("hidden");
-}
-
-openHabitBtn.addEventListener("click", openHabitPanel);
-closeHabitPanelBtn.addEventListener("click", closeHabitPanel);
-habitOverlay.addEventListener("click", closeHabitPanel);
-
-prevHabitMonthBtn.addEventListener("click", () => {
-  habitMonth--;
-  if (habitMonth < 0) {
-    habitMonth = 11;
-    habitYear--;
-  }
-  renderHabitTable();
-});
-
-nextHabitMonthBtn.addEventListener("click", () => {
-  habitMonth++;
-  if (habitMonth > 11) {
-    habitMonth = 0;
-    habitYear++;
-  }
-  renderHabitTable();
-});
 
 prevMonthBtn.addEventListener("click", () => {
   currentMonth--;

@@ -1,13 +1,23 @@
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  height: 100%;
 }
 
 body {
   font-family: "Hiragino Sans", "Meiryo", sans-serif;
   background: #f4f5f7;
   margin: 0;
-  padding: 20px;
+  padding: 12px;
   color: #222;
+  overscroll-behavior-y: none;
+}
+
+body.panel-open {
+  overflow: hidden;
 }
 
 .app {
@@ -15,7 +25,7 @@ body {
   margin: 0 auto;
   background: #fff;
   border-radius: 10px;
-  padding: 16px;
+  padding: 12px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.08);
 }
 
@@ -32,7 +42,8 @@ body {
 }
 
 .header button {
-  padding: 6px 12px;
+  padding: 8px 12px;
+  min-height: 40px;
   border: 1px solid #ccc;
   background: #fafafa;
   border-radius: 6px;
@@ -123,6 +134,14 @@ body {
   color: #555;
 }
 
+.day-cell .day-schedule {
+  font-size: 0.7rem;
+  color: #2a5db0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .overlay {
   position: fixed;
   inset: 0;
@@ -135,17 +154,21 @@ body {
 
 .panel {
   position: fixed;
-  top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
+  bottom: 0;
+  top: auto;
+  transform: translateX(-50%);
   background: #fff;
-  border-radius: 10px;
-  padding: 20px;
-  width: 90%;
+  border-radius: 16px 16px 0 0;
+  padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+  width: 100%;
   max-width: 480px;
   max-height: 85vh;
+  max-height: 85dvh;
   overflow-y: auto;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  box-shadow: 0 -4px 20px rgba(0,0,0,0.2);
 }
 
 .panel.hidden {
@@ -161,7 +184,10 @@ body {
 .panel-header button {
   border: none;
   background: none;
-  font-size: 1.4rem;
+  font-size: 1.6rem;
+  padding: 8px;
+  min-width: 44px;
+  min-height: 44px;
   cursor: pointer;
   color: #888;
 }
@@ -182,8 +208,15 @@ body {
 .mark-checks label {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 1.1rem;
+  gap: 6px;
+  font-size: 1.2rem;
+  padding: 6px 0;
+}
+
+.mark-checks input,
+.holiday-toggle input {
+  width: 20px;
+  height: 20px;
 }
 
 .toolbar-group {
@@ -208,7 +241,8 @@ body {
 }
 
 .link-buttons button {
-  padding: 6px 12px;
+  padding: 8px 14px;
+  min-height: 40px;
   border: 1px solid #ccc;
   background: #fff;
   border-radius: 6px;
@@ -221,12 +255,19 @@ body {
 
 .mark-mode-buttons {
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
+}
+
+.mark-mode-buttons .mode-btn {
+  flex: 1 1 30%;
 }
 
 .mode-btn {
   font-size: 1.1rem;
-  padding: 8px 12px;
+  padding: 8px 10px;
+  min-height: 40px;
+  flex: 1;
   border: 2px solid #ddd;
   background: #fafafa;
   border-radius: 8px;
@@ -268,14 +309,17 @@ body {
 
 .task-input-row input {
   flex: 1;
-  padding: 6px;
+  padding: 8px;
+  min-height: 40px;
+  font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 6px;
 }
 
 .task-input-row button,
 #saveDiary {
-  padding: 6px 12px;
+  padding: 8px 14px;
+  min-height: 40px;
   border: none;
   background: #4a7dfc;
   color: #fff;
@@ -292,8 +336,9 @@ body {
 .task-list li {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 0;
+  gap: 8px;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
 }
 
 .task-list li.done span {
@@ -301,12 +346,31 @@ body {
   color: #999;
 }
 
+.task-list li input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
 .task-list li .delete-task {
   margin-left: auto;
+  padding: 8px 10px;
   background: none;
   border: none;
   color: #c33;
   cursor: pointer;
+}
+
+.task-list-heading {
+  font-weight: bold;
+  color: #666;
+  margin: 12px 0 4px;
+  padding: 0;
+  list-style: none;
+}
+
+.task-list-heading:first-child {
+  margin-top: 0;
 }
 
 .diary-list {
@@ -316,7 +380,7 @@ body {
 }
 
 .diary-item {
-  padding: 8px 4px;
+  padding: 12px 4px;
   border-bottom: 1px solid #eee;
   cursor: pointer;
 }
@@ -332,99 +396,11 @@ body {
   color: #333;
 }
 
-.money-month-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 10px 0;
-}
-
-.money-month-nav button {
-  padding: 4px 10px;
-  border: 1px solid #ccc;
-  background: #fafafa;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.money-hint {
-  font-size: 0.8rem;
-  color: #4a7dfc;
-  margin: 0 0 8px;
-}
-
-.money-table-wrap {
-  overflow-x: auto;
-  max-height: 60vh;
-  overflow-y: auto;
-}
-
-.money-table {
-  border-collapse: collapse;
-  width: 100%;
-  font-size: 0.85rem;
-}
-
-.money-table th,
-.money-table td {
-  border: 1px solid #e0e0e0;
-  padding: 2px;
-  text-align: center;
-  white-space: nowrap;
-}
-
-.money-table th {
-  background: #fafafa;
-  position: sticky;
-  top: 0;
-}
-
-.category-name-input {
-  width: 56px;
-  border: none;
-  background: transparent;
-  text-align: center;
-  font-weight: bold;
-  font-size: 0.7rem;
-  padding: 2px;
-  box-sizing: border-box;
-}
-
-.money-cell-input {
-  width: 56px;
-  border: none;
-  text-align: right;
-  padding: 4px 2px;
-  font-size: 0.8rem;
-  box-sizing: border-box;
-}
-
-.money-total-row {
-  font-weight: bold;
-  background: #f4f5f7;
-}
-
-.habit-cell {
-  width: 44px;
-  height: 40px;
-  cursor: pointer;
-  font-size: 1.1rem;
-  transition: background 0.15s;
-}
-
-.habit-cell:active {
-  background: #e0e0e0;
-}
-
-.habit-cell.habit-done {
-  background: #4caf50;
-  color: #fff;
-  font-weight: bold;
-}
 
 #diaryText {
   width: 100%;
   padding: 8px;
+  font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 6px;
   resize: vertical;
