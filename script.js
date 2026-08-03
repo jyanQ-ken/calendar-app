@@ -96,9 +96,6 @@ const diaryOverlay = document.getElementById("diaryOverlay");
 const diaryPanel = document.getElementById("diaryPanel");
 const closeDiaryPanelBtn = document.getElementById("closeDiaryPanel");
 const diaryListEl = document.getElementById("diaryListEl");
-const diaryBulkFrom = document.getElementById("diaryBulkFrom");
-const diaryBulkTo = document.getElementById("diaryBulkTo");
-const diaryBulkDeleteBtn = document.getElementById("diaryBulkDeleteBtn");
 
 const openExportBtn = document.getElementById("openExport");
 const exportOverlay = document.getElementById("exportOverlay");
@@ -107,6 +104,9 @@ const closeExportPanelBtn = document.getElementById("closeExportPanel");
 const exportText = document.getElementById("exportText");
 const copyExportBtn = document.getElementById("copyExportBtn");
 const downloadExportBtn = document.getElementById("downloadExportBtn");
+const bulkDeleteFrom = document.getElementById("bulkDeleteFrom");
+const bulkDeleteTo = document.getElementById("bulkDeleteTo");
+const bulkDeleteBtn = document.getElementById("bulkDeleteBtn");
 
 const openMoneyBtn = document.getElementById("openMoney");
 const moneyOverlay = document.getElementById("moneyOverlay");
@@ -802,38 +802,6 @@ function renderDiaryList() {
   });
 }
 
-diaryBulkDeleteBtn.addEventListener("click", () => {
-  const from = diaryBulkFrom.value;
-  const to = diaryBulkTo.value;
-  if (!from || !to) {
-    alert("削除する期間の開始日と終了日を両方入力してください");
-    return;
-  }
-  if (from > to) {
-    alert("開始日は終了日より前の日付にしてください");
-    return;
-  }
-
-  const data = loadData();
-  const targetKeys = Object.keys(data).filter(
-    key => data[key].memo && data[key].memo.trim() !== "" && key >= from && key <= to
-  );
-
-  if (targetKeys.length === 0) {
-    alert("指定した期間にメモはありませんでした");
-    return;
-  }
-
-  const ok = confirm(`${from}〜${to}のメモ ${targetKeys.length}件を削除します。元に戻せませんが、よろしいですか?`);
-  if (!ok) return;
-
-  targetKeys.forEach(key => { data[key].memo = ""; });
-  saveData(data);
-  diaryBulkFrom.value = "";
-  diaryBulkTo.value = "";
-  renderDiaryList();
-});
-
 openDiaryListBtn.addEventListener("click", () => {
   closeMenuPanel();
   renderDiaryList();
@@ -929,6 +897,45 @@ downloadExportBtn.addEventListener("click", () => {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
+});
+
+bulkDeleteBtn.addEventListener("click", () => {
+  const from = bulkDeleteFrom.value;
+  const to = bulkDeleteTo.value;
+  if (!from || !to) {
+    alert("削除する期間の開始日と終了日を両方入力してください");
+    return;
+  }
+  if (from > to) {
+    alert("開始日は終了日より前の日付にしてください");
+    return;
+  }
+
+  const data = loadData();
+  const targetKeys = Object.keys(data).filter(key => {
+    if (key < from || key > to) return false;
+    const d = data[key];
+    return (d.schedule && d.schedule.length > 0) || (d.memo && d.memo.trim() !== "");
+  });
+
+  if (targetKeys.length === 0) {
+    alert("指定した期間に予定・メモはありませんでした");
+    return;
+  }
+
+  const ok = confirm(`${from}〜${to}の予定・メモ（対象${targetKeys.length}日分）を削除します。元に戻せませんが、よろしいですか?`);
+  if (!ok) return;
+
+  targetKeys.forEach(key => {
+    data[key].schedule = [];
+    data[key].memo = "";
+  });
+  saveData(data);
+  bulkDeleteFrom.value = "";
+  bulkDeleteTo.value = "";
+  exportText.value = generateCsv();
+  renderCalendar();
+  alert("削除しました");
 });
 
 openHelpBtn.addEventListener("click", () => {
