@@ -512,8 +512,6 @@ body.panel-open {
 }
 
 .mark-mode-scroll {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
   margin-bottom: 6px;
 }
 
@@ -521,24 +519,19 @@ body.panel-open {
   gap: 4px;
   margin-bottom: 0;
   flex-wrap: nowrap;
-  width: max-content;
+  width: 100%;
 }
 
 .mark-mode-buttons.compact .mode-btn {
-  flex: 0 0 auto;
-  width: 42px;
-  padding: 6px 4px;
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
+  padding: 6px 2px;
   min-height: 34px;
   font-size: 1rem;
   border-radius: 999px;
   border-width: 1px;
   border-bottom-width: 3px;
-}
-
-.mark-mode-buttons.compact .off-btn,
-.mark-mode-buttons.compact .mode-btn[data-mode="holiday"],
-.mark-mode-buttons.compact .mode-btn[data-mode="national"] {
-  width: 34px;
 }
 
 .mark-mode-buttons.compact .off-btn {
