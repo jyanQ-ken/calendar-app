@@ -1702,6 +1702,8 @@ function saveHealthData(data) {
   localStorage.setItem(HEALTH_KEY, JSON.stringify(data));
 }
 
+const HEALTH_NAME_EXAMPLES = ["血圧", "体温", "気分", "体重", "睡眠時間"];
+
 function renderHealthItemEditor() {
   const items = loadHealthItems();
   healthItemEditor.innerHTML = "";
@@ -1712,7 +1714,7 @@ function renderHealthItemEditor() {
     const nameInput = document.createElement("input");
     nameInput.type = "text";
     nameInput.value = item.name;
-    nameInput.placeholder = `項目${index + 1}`;
+    nameInput.placeholder = HEALTH_NAME_EXAMPLES[index % HEALTH_NAME_EXAMPLES.length];
     nameInput.addEventListener("change", () => {
       const current = loadHealthItems();
       current[index].name = nameInput.value.trim();
