@@ -25,7 +25,6 @@
   --national-color: #e00000;
   --national-label-color: #b3003c;
   --today-ring: #ffb020;
-  --habit-done-bg: #22c55e;
   --delete-color: #e0475a;
   --schedule-color: #3654c9;
   --shadow-soft: rgba(30,30,60,0.08);
@@ -62,7 +61,6 @@
     --national-color: #ff6b6b;
     --national-label-color: #ff8f8f;
     --today-ring: #ffc107;
-    --habit-done-bg: #3f8a45;
     --delete-color: #ff7a7a;
     --schedule-color: #9db4f5;
     --shadow-soft: rgba(0,0,0,0.4);
@@ -99,7 +97,6 @@
   --national-color: #ff6b6b;
   --national-label-color: #ff8f8f;
   --today-ring: #ffc107;
-  --habit-done-bg: #3f8a45;
   --delete-color: #ff7a7a;
   --schedule-color: #9db4f5;
   --shadow-soft: rgba(0,0,0,0.4);
@@ -720,49 +717,6 @@ body.panel-open {
   color: var(--text-strong-secondary);
 }
 
-.money-month-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 10px 0;
-}
-
-.money-month-nav button {
-  padding: 8px 12px;
-  min-height: 40px;
-  border: 1px solid var(--border-input);
-  background: var(--bg-btn);
-  color: var(--text-main);
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-.money-month-nav span {
-  font-weight: bold;
-}
-
-.money-summary {
-  background: var(--bg-toolbar);
-  border-radius: 4px;
-  padding: 8px 12px;
-  margin-bottom: 10px;
-  font-size: 0.9rem;
-}
-
-.money-summary-row {
-  display: flex;
-  justify-content: space-between;
-  padding: 3px 0;
-}
-
-.money-summary-row.total {
-  font-weight: bold;
-  border-top: 1px solid var(--border-medium);
-  margin-top: 4px;
-  padding-top: 6px;
-}
-
-
 .category-editor-wrap {
   margin-bottom: 10px;
 }
@@ -772,51 +726,6 @@ body.panel-open {
   color: var(--accent);
   cursor: pointer;
   padding: 4px 0;
-}
-
-.category-editor {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 6px;
-}
-
-.category-editor input {
-  padding: 8px;
-  min-height: 40px;
-  font-size: 1rem;
-  border: 1px solid var(--border-input);
-  border-radius: 3px;
-  background: var(--bg-input);
-  color: var(--text-main);
-}
-
-.date-add-row {
-  display: flex;
-  gap: 6px;
-  margin-bottom: 10px;
-}
-
-.date-add-row input[type="date"] {
-  flex: 1;
-  padding: 8px;
-  min-height: 40px;
-  font-size: 1rem;
-  border: 1px solid var(--border-input);
-  border-radius: 3px;
-  background: var(--bg-input);
-  color: var(--text-main);
-}
-
-.date-add-row button {
-  padding: 8px 14px;
-  min-height: 40px;
-  border: none;
-  background: var(--accent-gradient);
-  color: #fff;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: transform 0.12s ease, filter 0.12s ease;
 }
 
 .export-item-checks {
@@ -868,174 +777,6 @@ body.panel-open {
   color: #fff;
   border-radius: 3px;
   cursor: pointer;
-}
-
-.money-entry-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 10px 4px;
-  border-bottom: 1px solid var(--border-soft);
-  cursor: pointer;
-}
-
-.money-entry-row:hover {
-  background: var(--bg-hover-accent);
-}
-
-.money-entry-amount {
-  font-weight: bold;
-  color: var(--text-main);
-}
-
-.day-fields {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin: 12px 0;
-}
-
-.day-field-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.day-field-row label {
-  flex: 1;
-  font-size: 1rem;
-}
-
-.day-field-row input[type="number"] {
-  width: 100px;
-  padding: 8px;
-  min-height: 40px;
-  font-size: 1rem;
-  border: 1px solid var(--border-input);
-  border-radius: 3px;
-  text-align: right;
-  background: var(--bg-input);
-  color: var(--text-main);
-}
-
-.day-field-row input[type="checkbox"] {
-  width: 26px;
-  height: 26px;
-}
-
-.habit-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 14px 16px;
-  min-height: 52px;
-  font-size: 1rem;
-  border: 2px solid var(--border-medium);
-  background: var(--bg-btn);
-  color: var(--text-main);
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.15s, border-color 0.15s, color 0.15s;
-}
-
-.habit-toggle .habit-toggle-mark {
-  font-size: 0.9rem;
-  color: var(--text-faint);
-}
-
-.habit-toggle.done {
-  background: var(--habit-done-bg);
-  border-color: var(--habit-done-bg);
-  color: #fff;
-}
-
-.habit-toggle.done .habit-toggle-mark {
-  color: #fff;
-  font-weight: bold;
-}
-
-.health-item-editor {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 6px;
-}
-
-.health-item-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.health-item-row input[type="text"] {
-  flex: 1;
-  min-width: 0;
-  padding: 8px;
-  min-height: 40px;
-  font-size: 1rem;
-  border: 1px solid var(--border-input);
-  border-radius: 3px;
-  background: var(--bg-input);
-  color: var(--text-main);
-}
-
-.health-item-row select {
-  padding: 8px;
-  min-height: 40px;
-  font-size: 0.9rem;
-  border: 1px solid var(--border-input);
-  border-radius: 3px;
-  background: var(--bg-input);
-  color: var(--text-main);
-}
-
-.health-item-row button {
-  padding: 8px 10px;
-  min-height: 40px;
-  border: none;
-  background: #e00000;
-  color: #fff;
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-.health-add-item-btn {
-  margin-top: 8px;
-  padding: 8px 14px;
-  min-height: 40px;
-  border: none;
-  background: var(--accent-gradient);
-  color: #fff;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: transform 0.12s ease, filter 0.12s ease;
-}
-
-.day-field-row input[type="text"] {
-  width: 100%;
-  padding: 8px;
-  min-height: 40px;
-  font-size: 1rem;
-  border: 1px solid var(--border-input);
-  border-radius: 3px;
-  background: var(--bg-input);
-  color: var(--text-main);
-}
-
-#saveMoneyDayBtn,
-#saveHabitDayBtn,
-#saveHealthDayBtn {
-  width: 100%;
-  padding: 10px;
-  min-height: 44px;
-  border: none;
-  background: var(--accent-gradient);
-  color: #fff;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: transform 0.12s ease, filter 0.12s ease;
 }
 
 .help-content h3 {
@@ -1112,23 +853,13 @@ body.panel-open {
 
 .task-input-row button:hover,
 #saveDiary:hover,
-.date-add-row button:hover,
-.export-buttons button:hover,
-#saveMoneyDayBtn:hover,
-#saveHabitDayBtn:hover,
-#saveHealthDayBtn:hover,
-.health-add-item-btn:hover {
+.export-buttons button:hover {
   filter: brightness(1.06);
   transform: translateY(-1px);
 }
 
 .task-input-row button:active,
 #saveDiary:active,
-.date-add-row button:active,
-.export-buttons button:active,
-#saveMoneyDayBtn:active,
-#saveHabitDayBtn:active,
-#saveHealthDayBtn:active,
-.health-add-item-btn:active {
+.export-buttons button:active {
   transform: translateY(0);
 }

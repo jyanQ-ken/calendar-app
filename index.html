@@ -41,9 +41,6 @@
   <div class="link-buttons compact">
     <button id="openTaskArchive">タスク</button>
     <button id="openDiaryList">メモ</button>
-    <button id="openMoney">お金</button>
-    <button id="openHabit">習慣</button>
-    <button id="openHealth">健康</button>
     <button id="openExport">書出</button>
     <button id="openHelp">?</button>
   </div>
@@ -139,152 +136,6 @@
   <ul id="diaryListEl" class="diary-list"></ul>
 </div>
 
-<div id="moneyOverlay" class="overlay hidden"></div>
-<div id="moneyPanel" class="panel hidden">
-  <div class="panel-header">
-    <h2>お金</h2>
-    <button id="closeMoneyPanel">×</button>
-  </div>
-
-  <div class="money-month-nav">
-    <button id="prevMoneyMonth">&lt; 前の月</button>
-    <span id="moneyMonthLabel"></span>
-    <button id="nextMoneyMonth">次の月 &gt;</button>
-  </div>
-
-  <div id="moneySummary" class="money-summary"></div>
-
-  <details class="category-editor-wrap">
-    <summary>項目名を編集する</summary>
-    <div id="moneyCategoryEditor" class="category-editor"></div>
-  </details>
-
-  <div class="date-add-row">
-    <input type="date" id="moneyDateInput">
-    <button id="moneyAddEntryBtn">入力する</button>
-  </div>
-
-  <ul id="moneyList" class="task-list"></ul>
-
-  <details class="category-editor-wrap">
-    <summary>期間を指定して一括削除する</summary>
-    <div class="bulk-delete-row">
-      <input type="date" id="moneyBulkFrom">
-      <span>〜</span>
-      <input type="date" id="moneyBulkTo">
-      <button id="moneyBulkDeleteBtn">削除する</button>
-    </div>
-    <p class="export-hint">指定した期間(両端を含む)のお金の記録がすべて削除されます。元に戻せません。</p>
-  </details>
-</div>
-
-<div id="moneyDayOverlay" class="overlay hidden"></div>
-<div id="moneyDayPanel" class="panel hidden">
-  <div class="panel-header">
-    <h2 id="moneyDayDate"></h2>
-    <button id="closeMoneyDayPanel">×</button>
-  </div>
-  <div id="moneyDayFields" class="day-fields"></div>
-  <button id="saveMoneyDayBtn">保存</button>
-</div>
-
-<div id="habitOverlay" class="overlay hidden"></div>
-<div id="habitPanel" class="panel hidden">
-  <div class="panel-header">
-    <h2>習慣</h2>
-    <button id="closeHabitPanel">×</button>
-  </div>
-
-  <div class="money-month-nav">
-    <button id="prevHabitMonth">&lt; 前の月</button>
-    <span id="habitMonthLabel"></span>
-    <button id="nextHabitMonth">次の月 &gt;</button>
-  </div>
-
-  <div id="habitSummary" class="money-summary"></div>
-
-  <details class="category-editor-wrap">
-    <summary>項目名を編集する</summary>
-    <div id="habitCategoryEditor" class="category-editor"></div>
-  </details>
-
-  <div class="date-add-row">
-    <input type="date" id="habitDateInput">
-    <button id="habitAddEntryBtn">記録する</button>
-  </div>
-
-  <ul id="habitList" class="task-list"></ul>
-
-  <details class="category-editor-wrap">
-    <summary>期間を指定して一括削除する</summary>
-    <div class="bulk-delete-row">
-      <input type="date" id="habitBulkFrom">
-      <span>〜</span>
-      <input type="date" id="habitBulkTo">
-      <button id="habitBulkDeleteBtn">削除する</button>
-    </div>
-    <p class="export-hint">指定した期間(両端を含む)の習慣の記録がすべて削除されます。元に戻せません。</p>
-  </details>
-</div>
-
-<div id="habitDayOverlay" class="overlay hidden"></div>
-<div id="habitDayPanel" class="panel hidden">
-  <div class="panel-header">
-    <h2 id="habitDayDate"></h2>
-    <button id="closeHabitDayPanel">×</button>
-  </div>
-  <div id="habitDayFields" class="day-fields"></div>
-  <button id="saveHabitDayBtn">保存</button>
-</div>
-
-<div id="healthOverlay" class="overlay hidden"></div>
-<div id="healthPanel" class="panel hidden">
-  <div class="panel-header">
-    <h2>健康</h2>
-    <button id="closeHealthPanel">×</button>
-  </div>
-
-  <div class="money-month-nav">
-    <button id="prevHealthMonth">&lt; 前の月</button>
-    <span id="healthMonthLabel"></span>
-    <button id="nextHealthMonth">次の月 &gt;</button>
-  </div>
-
-  <details class="category-editor-wrap" open>
-    <summary>記録する項目を編集する</summary>
-    <div id="healthItemEditor" class="health-item-editor"></div>
-    <button type="button" id="healthAddItemBtn" class="health-add-item-btn">＋ 項目を追加する</button>
-  </details>
-
-  <div class="date-add-row">
-    <input type="date" id="healthDateInput">
-    <button id="healthAddEntryBtn">記録する</button>
-  </div>
-
-  <ul id="healthList" class="task-list"></ul>
-
-  <details class="category-editor-wrap">
-    <summary>期間を指定して一括削除する</summary>
-    <div class="bulk-delete-row">
-      <input type="date" id="healthBulkFrom">
-      <span>〜</span>
-      <input type="date" id="healthBulkTo">
-      <button id="healthBulkDeleteBtn">削除する</button>
-    </div>
-    <p class="export-hint">指定した期間(両端を含む)の健康の記録がすべて削除されます。元に戻せません。</p>
-  </details>
-</div>
-
-<div id="healthDayOverlay" class="overlay hidden"></div>
-<div id="healthDayPanel" class="panel hidden">
-  <div class="panel-header">
-    <h2 id="healthDayDate"></h2>
-    <button id="closeHealthDayPanel">×</button>
-  </div>
-  <div id="healthDayFields" class="day-fields"></div>
-  <button id="saveHealthDayBtn">保存</button>
-</div>
-
 <div id="exportOverlay" class="overlay hidden"></div>
 <div id="exportPanel" class="panel hidden">
   <div class="panel-header">
@@ -296,9 +147,6 @@
     <label><input type="checkbox" id="exportCheckSchedule" checked> 予定</label>
     <label><input type="checkbox" id="exportCheckMemo" checked> メモ</label>
     <label><input type="checkbox" id="exportCheckTask" checked> タスク</label>
-    <label><input type="checkbox" id="exportCheckMoney" checked> お金</label>
-    <label><input type="checkbox" id="exportCheckHabit" checked> 習慣</label>
-    <label><input type="checkbox" id="exportCheckHealth" checked> 健康</label>
   </div>
   <p class="export-hint">「コピーする」を押して、メモアプリやエディタに貼り付けるだけで、記録をそのまま文章として残しておけます(CSVへの変換や特別な操作は不要です)。ExcelやGoogleスプレッドシートに貼り付ければ、表形式で記録の集計や分析もできます。「ファイルとして保存」を選ぶとCSVファイルとしてダウンロードされ、あとからExcelなどで開けます。</p>
   <textarea id="exportText" rows="10" readonly></textarea>
@@ -330,16 +178,13 @@
     <h3>どんなアプリ?</h3>
     <p>「紙の手帳をそのままスマホに持ってきた」ような、気軽な使い心地を目指した「かんたんカレンダー」です。無料で、会員登録や広告もありません。</p>
     <p>日付をタップして、休み・祝日や⭐💗○△×の印をつけたり、予定・タスク・メモを書き込んだり。まずはそれだけの、シンプルな手帳として使えます。</p>
-    <p>それに加えて、「お金」「習慣」「健康」というボタンも用意しています。日付を選んで金額やチェックを入れるだけの手軽さはそのままに、家計簿・習慣づくり・体調管理の記録も同じアプリの中でつけられます。「健康」は記録する項目を自分で決められるので、体重や気分など、必要なものだけを自由に記録できます。</p>
-    <p>予定・タスク・メモ・お金・習慣・健康がひとつにまとまっているので、いくつものアプリを使い分ける必要はありません。使う機能だけ使えばよいので、気軽に試してみてください。</p>
+    <p>予定・タスク・メモがひとつにまとまっているので、いくつものアプリを使い分ける必要はありません。使う機能だけ使えばよいので、気軽に試してみてください。</p>
 
     <h3>はじめての使い方</h3>
     <p>むずかしい設定は何もいりません。まずは触ってみてください。</p>
     <ul>
       <li><strong>予定・タスク・メモを書く</strong>：カレンダーの日付をタップすると、その日の入力画面が開きます。「予定」「タスク」「メモ」それぞれに書き込んで、そのまま画面を閉じれば保存されます</li>
       <li><strong>休み・祝日・印をつける</strong>：カレンダー上部の印ボタン(休・祝・⭐など)を選んでから日付をタップすると、その印がつきます。もう一度タップすると外れます</li>
-      <li><strong>お金・習慣・健康を記録する</strong>：下のボタンから「お金」「習慣」「健康」を開き、日付を選んで「記録する」を押すと、その日の内容を入力できます。あとから同じ日付をタップすれば内容を直せます</li>
-      <li><strong>「健康」で自分だけの項目を作る</strong>：「健康」を開いて「記録する項目を編集する」から項目名を自由に入力し、「数値」「文章」「チェック」のどれかを選ぶと、自分専用の記録項目になります</li>
       <li><strong>予定を後から探す</strong>：「予定一覧」ボタンから、過去や未来の予定をまとめて見たり、キーワードで検索したりできます</li>
     </ul>
     <p>迷ったときは、まず日付をタップしてみるのがいちばんの近道です。</p>
