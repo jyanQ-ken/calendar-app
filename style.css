@@ -662,9 +662,22 @@ body.panel-open {
   border-bottom: 1px solid var(--border-list);
 }
 
-.task-list li.done span {
+.task-list li.done {
+  background: linear-gradient(90deg, rgba(46, 158, 79, 0.14), rgba(46, 158, 79, 0.03));
+  border-left: 3px solid #2e9e4f;
+  border-radius: 6px;
+  padding-left: 8px;
+}
+
+.task-list li.done span:not(.archive-item-date) {
   text-decoration: line-through;
   color: var(--text-faint);
+}
+
+.task-list li.done .archive-item-date::before {
+  content: "✓ ";
+  color: #2e9e4f;
+  font-weight: bold;
 }
 
 .task-list li input[type="checkbox"] {

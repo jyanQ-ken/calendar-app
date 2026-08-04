@@ -138,10 +138,11 @@
     <label><input type="checkbox" id="exportCheckMemo" checked> メモ</label>
     <label><input type="checkbox" id="exportCheckTask" checked> タスク</label>
   </div>
-  <p class="export-hint">「コピーする」を押して、メモアプリやエディタに貼り付けるだけで、記録をそのまま文章として残しておけます(CSVへの変換や特別な操作は不要です)。ExcelやGoogleスプレッドシートに貼り付ければ、表形式で記録の集計や分析もできます。</p>
+  <p class="export-hint">CSV形式のデータなので、コピーしてスプレッドシートに貼り付ければ表形式で保存できます。</p>
   <textarea id="exportText" rows="10" readonly></textarea>
   <div class="export-buttons">
     <button id="copyExportBtn">コピーする</button>
+    <button id="downloadExportBtn">ファイルとして保存</button>
   </div>
 
   <details class="category-editor-wrap">
@@ -152,7 +153,7 @@
       <input type="date" id="bulkDeleteTo">
       <button id="bulkDeleteBtn">削除する</button>
     </div>
-    <p class="export-hint">指定した期間(両端を含む)の予定・メモ・完了済みタスクが、まとめて削除されます。元に戻せないので、先に上のコピーで控えを残してから行うと安心です。</p>
+    <p class="export-hint">指定した期間(両端を含む)の予定・メモ・完了済みタスクが、まとめて削除されます。元に戻せないので、先に上のコピー・ファイル保存で控えを残してから行うと安心です。</p>
   </details>
 </div>
 

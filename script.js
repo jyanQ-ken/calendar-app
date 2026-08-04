@@ -102,6 +102,7 @@ const exportPanel = document.getElementById("exportPanel");
 const closeExportPanelBtn = document.getElementById("closeExportPanel");
 const exportText = document.getElementById("exportText");
 const copyExportBtn = document.getElementById("copyExportBtn");
+const downloadExportBtn = document.getElementById("downloadExportBtn");
 const bulkDeleteFrom = document.getElementById("bulkDeleteFrom");
 const bulkDeleteTo = document.getElementById("bulkDeleteTo");
 const bulkDeleteBtn = document.getElementById("bulkDeleteBtn");
@@ -934,6 +935,19 @@ copyExportBtn.addEventListener("click", async () => {
   }
   copyExportBtn.textContent = "コピーしました";
   setTimeout(() => { copyExportBtn.textContent = "コピーする"; }, 1200);
+});
+
+downloadExportBtn.addEventListener("click", () => {
+  const bom = "﻿";
+  const blob = new Blob([bom + exportText.value], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "calendar-data.csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 });
 
 bulkDeleteBtn.addEventListener("click", () => {
