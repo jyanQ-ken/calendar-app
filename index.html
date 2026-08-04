@@ -22,6 +22,7 @@
 
   <div class="schedule-list-buttons">
     <button id="openScheduleList" class="schedule-list-btn">📋 予定一覧</button>
+    <button id="openMarkList" class="schedule-list-btn">🔖 マーク一覧</button>
   </div>
 
   <div class="mark-mode-scroll">
@@ -123,6 +124,16 @@
   </div>
   <input type="text" id="scheduleSearchInput" class="schedule-search-input" placeholder="予定をキーワードで探す">
   <ul id="scheduleListAll" class="task-list"></ul>
+</div>
+
+<div id="markListOverlay" class="overlay hidden"></div>
+<div id="markListPanel" class="panel hidden">
+  <div class="panel-header">
+    <h2>マーク一覧</h2>
+    <button id="closeMarkListPanel">×</button>
+  </div>
+  <select id="markListSelect" class="schedule-search-input"></select>
+  <ul id="markListAll" class="task-list"></ul>
 </div>
 
 <div id="diaryOverlay" class="overlay hidden"></div>

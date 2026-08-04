@@ -416,11 +416,13 @@ body.panel-open {
 }
 
 .schedule-list-buttons {
+  display: flex;
+  gap: 6px;
   margin-bottom: 8px;
 }
 
 .schedule-list-btn {
-  width: 100%;
+  flex: 1;
   padding: 10px;
   min-height: 40px;
   border: none;
