@@ -50,6 +50,7 @@
     <button id="openDiaryList">メモ</button>
     <button id="openMoney">お金</button>
     <button id="openHabit">習慣</button>
+    <button id="openHealth">健康</button>
     <button id="openExport">書出</button>
     <button id="openHelp">?</button>
   </div>
@@ -243,6 +244,54 @@
   <button id="saveHabitDayBtn">保存</button>
 </div>
 
+<div id="healthOverlay" class="overlay hidden"></div>
+<div id="healthPanel" class="panel hidden">
+  <div class="panel-header">
+    <h2>健康</h2>
+    <button id="closeHealthPanel">×</button>
+  </div>
+
+  <div class="money-month-nav">
+    <button id="prevHealthMonth">&lt; 前の月</button>
+    <span id="healthMonthLabel"></span>
+    <button id="nextHealthMonth">次の月 &gt;</button>
+  </div>
+
+  <details class="category-editor-wrap" open>
+    <summary>記録する項目を編集する</summary>
+    <div id="healthItemEditor" class="health-item-editor"></div>
+    <button type="button" id="healthAddItemBtn" class="health-add-item-btn">＋ 項目を追加する</button>
+  </details>
+
+  <div class="date-add-row">
+    <input type="date" id="healthDateInput">
+    <button id="healthAddEntryBtn">記録する</button>
+  </div>
+
+  <ul id="healthList" class="task-list"></ul>
+
+  <details class="category-editor-wrap">
+    <summary>期間を指定して一括削除する</summary>
+    <div class="bulk-delete-row">
+      <input type="date" id="healthBulkFrom">
+      <span>〜</span>
+      <input type="date" id="healthBulkTo">
+      <button id="healthBulkDeleteBtn">削除する</button>
+    </div>
+    <p class="export-hint">指定した期間(両端を含む)の健康の記録がすべて削除されます。元に戻せません。</p>
+  </details>
+</div>
+
+<div id="healthDayOverlay" class="overlay hidden"></div>
+<div id="healthDayPanel" class="panel hidden">
+  <div class="panel-header">
+    <h2 id="healthDayDate"></h2>
+    <button id="closeHealthDayPanel">×</button>
+  </div>
+  <div id="healthDayFields" class="day-fields"></div>
+  <button id="saveHealthDayBtn">保存</button>
+</div>
+
 <div id="exportOverlay" class="overlay hidden"></div>
 <div id="exportPanel" class="panel hidden">
   <div class="panel-header">
@@ -285,6 +334,7 @@
     <h3>どんなアプリ?</h3>
     <p>Googleカレンダーのように他のアプリやサービスと連携する高機能さはありませんが、そのぶん「紙の手帳をそのままスマホに持ってきた」ような、気軽な使い心地を目指した「かんたんカレンダー」です。日付に休み・祝日のほか、⭐💗😊🍺☕🍱💼など色々な印をつけたり、予定・タスク・メモを書き込んだりできます。</p>
     <p>ほかに「お金」「習慣」の記録機能もあります。難しい設定や分析はいらず、日付を選んで金額やチェックを入力するだけ。三日坊主になりがちな習慣づくりや、気づけば使いすぎてしまうお金の管理も、ゆるく続けられることを大事にしています。</p>
+    <p>「健康」は記録したい項目を自分で自由に決められます(数値・文章・チェックから選べます)。体重や睡眠時間などの数値、気になったことのメモ、続けたいことのチェックなど、自分に合った記録の仕方にカスタマイズできます。</p>
 
     <h3>データはどこに保存される?</h3>
     <p>入力した内容は、インターネット上のどこかのサーバーではなく、<strong>今使っているスマホやパソコンのブラウザの中(ローカルストレージ)</strong>だけに保存されます。外部に送信されることはないので、データが漏れる心配はありません。</p>

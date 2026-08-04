@@ -177,6 +177,36 @@ let habitYear;
 let habitMonth; // 0-11
 let habitEditingDateKey = null;
 
+const openHealthBtn = document.getElementById("openHealth");
+const healthOverlay = document.getElementById("healthOverlay");
+const healthPanel = document.getElementById("healthPanel");
+const closeHealthPanelBtn = document.getElementById("closeHealthPanel");
+const prevHealthMonthBtn = document.getElementById("prevHealthMonth");
+const nextHealthMonthBtn = document.getElementById("nextHealthMonth");
+const healthMonthLabel = document.getElementById("healthMonthLabel");
+const healthItemEditor = document.getElementById("healthItemEditor");
+const healthAddItemBtn = document.getElementById("healthAddItemBtn");
+const healthDateInput = document.getElementById("healthDateInput");
+const healthAddEntryBtn = document.getElementById("healthAddEntryBtn");
+const healthList = document.getElementById("healthList");
+const healthBulkFrom = document.getElementById("healthBulkFrom");
+const healthBulkTo = document.getElementById("healthBulkTo");
+const healthBulkDeleteBtn = document.getElementById("healthBulkDeleteBtn");
+
+const healthDayOverlay = document.getElementById("healthDayOverlay");
+const healthDayPanel = document.getElementById("healthDayPanel");
+const closeHealthDayPanelBtn = document.getElementById("closeHealthDayPanel");
+const healthDayDate = document.getElementById("healthDayDate");
+const healthDayFields = document.getElementById("healthDayFields");
+const saveHealthDayBtn = document.getElementById("saveHealthDayBtn");
+
+const HEALTH_KEY = "healthEntriesData";
+const HEALTH_ITEMS_KEY = "healthItemsData";
+const HEALTH_TYPE_LABELS = { number: "数値", text: "文章", check: "チェック" };
+let healthYear;
+let healthMonth; // 0-11
+let healthEditingDateKey = null;
+
 function closeMenuPanel() {
   // ハンバーガーメニューは廃止済み。各パネルを開く前の後始末として呼ばれるため関数だけ残している。
 }
@@ -1635,6 +1665,297 @@ habitBulkDeleteBtn.addEventListener("click", () => {
   habitBulkFrom.value = "";
   habitBulkTo.value = "";
   renderHabitList();
+  alert("削除しました");
+});
+
+function loadHealthItems() {
+  const raw = localStorage.getItem(HEALTH_ITEMS_KEY);
+  return raw ? JSON.parse(raw) : [];
+}
+
+function saveHealthItems(items) {
+  localStorage.setItem(HEALTH_ITEMS_KEY, JSON.stringify(items));
+}
+
+function loadHealthData() {
+  const raw = localStorage.getItem(HEALTH_KEY);
+  return raw ? JSON.parse(raw) : {};
+}
+
+function saveHealthData(data) {
+  localStorage.setItem(HEALTH_KEY, JSON.stringify(data));
+}
+
+function renderHealthItemEditor() {
+  const items = loadHealthItems();
+  healthItemEditor.innerHTML = "";
+  items.forEach((item, index) => {
+    const row = document.createElement("div");
+    row.className = "health-item-row";
+
+    const nameInput = document.createElement("input");
+    nameInput.type = "text";
+    nameInput.value = item.name;
+    nameInput.placeholder = `項目${index + 1}`;
+    nameInput.addEventListener("change", () => {
+      const current = loadHealthItems();
+      current[index].name = nameInput.value.trim();
+      saveHealthItems(current);
+      renderHealthList();
+    });
+
+    const typeSelect = document.createElement("select");
+    Object.entries(HEALTH_TYPE_LABELS).forEach(([value, label]) => {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = label;
+      if (value === item.type) option.selected = true;
+      typeSelect.appendChild(option);
+    });
+    typeSelect.addEventListener("change", () => {
+      const current = loadHealthItems();
+      current[index].type = typeSelect.value;
+      saveHealthItems(current);
+      renderHealthList();
+    });
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.type = "button";
+    deleteBtn.textContent = "削除";
+    deleteBtn.addEventListener("click", () => {
+      const ok = confirm(`「${item.name || `項目${index + 1}`}」を削除しますか？この項目に記録した過去のデータも表示されなくなります。`);
+      if (!ok) return;
+      const current = loadHealthItems();
+      current.splice(index, 1);
+      saveHealthItems(current);
+      renderHealthItemEditor();
+      renderHealthList();
+    });
+
+    row.appendChild(nameInput);
+    row.appendChild(typeSelect);
+    row.appendChild(deleteBtn);
+    healthItemEditor.appendChild(row);
+  });
+}
+
+healthAddItemBtn.addEventListener("click", () => {
+  const items = loadHealthItems();
+  items.push({ name: "", type: "number" });
+  saveHealthItems(items);
+  renderHealthItemEditor();
+});
+
+function renderHealthList() {
+  healthMonthLabel.textContent = `${healthYear}年 ${healthMonth + 1}月`;
+  const items = loadHealthItems();
+  const data = loadHealthData();
+  const daysInMonth = new Date(healthYear, healthMonth + 1, 0).getDate();
+
+  healthList.innerHTML = "";
+  let hasEntry = false;
+
+  for (let day = 1; day <= daysInMonth; day++) {
+    const key = dateKey(healthYear, healthMonth, day);
+    const row = data[key];
+    if (!row) continue;
+    const parts = items
+      .map((item, index) => {
+        const value = row[index];
+        if (value === undefined || value === "" || value === false) return null;
+        const label = item.name || `項目${index + 1}`;
+        if (item.type === "check") return label;
+        return `${label}: ${value}`;
+      })
+      .filter(Boolean);
+    if (parts.length === 0) continue;
+    hasEntry = true;
+
+    const li = document.createElement("li");
+    li.className = "money-entry-row";
+    const dateSpan = document.createElement("span");
+    dateSpan.textContent = key;
+    const summarySpan = document.createElement("span");
+    summarySpan.className = "money-entry-amount";
+    summarySpan.textContent = parts.join(" / ");
+    li.appendChild(dateSpan);
+    li.appendChild(summarySpan);
+    li.addEventListener("click", () => openHealthDayPanel(key));
+    healthList.appendChild(li);
+  }
+
+  if (!hasEntry) {
+    const li = document.createElement("li");
+    li.textContent = items.length === 0
+      ? "まず上で記録したい項目を追加してください"
+      : "この月の記録はまだありません";
+    healthList.appendChild(li);
+  }
+}
+
+function openHealthDayPanel(key) {
+  healthEditingDateKey = key;
+  const items = loadHealthItems();
+  const data = loadHealthData();
+  const row = data[key] || [];
+
+  healthDayDate.textContent = key;
+  healthDayFields.innerHTML = "";
+
+  if (items.length === 0) {
+    const hint = document.createElement("p");
+    hint.className = "export-hint";
+    hint.textContent = "記録する項目がまだありません。上の「項目を編集する」から追加してください";
+    healthDayFields.appendChild(hint);
+  }
+
+  items.forEach((item, index) => {
+    const label = item.name || `項目${index + 1}`;
+
+    if (item.type === "check") {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "habit-toggle";
+      btn.dataset.index = index;
+      btn.dataset.type = "check";
+      const done = !!row[index];
+      btn.dataset.done = done ? "true" : "false";
+      if (done) btn.classList.add("done");
+      btn.innerHTML = `<span>${label}</span><span class="habit-toggle-mark">${done ? "達成 ✓" : "未達成"}</span>`;
+      btn.addEventListener("click", () => {
+        const isDone = btn.dataset.done === "true";
+        btn.dataset.done = isDone ? "false" : "true";
+        btn.classList.toggle("done", !isDone);
+        btn.querySelector(".habit-toggle-mark").textContent = isDone ? "未達成" : "達成 ✓";
+      });
+      healthDayFields.appendChild(btn);
+      return;
+    }
+
+    const fieldRow = document.createElement("div");
+    fieldRow.className = "day-field-row";
+    const fieldLabel = document.createElement("label");
+    fieldLabel.textContent = label;
+    const input = document.createElement("input");
+    input.type = item.type === "number" ? "number" : "text";
+    input.dataset.index = index;
+    input.dataset.type = item.type;
+    input.value = row[index] !== undefined ? row[index] : "";
+    fieldRow.appendChild(fieldLabel);
+    fieldRow.appendChild(input);
+    healthDayFields.appendChild(fieldRow);
+  });
+
+  healthDayOverlay.classList.remove("hidden");
+  healthDayPanel.classList.remove("hidden");
+  lockBackgroundScroll();
+}
+
+function closeHealthDayPanel() {
+  healthDayOverlay.classList.add("hidden");
+  healthDayPanel.classList.add("hidden");
+  healthEditingDateKey = null;
+  unlockBackgroundScroll();
+}
+
+saveHealthDayBtn.addEventListener("click", () => {
+  if (!healthEditingDateKey) return;
+  const row = [];
+
+  healthDayFields.querySelectorAll("[data-index]").forEach(el => {
+    const index = Number(el.dataset.index);
+    const type = el.dataset.type;
+    if (type === "check") {
+      row[index] = el.dataset.done === "true";
+    } else if (type === "number") {
+      row[index] = el.value === "" ? "" : Number(el.value);
+    } else {
+      row[index] = el.value;
+    }
+  });
+
+  const data = loadHealthData();
+  data[healthEditingDateKey] = row;
+  saveHealthData(data);
+  closeHealthDayPanel();
+  renderHealthList();
+});
+
+closeHealthDayPanelBtn.addEventListener("click", closeHealthDayPanel);
+healthDayOverlay.addEventListener("click", closeHealthDayPanel);
+
+healthAddEntryBtn.addEventListener("click", () => {
+  if (!healthDateInput.value) return;
+  openHealthDayPanel(healthDateInput.value);
+});
+
+openHealthBtn.addEventListener("click", () => {
+  closeMenuPanel();
+  healthYear = currentYear;
+  healthMonth = currentMonth;
+  renderHealthItemEditor();
+  renderHealthList();
+  healthDateInput.value = dateKey(currentYear, currentMonth, new Date().getDate());
+  healthOverlay.classList.remove("hidden");
+  healthPanel.classList.remove("hidden");
+  lockBackgroundScroll();
+});
+
+function closeHealthPanel() {
+  healthOverlay.classList.add("hidden");
+  healthPanel.classList.add("hidden");
+  unlockBackgroundScroll();
+}
+
+closeHealthPanelBtn.addEventListener("click", closeHealthPanel);
+healthOverlay.addEventListener("click", closeHealthPanel);
+
+prevHealthMonthBtn.addEventListener("click", () => {
+  healthMonth--;
+  if (healthMonth < 0) {
+    healthMonth = 11;
+    healthYear--;
+  }
+  renderHealthList();
+});
+
+nextHealthMonthBtn.addEventListener("click", () => {
+  healthMonth++;
+  if (healthMonth > 11) {
+    healthMonth = 0;
+    healthYear++;
+  }
+  renderHealthList();
+});
+
+healthBulkDeleteBtn.addEventListener("click", () => {
+  const from = healthBulkFrom.value;
+  const to = healthBulkTo.value;
+  if (!from || !to) {
+    alert("削除する期間の開始日と終了日を両方入力してください");
+    return;
+  }
+  if (from > to) {
+    alert("開始日は終了日より前の日付にしてください");
+    return;
+  }
+
+  const healthData = loadHealthData();
+  const targetKeys = Object.keys(healthData).filter(key => key >= from && key <= to);
+
+  if (targetKeys.length === 0) {
+    alert("指定した期間に健康の記録はありませんでした");
+    return;
+  }
+
+  const ok = confirm(`${from}〜${to}の健康の記録（対象${targetKeys.length}日分）を削除します。元に戻せませんが、よろしいですか?`);
+  if (!ok) return;
+
+  targetKeys.forEach(key => { delete healthData[key]; });
+  saveHealthData(healthData);
+  healthBulkFrom.value = "";
+  healthBulkTo.value = "";
+  renderHealthList();
   alert("削除しました");
 });
 

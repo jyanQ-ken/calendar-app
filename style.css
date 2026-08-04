@@ -966,8 +966,77 @@ body.panel-open {
   font-weight: bold;
 }
 
+.health-item-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.health-item-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.health-item-row input[type="text"] {
+  flex: 1;
+  min-width: 0;
+  padding: 8px;
+  min-height: 40px;
+  font-size: 1rem;
+  border: 1px solid var(--border-input);
+  border-radius: 3px;
+  background: var(--bg-input);
+  color: var(--text-main);
+}
+
+.health-item-row select {
+  padding: 8px;
+  min-height: 40px;
+  font-size: 0.9rem;
+  border: 1px solid var(--border-input);
+  border-radius: 3px;
+  background: var(--bg-input);
+  color: var(--text-main);
+}
+
+.health-item-row button {
+  padding: 8px 10px;
+  min-height: 40px;
+  border: none;
+  background: #e00000;
+  color: #fff;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.health-add-item-btn {
+  margin-top: 8px;
+  padding: 8px 14px;
+  min-height: 40px;
+  border: none;
+  background: var(--accent-gradient);
+  color: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+
+.day-field-row input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  min-height: 40px;
+  font-size: 1rem;
+  border: 1px solid var(--border-input);
+  border-radius: 3px;
+  background: var(--bg-input);
+  color: var(--text-main);
+}
+
 #saveMoneyDayBtn,
-#saveHabitDayBtn {
+#saveHabitDayBtn,
+#saveHealthDayBtn {
   width: 100%;
   padding: 10px;
   min-height: 44px;
@@ -1057,7 +1126,9 @@ body.panel-open {
 .date-add-row button:hover,
 .export-buttons button:hover,
 #saveMoneyDayBtn:hover,
-#saveHabitDayBtn:hover {
+#saveHabitDayBtn:hover,
+#saveHealthDayBtn:hover,
+.health-add-item-btn:hover {
   filter: brightness(1.06);
   transform: translateY(-1px);
 }
@@ -1067,6 +1138,8 @@ body.panel-open {
 .date-add-row button:active,
 .export-buttons button:active,
 #saveMoneyDayBtn:active,
-#saveHabitDayBtn:active {
+#saveHabitDayBtn:active,
+#saveHealthDayBtn:active,
+.health-add-item-btn:active {
   transform: translateY(0);
 }
