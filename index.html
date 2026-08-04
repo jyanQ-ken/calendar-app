@@ -138,11 +138,10 @@
     <label><input type="checkbox" id="exportCheckMemo" checked> メモ</label>
     <label><input type="checkbox" id="exportCheckTask" checked> タスク</label>
   </div>
-  <p class="export-hint">「コピーする」を押して、メモアプリやエディタに貼り付けるだけで、記録をそのまま文章として残しておけます(CSVへの変換や特別な操作は不要です)。ExcelやGoogleスプレッドシートに貼り付ければ、表形式で記録の集計や分析もできます。「ファイルとして保存」を選ぶとCSVファイルとしてダウンロードされ、あとからExcelなどで開けます。</p>
+  <p class="export-hint">「コピーする」を押して、メモアプリやエディタに貼り付けるだけで、記録をそのまま文章として残しておけます(CSVへの変換や特別な操作は不要です)。ExcelやGoogleスプレッドシートに貼り付ければ、表形式で記録の集計や分析もできます。</p>
   <textarea id="exportText" rows="10" readonly></textarea>
   <div class="export-buttons">
     <button id="copyExportBtn">コピーする</button>
-    <button id="downloadExportBtn">ファイルとして保存</button>
   </div>
 
   <details class="category-editor-wrap">
@@ -153,7 +152,7 @@
       <input type="date" id="bulkDeleteTo">
       <button id="bulkDeleteBtn">削除する</button>
     </div>
-    <p class="export-hint">指定した期間(両端を含む)の予定・メモ・完了済みタスクが、まとめて削除されます。元に戻せないので、先に上のコピー・ファイル保存で控えを残してから行うと安心です。</p>
+    <p class="export-hint">指定した期間(両端を含む)の予定・メモ・完了済みタスクが、まとめて削除されます。元に戻せないので、先に上のコピーで控えを残してから行うと安心です。</p>
   </details>
 </div>
 
@@ -187,7 +186,7 @@
       <li>ブラウザの「履歴・データを消去」をすると、入力した内容も消えてしまいます</li>
       <li>他の端末とは自動で同期されません</li>
     </ul>
-    <p>大事な予定・メモ・タスクの記録は、「書出」ボタンからCSVファイルとして保存しておくと安心です。</p>
+    <p>大事な予定・メモ・タスクの記録は、「書出」ボタンからコピーして、メモアプリなどに控えておくと安心です。</p>
 
     <h3>ネットがないところでも使える?</h3>
     <p>一度ネットがつながっている状態でこのアプリを開いておくと、その内容がスマホやパソコンの中に保存され、次回からは<strong>ネットに繋がっていない状態(電波が届かない・機内モードなど)でも表示・入力ができます</strong>。ただし、初めて開く時と、アプリを更新した直後の1回目は、ネットに繋がった状態で開いてください。</p>
