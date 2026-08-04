@@ -90,13 +90,6 @@ const closeScheduleListPanelBtn = document.getElementById("closeScheduleListPane
 const scheduleListAll = document.getElementById("scheduleListAll");
 const scheduleSearchInput = document.getElementById("scheduleSearchInput");
 
-const openMarkListBtn = document.getElementById("openMarkList");
-const markListOverlay = document.getElementById("markListOverlay");
-const markListPanel = document.getElementById("markListPanel");
-const closeMarkListPanelBtn = document.getElementById("closeMarkListPanel");
-const markListSelect = document.getElementById("markListSelect");
-const markListAll = document.getElementById("markListAll");
-
 const openDiaryListBtn = document.getElementById("openDiaryList");
 const diaryOverlay = document.getElementById("diaryOverlay");
 const diaryPanel = document.getElementById("diaryPanel");
@@ -144,16 +137,6 @@ MARK_DEFS.forEach(def => { MODE_LABELS[def.key] = def.label; });
 
 markChecks.innerHTML = MARK_DEFS.map(def =>
   `<label><input type="checkbox" data-mark="${def.key}"> <span${def.color ? ` style="color:${def.color}"` : ""}>${def.emoji}</span></label>`
-).join("");
-
-const MARK_LIST_DEFS = [
-  { key: "holiday", emoji: "休", label: "休み", field: "holiday" },
-  { key: "national", emoji: "祝", label: "祝日", field: "national" },
-  ...MARK_DEFS.map(def => ({ ...def, field: null })),
-];
-
-markListSelect.innerHTML = MARK_LIST_DEFS.map(def =>
-  `<option value="${def.key}">${def.label}</option>`
 ).join("");
 
 function loadData() {
@@ -769,90 +752,6 @@ function closeScheduleListPanel() {
 
 closeScheduleListPanelBtn.addEventListener("click", closeScheduleListPanel);
 scheduleListOverlay.addEventListener("click", closeScheduleListPanel);
-
-function renderMarkList() {
-  const markKey = markListSelect.value;
-  const markDef = MARK_LIST_DEFS.find(d => d.key === markKey);
-  const data = loadData();
-  const todayKey = dateKey(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
-
-  const isOn = key => {
-    const dayData = getDayData(data, key);
-    return markDef.field ? dayData[markDef.field] : dayData.marks[markKey];
-  };
-
-  const entries = Object.keys(data)
-    .filter(isOn)
-    .sort((a, b) => a.localeCompare(b));
-
-  markListAll.innerHTML = "";
-
-  if (entries.length === 0) {
-    const li = document.createElement("li");
-    li.textContent = `${markDef.label} が付いている日はまだありません`;
-    markListAll.appendChild(li);
-    return;
-  }
-
-  entries.forEach(key => {
-    const li = document.createElement("li");
-    if (key === todayKey) li.classList.add("today-item");
-
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.checked = true;
-    checkbox.addEventListener("click", (e) => e.stopPropagation());
-    checkbox.addEventListener("change", (e) => {
-      const current = loadData();
-      const dayData = getDayData(current, key);
-      if (markDef.field) {
-        dayData[markDef.field] = false;
-      } else {
-        dayData.marks[markKey] = false;
-      }
-      current[key] = dayData;
-      saveData(current);
-      renderMarkList();
-      renderCalendar();
-    });
-
-    const dateSpan = document.createElement("span");
-    dateSpan.className = "archive-item-date";
-    dateSpan.textContent = key;
-
-    const emojiSpan = document.createElement("span");
-    emojiSpan.textContent = markDef.emoji;
-    if (markDef.color) emojiSpan.style.color = markDef.color;
-
-    li.appendChild(checkbox);
-    li.appendChild(dateSpan);
-    li.appendChild(emojiSpan);
-    li.addEventListener("click", () => {
-      closeMarkListPanel();
-      openPanel(key);
-    });
-    markListAll.appendChild(li);
-  });
-}
-
-openMarkListBtn.addEventListener("click", () => {
-  closeMenuPanel();
-  renderMarkList();
-  markListOverlay.classList.remove("hidden");
-  markListPanel.classList.remove("hidden");
-  lockBackgroundScroll();
-});
-
-markListSelect.addEventListener("change", renderMarkList);
-
-function closeMarkListPanel() {
-  markListOverlay.classList.add("hidden");
-  markListPanel.classList.add("hidden");
-  unlockBackgroundScroll();
-}
-
-closeMarkListPanelBtn.addEventListener("click", closeMarkListPanel);
-markListOverlay.addEventListener("click", closeMarkListPanel);
 
 function renderDiaryList() {
   const data = loadData();
