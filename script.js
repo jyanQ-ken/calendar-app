@@ -108,8 +108,6 @@ const bulkDeleteTo = document.getElementById("bulkDeleteTo");
 const bulkDeleteBtn = document.getElementById("bulkDeleteBtn");
 const exportCheckSchedule = document.getElementById("exportCheckSchedule");
 const exportCheckMemo = document.getElementById("exportCheckMemo");
-const exportCheckMoney = document.getElementById("exportCheckMoney");
-const exportCheckHabit = document.getElementById("exportCheckHabit");
 const exportCheckTask = document.getElementById("exportCheckTask");
 
 const openMoneyBtn = document.getElementById("openMoney");
@@ -124,6 +122,9 @@ const moneyCategoryEditor = document.getElementById("moneyCategoryEditor");
 const moneyDateInput = document.getElementById("moneyDateInput");
 const moneyAddEntryBtn = document.getElementById("moneyAddEntryBtn");
 const moneyList = document.getElementById("moneyList");
+const moneyBulkFrom = document.getElementById("moneyBulkFrom");
+const moneyBulkTo = document.getElementById("moneyBulkTo");
+const moneyBulkDeleteBtn = document.getElementById("moneyBulkDeleteBtn");
 
 const moneyDayOverlay = document.getElementById("moneyDayOverlay");
 const moneyDayPanel = document.getElementById("moneyDayPanel");
@@ -151,6 +152,9 @@ const habitCategoryEditor = document.getElementById("habitCategoryEditor");
 const habitDateInput = document.getElementById("habitDateInput");
 const habitAddEntryBtn = document.getElementById("habitAddEntryBtn");
 const habitList = document.getElementById("habitList");
+const habitBulkFrom = document.getElementById("habitBulkFrom");
+const habitBulkTo = document.getElementById("habitBulkTo");
+const habitBulkDeleteBtn = document.getElementById("habitBulkDeleteBtn");
 
 const habitDayOverlay = document.getElementById("habitDayOverlay");
 const habitDayPanel = document.getElementById("habitDayPanel");
@@ -907,14 +911,9 @@ function generateCsv(options) {
   const opts = options || {};
   const includeSchedule = opts.schedule !== false;
   const includeMemo = opts.memo !== false;
-  const includeMoney = opts.money !== false;
-  const includeHabit = opts.habit !== false;
   const includeTask = opts.task !== false;
 
   const data = loadData();
-  const moneyData = includeMoney ? loadMoneyData() : {};
-  const habitData = includeHabit ? loadHabitData() : {};
-  const habitNames = loadHabitNames();
   const archive = includeTask ? loadArchive() : [];
 
   const archiveByDate = {};
@@ -925,16 +924,12 @@ function generateCsv(options) {
 
   const allKeys = new Set([
     ...Object.keys(data),
-    ...Object.keys(moneyData),
-    ...Object.keys(habitData),
     ...Object.keys(archiveByDate),
   ]);
 
   const header = ["日付"];
   if (includeSchedule) header.push("予定");
   if (includeMemo) header.push("メモ");
-  if (includeMoney) header.push("お金(合計)");
-  if (includeHabit) header.push("習慣");
   if (includeTask) header.push("タスク(未完了)");
   if (includeTask) header.push("タスク(完了済み)");
   const rows = [header.join(",")];
@@ -944,22 +939,14 @@ function generateCsv(options) {
     const schedule = includeSchedule ? (dayData.schedule || []).join(" / ") : "";
     const memo = includeMemo ? (dayData.memo || "") : "";
 
-    const moneyRow = includeMoney ? moneyData[key] : null;
-    const moneyTotal = moneyRow ? moneyRow.reduce((sum, v) => sum + (Number(v) || 0), 0) : 0;
-
-    const habitRow = includeHabit ? habitData[key] : null;
-    const doneHabits = habitRow ? habitNames.filter((name, index) => habitRow[index] && name).join(" / ") : "";
-
     const pendingTasks = includeTask ? (dayData.tasks || []).map(t => t.text).join(" / ") : "";
     const doneTasks = includeTask ? (archiveByDate[key] || []).join(" / ") : "";
 
-    if (!schedule && !memo.trim() && !moneyTotal && !doneHabits && !pendingTasks && !doneTasks) return;
+    if (!schedule && !memo.trim() && !pendingTasks && !doneTasks) return;
 
     const row = [csvEscape(key)];
     if (includeSchedule) row.push(csvEscape(schedule));
     if (includeMemo) row.push(csvEscape(memo));
-    if (includeMoney) row.push(csvEscape(moneyTotal || ""));
-    if (includeHabit) row.push(csvEscape(doneHabits));
     if (includeTask) row.push(csvEscape(pendingTasks));
     if (includeTask) row.push(csvEscape(doneTasks));
     rows.push(row.join(","));
@@ -971,8 +958,6 @@ function currentExportOptions() {
   return {
     schedule: exportCheckSchedule.checked,
     memo: exportCheckMemo.checked,
-    money: exportCheckMoney.checked,
-    habit: exportCheckHabit.checked,
     task: exportCheckTask.checked,
   };
 }
@@ -981,7 +966,7 @@ function refreshExportText() {
   exportText.value = generateCsv(currentExportOptions());
 }
 
-[exportCheckSchedule, exportCheckMemo, exportCheckMoney, exportCheckHabit, exportCheckTask].forEach(cb => {
+[exportCheckSchedule, exportCheckMemo, exportCheckTask].forEach(cb => {
   cb.addEventListener("change", refreshExportText);
 });
 
@@ -1039,8 +1024,6 @@ bulkDeleteBtn.addEventListener("click", () => {
   }
 
   const data = loadData();
-  const moneyData = loadMoneyData();
-  const habitData = loadHabitData();
   const archive = loadArchive();
 
   const inRange = key => key >= from && key <= to;
@@ -1050,18 +1033,16 @@ bulkDeleteBtn.addEventListener("click", () => {
     const d = data[key];
     return (d.schedule && d.schedule.length > 0) || (d.memo && d.memo.trim() !== "");
   });
-  const moneyKeys = Object.keys(moneyData).filter(inRange);
-  const habitKeys = Object.keys(habitData).filter(inRange);
   const archiveEntries = archive.filter(item => inRange(item.date));
 
-  const totalCount = scheduleMemoKeys.length + moneyKeys.length + habitKeys.length + archiveEntries.length;
+  const totalCount = scheduleMemoKeys.length + archiveEntries.length;
 
   if (totalCount === 0) {
     alert("指定した期間には削除できる記録がありませんでした");
     return;
   }
 
-  const ok = confirm(`${from}〜${to}の予定・メモ・お金・習慣・完了済みタスクの記録をまとめて削除します。元に戻せませんが、よろしいですか?`);
+  const ok = confirm(`${from}〜${to}の予定・メモ・完了済みタスクの記録をまとめて削除します。元に戻せませんが、よろしいですか?`);
   if (!ok) return;
 
   scheduleMemoKeys.forEach(key => {
@@ -1069,12 +1050,6 @@ bulkDeleteBtn.addEventListener("click", () => {
     data[key].memo = "";
   });
   saveData(data);
-
-  moneyKeys.forEach(key => { delete moneyData[key]; });
-  saveMoneyData(moneyData);
-
-  habitKeys.forEach(key => { delete habitData[key]; });
-  saveHabitData(habitData);
 
   saveArchive(archive.filter(item => !inRange(item.date)));
 
@@ -1303,6 +1278,37 @@ nextMoneyMonthBtn.addEventListener("click", () => {
   renderMoneyList();
 });
 
+moneyBulkDeleteBtn.addEventListener("click", () => {
+  const from = moneyBulkFrom.value;
+  const to = moneyBulkTo.value;
+  if (!from || !to) {
+    alert("削除する期間の開始日と終了日を両方入力してください");
+    return;
+  }
+  if (from > to) {
+    alert("開始日は終了日より前の日付にしてください");
+    return;
+  }
+
+  const moneyData = loadMoneyData();
+  const targetKeys = Object.keys(moneyData).filter(key => key >= from && key <= to);
+
+  if (targetKeys.length === 0) {
+    alert("指定した期間にお金の記録はありませんでした");
+    return;
+  }
+
+  const ok = confirm(`${from}〜${to}のお金の記録（対象${targetKeys.length}日分）を削除します。元に戻せませんが、よろしいですか?`);
+  if (!ok) return;
+
+  targetKeys.forEach(key => { delete moneyData[key]; });
+  saveMoneyData(moneyData);
+  moneyBulkFrom.value = "";
+  moneyBulkTo.value = "";
+  renderMoneyList();
+  alert("削除しました");
+});
+
 function loadHabitNames() {
   const raw = localStorage.getItem(HABIT_NAMES_KEY);
   return raw ? JSON.parse(raw) : DEFAULT_HABITS.slice();
@@ -1499,6 +1505,37 @@ nextHabitMonthBtn.addEventListener("click", () => {
     habitYear++;
   }
   renderHabitList();
+});
+
+habitBulkDeleteBtn.addEventListener("click", () => {
+  const from = habitBulkFrom.value;
+  const to = habitBulkTo.value;
+  if (!from || !to) {
+    alert("削除する期間の開始日と終了日を両方入力してください");
+    return;
+  }
+  if (from > to) {
+    alert("開始日は終了日より前の日付にしてください");
+    return;
+  }
+
+  const habitData = loadHabitData();
+  const targetKeys = Object.keys(habitData).filter(key => key >= from && key <= to);
+
+  if (targetKeys.length === 0) {
+    alert("指定した期間に習慣の記録はありませんでした");
+    return;
+  }
+
+  const ok = confirm(`${from}〜${to}の習慣の記録（対象${targetKeys.length}日分）を削除します。元に戻せませんが、よろしいですか?`);
+  if (!ok) return;
+
+  targetKeys.forEach(key => { delete habitData[key]; });
+  saveHabitData(habitData);
+  habitBulkFrom.value = "";
+  habitBulkTo.value = "";
+  renderHabitList();
+  alert("削除しました");
 });
 
 function init() {

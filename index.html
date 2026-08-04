@@ -160,6 +160,17 @@
   </div>
 
   <ul id="moneyList" class="task-list"></ul>
+
+  <details class="category-editor-wrap">
+    <summary>期間を指定して一括削除する</summary>
+    <div class="bulk-delete-row">
+      <input type="date" id="moneyBulkFrom">
+      <span>〜</span>
+      <input type="date" id="moneyBulkTo">
+      <button id="moneyBulkDeleteBtn">削除する</button>
+    </div>
+    <p class="export-hint">指定した期間(両端を含む)のお金の記録がすべて削除されます。元に戻せません。</p>
+  </details>
 </div>
 
 <div id="moneyDayOverlay" class="overlay hidden"></div>
@@ -198,6 +209,17 @@
   </div>
 
   <ul id="habitList" class="task-list"></ul>
+
+  <details class="category-editor-wrap">
+    <summary>期間を指定して一括削除する</summary>
+    <div class="bulk-delete-row">
+      <input type="date" id="habitBulkFrom">
+      <span>〜</span>
+      <input type="date" id="habitBulkTo">
+      <button id="habitBulkDeleteBtn">削除する</button>
+    </div>
+    <p class="export-hint">指定した期間(両端を含む)の習慣の記録がすべて削除されます。元に戻せません。</p>
+  </details>
 </div>
 
 <div id="habitDayOverlay" class="overlay hidden"></div>
@@ -220,8 +242,6 @@
   <div class="export-item-checks">
     <label><input type="checkbox" id="exportCheckSchedule" checked> 予定</label>
     <label><input type="checkbox" id="exportCheckMemo" checked> メモ</label>
-    <label><input type="checkbox" id="exportCheckMoney" checked> お金</label>
-    <label><input type="checkbox" id="exportCheckHabit" checked> 習慣</label>
     <label><input type="checkbox" id="exportCheckTask" checked> タスク</label>
   </div>
   <p class="export-hint">下の内容を全部コピーして、他のアプリ(メモ・メール・Excelなど)に貼り付けられます。ファイルとして保存することもできます。</p>
@@ -239,7 +259,7 @@
       <input type="date" id="bulkDeleteTo">
       <button id="bulkDeleteBtn">削除する</button>
     </div>
-    <p class="export-hint">指定した期間(両端を含む)の予定・メモ・お金・習慣の記録・完了済みタスクが、まとめて削除されます。元に戻せないので、先に上のコピー・ファイル保存で控えを残してから行うと安心です。</p>
+    <p class="export-hint">指定した期間(両端を含む)の予定・メモ・完了済みタスクが、まとめて削除されます。元に戻せないので、先に上のコピー・ファイル保存で控えを残してから行うと安心です。</p>
   </details>
 </div>
 
@@ -263,7 +283,7 @@
       <li>ブラウザの「履歴・データを消去」をすると、入力した内容も消えてしまいます</li>
       <li>他の端末とは自動で同期されません</li>
     </ul>
-    <p>大事な予定・メモ・お金・習慣の記録は、「書出」ボタンからCSVファイルとして保存しておくと安心です。</p>
+    <p>大事な予定・メモ・タスクの記録は、「書出」ボタンからCSVファイルとして保存しておくと安心です。</p>
 
     <h3>ネットがないところでも使える?</h3>
     <p>一度ネットがつながっている状態でこのアプリを開いておくと、その内容がスマホやパソコンの中に保存され、次回からは<strong>ネットに繋がっていない状態(電波が届かない・機内モードなど)でも表示・入力ができます</strong>。ただし、初めて開く時と、アプリを更新した直後の1回目は、ネットに繋がった状態で開いてください。</p>
