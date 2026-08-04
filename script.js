@@ -116,6 +116,8 @@ const bulkDeleteBtn = document.getElementById("bulkDeleteBtn");
 const exportCheckSchedule = document.getElementById("exportCheckSchedule");
 const exportCheckMemo = document.getElementById("exportCheckMemo");
 const exportCheckTask = document.getElementById("exportCheckTask");
+const exportCheckMoney = document.getElementById("exportCheckMoney");
+const exportCheckHabit = document.getElementById("exportCheckHabit");
 const exportCheckHealth = document.getElementById("exportCheckHealth");
 
 const openMoneyBtn = document.getElementById("openMoney");
@@ -1043,10 +1045,16 @@ function generateCsv(options) {
   const includeSchedule = opts.schedule !== false;
   const includeMemo = opts.memo !== false;
   const includeTask = opts.task !== false;
+  const includeMoney = opts.money !== false;
+  const includeHabit = opts.habit !== false;
   const includeHealth = opts.health !== false;
 
   const data = loadData();
   const archive = includeTask ? loadArchive() : [];
+  const moneyCategories = includeMoney ? loadCategories() : [];
+  const moneyData = includeMoney ? loadMoneyData() : {};
+  const habitNames = includeHabit ? loadHabitNames() : [];
+  const habitData = includeHabit ? loadHabitData() : {};
   const healthItems = includeHealth ? loadHealthItems() : [];
   const healthData = includeHealth ? loadHealthData() : {};
 
@@ -1059,6 +1067,8 @@ function generateCsv(options) {
   const allKeys = new Set([
     ...Object.keys(data),
     ...Object.keys(archiveByDate),
+    ...Object.keys(moneyData),
+    ...Object.keys(habitData),
     ...Object.keys(healthData),
   ]);
 
@@ -1067,6 +1077,8 @@ function generateCsv(options) {
   if (includeMemo) header.push("メモ");
   if (includeTask) header.push("タスク(未完了)");
   if (includeTask) header.push("タスク(完了済み)");
+  if (includeMoney) moneyCategories.forEach((name, index) => header.push(name || `項目${index + 1}`));
+  if (includeHabit) habitNames.forEach((name, index) => header.push(name || `習慣${index + 1}`));
   if (includeHealth) healthItems.forEach((item, index) => header.push(item.name || `健康項目${index + 1}`));
   const rows = [header.join(",")];
 
@@ -1078,6 +1090,15 @@ function generateCsv(options) {
     const pendingTasks = includeTask ? (dayData.tasks || []).map(t => t.text).join(" / ") : "";
     const doneTasks = includeTask ? (archiveByDate[key] || []).join(" / ") : "";
 
+    const moneyRow = includeMoney ? (moneyData[key] || []) : [];
+    const moneyValues = includeMoney ? moneyCategories.map((name, index) => {
+      const v = Number(moneyRow[index]) || 0;
+      return v > 0 ? String(v) : "";
+    }) : [];
+
+    const habitRow = includeHabit ? (habitData[key] || []) : [];
+    const habitValues = includeHabit ? habitNames.map((name, index) => habitRow[index] ? "達成" : "") : [];
+
     const healthRow = includeHealth ? (healthData[key] || []) : [];
     const healthValues = includeHealth ? healthItems.map((item, index) => {
       const v = healthRow[index];
@@ -1086,13 +1107,16 @@ function generateCsv(options) {
       return String(v);
     }) : [];
 
-    if (!schedule && !memo.trim() && !pendingTasks && !doneTasks && !healthValues.some(v => v)) return;
+    if (!schedule && !memo.trim() && !pendingTasks && !doneTasks
+      && !moneyValues.some(v => v) && !habitValues.some(v => v) && !healthValues.some(v => v)) return;
 
     const row = [csvEscape(key)];
     if (includeSchedule) row.push(csvEscape(schedule));
     if (includeMemo) row.push(csvEscape(memo));
     if (includeTask) row.push(csvEscape(pendingTasks));
     if (includeTask) row.push(csvEscape(doneTasks));
+    if (includeMoney) moneyValues.forEach(v => row.push(csvEscape(v)));
+    if (includeHabit) habitValues.forEach(v => row.push(csvEscape(v)));
     if (includeHealth) healthValues.forEach(v => row.push(csvEscape(v)));
     rows.push(row.join(","));
   });
@@ -1104,6 +1128,8 @@ function currentExportOptions() {
     schedule: exportCheckSchedule.checked,
     memo: exportCheckMemo.checked,
     task: exportCheckTask.checked,
+    money: exportCheckMoney.checked,
+    habit: exportCheckHabit.checked,
     health: exportCheckHealth.checked,
   };
 }
@@ -1112,7 +1138,7 @@ function refreshExportText() {
   exportText.value = generateCsv(currentExportOptions());
 }
 
-[exportCheckSchedule, exportCheckMemo, exportCheckTask, exportCheckHealth].forEach(cb => {
+[exportCheckSchedule, exportCheckMemo, exportCheckTask, exportCheckMoney, exportCheckHabit, exportCheckHealth].forEach(cb => {
   cb.addEventListener("change", refreshExportText);
 });
 
