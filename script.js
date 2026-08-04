@@ -8,6 +8,12 @@ const STORAGE_KEY = "calendarAppData";
 const ARCHIVE_KEY = "completedTasksData";
 const THEME_KEY = "themePreference";
 
+[
+  "moneyEntriesData", "moneyCategoriesData",
+  "habitEntriesData", "habitNamesData",
+  "healthEntriesData", "healthItemsData",
+].forEach(key => localStorage.removeItem(key));
+
 const themeToggleBtn = document.getElementById("themeToggle");
 
 function effectiveTheme() {
@@ -371,11 +377,10 @@ function renderTaskList(tasks) {
   taskList.innerHTML = "";
   tasks.forEach((task, index) => {
     const li = document.createElement("li");
-    if (task.done) li.classList.add("done");
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    checkbox.checked = task.done;
+    checkbox.checked = false;
     checkbox.addEventListener("change", () => toggleTask(index));
 
     const span = document.createElement("span");
@@ -405,19 +410,12 @@ function updateSelectedDay(mutator) {
 function toggleTask(index) {
   let completedText = null;
   const dayData = updateSelectedDay(d => {
-    const task = d.tasks[index];
-    if (!task.done) {
-      completedText = task.text;
-      d.tasks.splice(index, 1);
-    } else {
-      task.done = false;
-    }
+    completedText = d.tasks[index].text;
+    d.tasks.splice(index, 1);
   });
-  if (completedText !== null) {
-    const archive = loadArchive();
-    archive.push({ text: completedText, date: selectedDateKey });
-    saveArchive(archive);
-  }
+  const archive = loadArchive();
+  archive.push({ text: completedText, date: selectedDateKey });
+  saveArchive(archive);
   renderTaskList(dayData.tasks);
 }
 
