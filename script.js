@@ -116,6 +116,7 @@ const bulkDeleteBtn = document.getElementById("bulkDeleteBtn");
 const exportCheckSchedule = document.getElementById("exportCheckSchedule");
 const exportCheckMemo = document.getElementById("exportCheckMemo");
 const exportCheckTask = document.getElementById("exportCheckTask");
+const exportCheckHealth = document.getElementById("exportCheckHealth");
 
 const openMoneyBtn = document.getElementById("openMoney");
 const moneyOverlay = document.getElementById("moneyOverlay");
@@ -1042,9 +1043,12 @@ function generateCsv(options) {
   const includeSchedule = opts.schedule !== false;
   const includeMemo = opts.memo !== false;
   const includeTask = opts.task !== false;
+  const includeHealth = opts.health !== false;
 
   const data = loadData();
   const archive = includeTask ? loadArchive() : [];
+  const healthItems = includeHealth ? loadHealthItems() : [];
+  const healthData = includeHealth ? loadHealthData() : {};
 
   const archiveByDate = {};
   archive.forEach(item => {
@@ -1055,6 +1059,7 @@ function generateCsv(options) {
   const allKeys = new Set([
     ...Object.keys(data),
     ...Object.keys(archiveByDate),
+    ...Object.keys(healthData),
   ]);
 
   const header = ["日付"];
@@ -1062,6 +1067,7 @@ function generateCsv(options) {
   if (includeMemo) header.push("メモ");
   if (includeTask) header.push("タスク(未完了)");
   if (includeTask) header.push("タスク(完了済み)");
+  if (includeHealth) healthItems.forEach((item, index) => header.push(item.name || `健康項目${index + 1}`));
   const rows = [header.join(",")];
 
   Array.from(allKeys).sort().forEach(key => {
@@ -1072,13 +1078,22 @@ function generateCsv(options) {
     const pendingTasks = includeTask ? (dayData.tasks || []).map(t => t.text).join(" / ") : "";
     const doneTasks = includeTask ? (archiveByDate[key] || []).join(" / ") : "";
 
-    if (!schedule && !memo.trim() && !pendingTasks && !doneTasks) return;
+    const healthRow = includeHealth ? (healthData[key] || []) : [];
+    const healthValues = includeHealth ? healthItems.map((item, index) => {
+      const v = healthRow[index];
+      if (v === undefined || v === "") return "";
+      if (item.type === "check") return v ? "済" : "";
+      return String(v);
+    }) : [];
+
+    if (!schedule && !memo.trim() && !pendingTasks && !doneTasks && !healthValues.some(v => v)) return;
 
     const row = [csvEscape(key)];
     if (includeSchedule) row.push(csvEscape(schedule));
     if (includeMemo) row.push(csvEscape(memo));
     if (includeTask) row.push(csvEscape(pendingTasks));
     if (includeTask) row.push(csvEscape(doneTasks));
+    if (includeHealth) healthValues.forEach(v => row.push(csvEscape(v)));
     rows.push(row.join(","));
   });
   return rows.join("\n");
@@ -1089,6 +1104,7 @@ function currentExportOptions() {
     schedule: exportCheckSchedule.checked,
     memo: exportCheckMemo.checked,
     task: exportCheckTask.checked,
+    health: exportCheckHealth.checked,
   };
 }
 
@@ -1096,7 +1112,7 @@ function refreshExportText() {
   exportText.value = generateCsv(currentExportOptions());
 }
 
-[exportCheckSchedule, exportCheckMemo, exportCheckTask].forEach(cb => {
+[exportCheckSchedule, exportCheckMemo, exportCheckTask, exportCheckHealth].forEach(cb => {
   cb.addEventListener("change", refreshExportText);
 });
 
