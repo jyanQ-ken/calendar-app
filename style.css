@@ -248,8 +248,9 @@ body.panel-open {
 }
 
 .mark-row {
-  font-size: 0.75rem;
-  line-height: 1;
+  font-size: 0.65rem;
+  line-height: 1.3;
+  overflow: hidden;
 }
 
 .day-cell .day-info {
@@ -329,7 +330,8 @@ body.panel-open {
 
 .mark-checks {
   display: flex;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 10px 16px;
   margin-bottom: 10px;
 }
 
@@ -448,18 +450,33 @@ body.panel-open {
   flex: 1 1 30%;
 }
 
-.mark-mode-buttons.compact {
-  gap: 4px;
+.mark-mode-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   margin-bottom: 6px;
 }
 
+.mark-mode-buttons.compact {
+  gap: 4px;
+  margin-bottom: 0;
+  flex-wrap: nowrap;
+  width: max-content;
+}
+
 .mark-mode-buttons.compact .mode-btn {
-  flex: 1;
+  flex: 0 0 auto;
+  width: 42px;
   padding: 6px 4px;
   min-height: 34px;
   font-size: 1rem;
   border-width: 1px;
   border-bottom-width: 3px;
+}
+
+.mark-mode-buttons.compact .off-btn,
+.mark-mode-buttons.compact .mode-btn[data-mode="holiday"],
+.mark-mode-buttons.compact .mode-btn[data-mode="national"] {
+  width: 34px;
 }
 
 .mode-btn[data-mode="off"] {
@@ -484,6 +501,18 @@ body.panel-open {
 
 .mode-btn[data-mode="smile"] {
   border-bottom-color: #ff9800;
+}
+
+.mode-btn[data-mode="beer"],
+.mode-btn[data-mode="coffee"],
+.mode-btn[data-mode="lunch"],
+.mode-btn[data-mode="work"],
+.mode-btn[data-mode="trip"],
+.mode-btn[data-mode="movie"],
+.mode-btn[data-mode="shopping"],
+.mode-btn[data-mode="sleep"],
+.mode-btn[data-mode="party"] {
+  border-bottom-color: var(--accent);
 }
 
 .mode-btn {

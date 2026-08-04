@@ -67,9 +67,7 @@ const panelDate = document.getElementById("panelDate");
 const closePanelBtn = document.getElementById("closePanel");
 const holidayCheck = document.getElementById("holidayCheck");
 const nationalCheck = document.getElementById("nationalCheck");
-const markStar = document.getElementById("markStar");
-const markHeart = document.getElementById("markHeart");
-const markSmile = document.getElementById("markSmile");
+const markChecks = document.getElementById("markChecks");
 const scheduleInput = document.getElementById("scheduleInput");
 const addScheduleBtn = document.getElementById("addSchedule");
 const scheduleList = document.getElementById("scheduleList");
@@ -182,7 +180,27 @@ const modeHintLabel = document.getElementById("modeHintLabel");
 const modeHint = document.getElementById("modeHint");
 let activeMode = null; // "holiday" | "star" | "heart" | "smile" | null (null = オフ)
 
-const MODE_LABELS = { holiday: "休み", national: "祝日", star: "⭐", heart: "💗", smile: "😊" };
+const MARK_DEFS = [
+  { key: "star", emoji: "⭐", label: "⭐" },
+  { key: "heart", emoji: "💗", label: "💗" },
+  { key: "smile", emoji: "😊", label: "😊" },
+  { key: "beer", emoji: "🍺", label: "🍺 お酒" },
+  { key: "coffee", emoji: "☕", label: "☕ カフェ" },
+  { key: "lunch", emoji: "🍱", label: "🍱 ランチ" },
+  { key: "work", emoji: "💼", label: "💼 仕事" },
+  { key: "trip", emoji: "🚗", label: "🚗 おでかけ" },
+  { key: "movie", emoji: "🎬", label: "🎬 映画" },
+  { key: "shopping", emoji: "🛍️", label: "🛍️ 買い物" },
+  { key: "sleep", emoji: "😴", label: "😴 早寝" },
+  { key: "party", emoji: "🎉", label: "🎉 イベント" },
+];
+
+const MODE_LABELS = { holiday: "休み", national: "祝日" };
+MARK_DEFS.forEach(def => { MODE_LABELS[def.key] = def.label; });
+
+markChecks.innerHTML = MARK_DEFS.map(def =>
+  `<label><input type="checkbox" data-mark="${def.key}"> ${def.emoji}</label>`
+).join("");
 
 function loadData() {
   const raw = localStorage.getItem(STORAGE_KEY);
@@ -201,14 +219,12 @@ function dateKey(year, month, day) {
 
 function getDayData(data, key) {
   const raw = data[key] || {};
+  const marks = {};
+  MARK_DEFS.forEach(def => { marks[def.key] = !!(raw.marks && raw.marks[def.key]); });
   return {
     holiday: !!raw.holiday,
     national: !!raw.national,
-    marks: {
-      star: !!(raw.marks && raw.marks.star),
-      heart: !!(raw.marks && raw.marks.heart),
-      smile: !!(raw.marks && raw.marks.smile),
-    },
+    marks,
     schedule: raw.schedule || [],
     tasks: raw.tasks || [],
     memo: raw.memo !== undefined ? raw.memo : (raw.diary || ""),
@@ -268,10 +284,7 @@ function renderCalendar() {
       cell.appendChild(nationalLabel);
     }
 
-    const markEmojis = [];
-    if (dayData.marks.star) markEmojis.push("⭐");
-    if (dayData.marks.heart) markEmojis.push("💗");
-    if (dayData.marks.smile) markEmojis.push("😊");
+    const markEmojis = MARK_DEFS.filter(def => dayData.marks[def.key]).map(def => def.emoji);
     if (markEmojis.length > 0) {
       const markRow = document.createElement("div");
       markRow.className = "mark-row";
@@ -365,9 +378,9 @@ function openPanel(key) {
   panelDate.textContent = key;
   holidayCheck.checked = dayData.holiday;
   nationalCheck.checked = dayData.national;
-  markStar.checked = dayData.marks.star;
-  markHeart.checked = dayData.marks.heart;
-  markSmile.checked = dayData.marks.smile;
+  markChecks.querySelectorAll("input[data-mark]").forEach(input => {
+    input.checked = dayData.marks[input.dataset.mark];
+  });
   diaryText.value = dayData.memo || "";
   renderScheduleList(dayData.schedule);
   renderTaskList(dayData.tasks);
@@ -512,14 +525,10 @@ nationalCheck.addEventListener("change", () => {
   });
 });
 
-markStar.addEventListener("change", () => {
-  updateSelectedDay(d => { d.marks.star = markStar.checked; });
-});
-markHeart.addEventListener("change", () => {
-  updateSelectedDay(d => { d.marks.heart = markHeart.checked; });
-});
-markSmile.addEventListener("change", () => {
-  updateSelectedDay(d => { d.marks.smile = markSmile.checked; });
+markChecks.addEventListener("change", (e) => {
+  const input = e.target;
+  if (!input.dataset.mark) return;
+  updateSelectedDay(d => { d.marks[input.dataset.mark] = input.checked; });
 });
 
 saveDiaryBtn.addEventListener("click", () => {
