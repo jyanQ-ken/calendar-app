@@ -1702,7 +1702,7 @@ function saveHealthData(data) {
   localStorage.setItem(HEALTH_KEY, JSON.stringify(data));
 }
 
-const HEALTH_NAME_EXAMPLES = ["血圧", "体温", "気分", "体重", "睡眠時間"];
+const HEALTH_NAME_EXAMPLES = ["例）血圧", "例）体温", "例）気分", "例）体重", "例）睡眠時間"];
 
 function renderHealthItemEditor() {
   const items = loadHealthItems();
