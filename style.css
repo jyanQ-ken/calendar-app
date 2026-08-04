@@ -482,7 +482,11 @@ body.panel-open {
 }
 
 .mode-btn[data-mode="off"] {
-  border-bottom-color: var(--text-faint);
+  border-style: dashed;
+  border-bottom-style: dashed;
+  border-color: var(--text-faint);
+  background: var(--bg-page);
+  color: var(--text-hint);
 }
 
 .mode-btn[data-mode="holiday"] {
