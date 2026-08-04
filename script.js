@@ -225,23 +225,16 @@ let activeMode = null; // "holiday" | "star" | "heart" | "smile" | null (null = 
 const MARK_DEFS = [
   { key: "star", emoji: "⭐", label: "⭐" },
   { key: "heart", emoji: "💗", label: "💗" },
-  { key: "smile", emoji: "😊", label: "😊" },
-  { key: "beer", emoji: "🍺", label: "🍺 お酒" },
-  { key: "coffee", emoji: "☕", label: "☕ カフェ" },
-  { key: "lunch", emoji: "🍱", label: "🍱 ランチ" },
-  { key: "work", emoji: "💼", label: "💼 仕事" },
-  { key: "trip", emoji: "🚗", label: "🚗 おでかけ" },
-  { key: "movie", emoji: "🎬", label: "🎬 映画" },
-  { key: "shopping", emoji: "🛍️", label: "🛍️ 買い物" },
-  { key: "sleep", emoji: "😴", label: "😴 早寝" },
-  { key: "party", emoji: "🎉", label: "🎉 イベント" },
+  { key: "circle", emoji: "○", label: "○", color: "#2e9e4f" },
+  { key: "triangle", emoji: "△", label: "△", color: "#d99a1b" },
+  { key: "cross", emoji: "×", label: "×", color: "#d94d4d" },
 ];
 
 const MODE_LABELS = { holiday: "休み", national: "祝日" };
 MARK_DEFS.forEach(def => { MODE_LABELS[def.key] = def.label; });
 
 markChecks.innerHTML = MARK_DEFS.map(def =>
-  `<label><input type="checkbox" data-mark="${def.key}"> ${def.emoji}</label>`
+  `<label><input type="checkbox" data-mark="${def.key}"> <span${def.color ? ` style="color:${def.color}"` : ""}>${def.emoji}</span></label>`
 ).join("");
 
 const MARK_LIST_DEFS = [
@@ -336,11 +329,17 @@ function renderCalendar() {
       cell.appendChild(nationalLabel);
     }
 
-    const markEmojis = MARK_DEFS.filter(def => dayData.marks[def.key]).map(def => def.emoji);
-    if (markEmojis.length > 0) {
+    const activeMarks = MARK_DEFS.filter(def => dayData.marks[def.key]);
+    if (activeMarks.length > 0) {
       const markRow = document.createElement("div");
       markRow.className = "mark-row";
-      markRow.textContent = markEmojis.join(" ");
+      activeMarks.forEach((def, index) => {
+        const span = document.createElement("span");
+        span.textContent = def.emoji;
+        if (def.color) span.style.color = def.color;
+        markRow.appendChild(span);
+        if (index < activeMarks.length - 1) markRow.appendChild(document.createTextNode(" "));
+      });
       cell.appendChild(markRow);
     }
 
@@ -914,6 +913,7 @@ function renderMarkList() {
 
     const emojiSpan = document.createElement("span");
     emojiSpan.textContent = markDef.emoji;
+    if (markDef.color) emojiSpan.style.color = markDef.color;
 
     li.appendChild(checkbox);
     li.appendChild(dateSpan);
