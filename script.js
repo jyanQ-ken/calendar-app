@@ -213,7 +213,13 @@ markChecks.innerHTML = MARK_DEFS.map(def =>
   `<label><input type="checkbox" data-mark="${def.key}"> ${def.emoji}</label>`
 ).join("");
 
-markListSelect.innerHTML = MARK_DEFS.map(def =>
+const MARK_LIST_DEFS = [
+  { key: "holiday", emoji: "休", label: "休み", field: "holiday" },
+  { key: "national", emoji: "祝", label: "祝日", field: "national" },
+  ...MARK_DEFS.map(def => ({ ...def, field: null })),
+];
+
+markListSelect.innerHTML = MARK_LIST_DEFS.map(def =>
   `<option value="${def.key}">${def.label}</option>`
 ).join("");
 
@@ -827,12 +833,17 @@ scheduleListOverlay.addEventListener("click", closeScheduleListPanel);
 
 function renderMarkList() {
   const markKey = markListSelect.value;
-  const markDef = MARK_DEFS.find(d => d.key === markKey);
+  const markDef = MARK_LIST_DEFS.find(d => d.key === markKey);
   const data = loadData();
   const todayKey = dateKey(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
 
+  const isOn = key => {
+    const dayData = getDayData(data, key);
+    return markDef.field ? dayData[markDef.field] : dayData.marks[markKey];
+  };
+
   const entries = Object.keys(data)
-    .filter(key => data[key].marks && data[key].marks[markKey])
+    .filter(isOn)
     .sort((a, b) => a.localeCompare(b));
 
   markListAll.innerHTML = "";
@@ -855,7 +866,11 @@ function renderMarkList() {
     checkbox.addEventListener("change", (e) => {
       const current = loadData();
       const dayData = getDayData(current, key);
-      dayData.marks[markKey] = false;
+      if (markDef.field) {
+        dayData[markDef.field] = false;
+      } else {
+        dayData.marks[markKey] = false;
+      }
       current[key] = dayData;
       saveData(current);
       renderMarkList();
