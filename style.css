@@ -822,6 +822,23 @@ body.panel-open {
   padding: 4px 0;
 }
 
+.reset-all-btn {
+  width: 100%;
+  padding: 10px;
+  margin-top: 6px;
+  min-height: 40px;
+  border: 1px solid #d94d4d;
+  border-radius: 8px;
+  background: none;
+  color: #d94d4d;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.reset-all-btn:hover {
+  background: rgba(217, 77, 77, 0.08);
+}
+
 .export-item-checks {
   display: flex;
   flex-wrap: wrap;

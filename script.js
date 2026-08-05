@@ -1103,6 +1103,22 @@ bulkDeleteBtn.addEventListener("click", () => {
   alert("削除しました");
 });
 
+const resetAllBtn = document.getElementById("resetAllBtn");
+
+resetAllBtn.addEventListener("click", () => {
+  const ok1 = confirm("休み・祝日・マーク・予定・タスク・メモ・メモ帳など、このアプリのデータをすべて削除して初期状態に戻します。元に戻せませんが、よろしいですか?");
+  if (!ok1) return;
+  const ok2 = confirm("本当によろしいですか?この操作は取り消せません。");
+  if (!ok2) return;
+
+  localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(ARCHIVE_KEY);
+  localStorage.removeItem(FREE_MEMO_KEY);
+
+  alert("すべてのデータを削除しました");
+  location.reload();
+});
+
 openHelpBtn.addEventListener("click", () => {
   closeMenuPanel();
   helpOverlay.classList.remove("hidden");
