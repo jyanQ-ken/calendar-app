@@ -189,7 +189,50 @@ const closeHelpPanelBtn = document.getElementById("closeHelpPanel");
 const modeButtons = document.querySelectorAll(".mode-btn");
 const modeHintLabel = document.getElementById("modeHintLabel");
 const modeHint = document.getElementById("modeHint");
-let activeMode = null; // "holiday" | "star" | "heart" | "smile" | null (null = オフ)
+let activeMode = null; // "holiday" | "star" | "heart" | "smile" | "delete" | null (null = オフ)
+
+const deleteActionBar = document.getElementById("deleteActionBar");
+const deleteSelectionCount = document.getElementById("deleteSelectionCount");
+const deleteSelectedBtn = document.getElementById("deleteSelectedBtn");
+const cancelDeleteSelectionBtn = document.getElementById("cancelDeleteSelectionBtn");
+const deleteSelection = new Set();
+
+function updateDeleteActionBar() {
+  if (activeMode === "delete") {
+    deleteActionBar.classList.remove("hidden");
+    deleteSelectionCount.textContent = `${deleteSelection.size}件選択中`;
+    deleteSelectedBtn.disabled = deleteSelection.size === 0;
+  } else {
+    deleteActionBar.classList.add("hidden");
+  }
+}
+
+function toggleDeleteSelection(key) {
+  if (deleteSelection.has(key)) {
+    deleteSelection.delete(key);
+  } else {
+    deleteSelection.add(key);
+  }
+  updateDeleteActionBar();
+  renderCalendar();
+}
+
+deleteSelectedBtn.addEventListener("click", () => {
+  if (deleteSelection.size === 0) return;
+  const ok = confirm(`選択した${deleteSelection.size}件の日付の記録(印・予定・タスク・メモ)を完全に削除します。元に戻せませんが、よろしいですか?`);
+  if (!ok) return;
+  const data = loadData();
+  deleteSelection.forEach(key => { delete data[key]; });
+  saveData(data);
+  deleteSelection.clear();
+  setActiveMode("off");
+  renderCalendar();
+});
+
+cancelDeleteSelectionBtn.addEventListener("click", () => {
+  deleteSelection.clear();
+  renderCalendar();
+});
 
 const MARK_DEFS = [
   { key: "star", emoji: "⭐", label: "⭐" },
@@ -302,8 +345,14 @@ function renderCalendar() {
       cell.appendChild(markRow);
     }
 
+    if (activeMode === "delete" && deleteSelection.has(key)) {
+      cell.classList.add("selected-for-delete");
+    }
+
     cell.addEventListener("click", () => {
-      if (activeMode) {
+      if (activeMode === "delete") {
+        toggleDeleteSelection(key);
+      } else if (activeMode) {
         applyModeToDay(key, activeMode);
       } else {
         openPanel(key);
@@ -356,6 +405,9 @@ function applyModeToDay(key, mode) {
 }
 
 function setActiveMode(mode) {
+  if (activeMode !== "delete" || mode !== "delete") {
+    deleteSelection.clear();
+  }
   activeMode = (mode === "off") ? null : mode;
   modeButtons.forEach(btn => {
     const btnIsActive = activeMode === null ? btn.dataset.mode === "off" : btn.dataset.mode === activeMode;
@@ -364,6 +416,9 @@ function setActiveMode(mode) {
   if (activeMode === "national") {
     modeHintLabel.textContent = "選択中: 祝日 ／ このアプリは祝日を自動判定しません。日本の暦を見ながら、祝日の日付を自分でタップして赤字にしてください";
     modeHint.classList.remove("hidden");
+  } else if (activeMode === "delete") {
+    modeHintLabel.textContent = "選択中: 削除 ／ 削除したい日付をタップして選び(複数選択可)、下の「選択した日を削除」ボタンを押してください";
+    modeHint.classList.remove("hidden");
   } else if (activeMode) {
     modeHintLabel.textContent = `選択中: ${MODE_LABELS[activeMode]} ／ 日付をタップするとON/OFFが切り替わります`;
     modeHint.classList.remove("hidden");
@@ -371,6 +426,8 @@ function setActiveMode(mode) {
     modeHintLabel.textContent = "";
     modeHint.classList.add("hidden");
   }
+  updateDeleteActionBar();
+  if (currentYear !== undefined) renderCalendar();
 }
 
 modeButtons.forEach(btn => {

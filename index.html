@@ -34,6 +34,7 @@
       <button type="button" class="mode-btn" data-mode="circle"><span class="mark-symbol" style="color:#2e9e4f">○</span></button>
       <button type="button" class="mode-btn" data-mode="triangle"><span class="mark-symbol" style="color:#d99a1b">△</span></button>
       <button type="button" class="mode-btn" data-mode="cross"><span class="mark-symbol" style="color:#d94d4d">×</span></button>
+      <button type="button" class="mode-btn" data-mode="delete">🗑</button>
     </div>
   </div>
 
@@ -46,6 +47,12 @@
   </div>
 
   <p id="modeHint" class="mode-hint hidden"><span id="modeHintLabel"></span></p>
+
+  <div id="deleteActionBar" class="delete-action-bar hidden">
+    <span id="deleteSelectionCount">0件選択中</span>
+    <button id="deleteSelectedBtn" type="button">選択した日を削除</button>
+    <button id="cancelDeleteSelectionBtn" type="button">選択解除</button>
+  </div>
 
   <div class="weekdays">
     <div>日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div>土</div>
