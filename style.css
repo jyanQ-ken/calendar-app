@@ -216,6 +216,29 @@ body.panel-open {
   gap: 4px;
 }
 
+.month-memo {
+  margin-top: 12px;
+}
+
+.month-memo-label {
+  margin: 0 0 6px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.month-memo textarea {
+  width: 100%;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid var(--border-input);
+  border-radius: 8px;
+  resize: vertical;
+  font-family: inherit;
+  background: var(--bg-input);
+  color: var(--text-main);
+  box-sizing: border-box;
+}
+
 .day-cell {
   height: 70px;
   overflow: hidden;

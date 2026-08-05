@@ -66,6 +66,33 @@ const monthLabel = document.getElementById("monthLabel");
 const calendarGrid = document.getElementById("calendarGrid");
 const prevMonthBtn = document.getElementById("prevMonth");
 const nextMonthBtn = document.getElementById("nextMonth");
+const monthMemoText = document.getElementById("monthMemoText");
+
+const MONTH_MEMO_KEY = "monthMemoData";
+
+function monthMemoKey(year, month) {
+  return `${year}-${String(month + 1).padStart(2, "0")}`;
+}
+
+function loadMonthMemos() {
+  const raw = localStorage.getItem(MONTH_MEMO_KEY);
+  return raw ? JSON.parse(raw) : {};
+}
+
+function saveMonthMemos(memos) {
+  localStorage.setItem(MONTH_MEMO_KEY, JSON.stringify(memos));
+}
+
+function renderMonthMemo() {
+  const memos = loadMonthMemos();
+  monthMemoText.value = memos[monthMemoKey(currentYear, currentMonth)] || "";
+}
+
+monthMemoText.addEventListener("input", () => {
+  const memos = loadMonthMemos();
+  memos[monthMemoKey(currentYear, currentMonth)] = monthMemoText.value;
+  saveMonthMemos(memos);
+});
 
 const overlay = document.getElementById("overlay");
 const panel = document.getElementById("panel");
@@ -275,6 +302,8 @@ function renderCalendar() {
 
     calendarGrid.appendChild(cell);
   }
+
+  renderMonthMemo();
 }
 
 function applyModeToDay(key, mode) {
