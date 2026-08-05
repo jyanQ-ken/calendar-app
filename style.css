@@ -542,9 +542,10 @@ body.panel-open {
 
 .mark-mode-row .delete-mode-btn {
   flex: 0 0 auto;
-  padding: 6px 10px;
+  width: 40px;
+  padding: 6px 2px;
   min-height: 34px;
-  font-size: 0.8rem;
+  font-size: 1rem;
   border-radius: 999px;
   white-space: nowrap;
 }
