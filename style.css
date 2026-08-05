@@ -905,6 +905,14 @@ body.panel-open {
   color: var(--text-strong-secondary);
 }
 
+.help-content .disclaimer {
+  margin-top: 20px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-list);
+  font-size: 0.75rem;
+  color: var(--text-faint);
+}
+
 .help-content ul {
   margin: 4px 0;
   padding-left: 20px;
