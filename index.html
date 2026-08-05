@@ -39,6 +39,7 @@
   </div>
 
   <div class="link-buttons compact">
+    <button id="openHabit">習慣</button>
     <button id="openMonthMemo">メモ帳</button>
     <button id="openExport">書出</button>
     <button id="openHelp">?</button>
@@ -144,6 +145,29 @@
     <button id="copyMonthMemoBtn">コピーする</button>
     <button id="clearMonthMemoBtn">全部消す</button>
   </div>
+</div>
+
+<div id="habitOverlay" class="overlay hidden"></div>
+<div id="habitPanel" class="panel hidden">
+  <div class="panel-header">
+    <h2>今日の習慣</h2>
+    <button id="closeHabitPanel">×</button>
+  </div>
+  <p id="habitDateLabel" class="habit-date-label"></p>
+
+  <div class="habit-progress-wrap">
+    <div class="habit-progress-bar"><div id="habitProgressFill" class="habit-progress-fill"></div></div>
+    <p id="habitProgressText" class="habit-progress-text"></p>
+  </div>
+  <p id="habitCelebration" class="habit-celebration hidden">🎉 今日の習慣、全部できました!</p>
+
+  <ul id="habitList" class="habit-list"></ul>
+
+  <div class="task-input-row">
+    <input type="text" id="habitNameInput" placeholder="新しい習慣を追加(例: 水を飲む)">
+    <button id="addHabitBtn">追加</button>
+  </div>
+  <p class="export-hint">チェックをタップするだけで記録できます。習慣名の横の×で削除できます。</p>
 </div>
 
 <div id="exportOverlay" class="overlay hidden"></div>

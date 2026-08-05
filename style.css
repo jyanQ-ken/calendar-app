@@ -982,3 +982,142 @@ body.panel-open {
 .export-buttons button:active {
   transform: translateY(0);
 }
+
+/* 習慣化チェック */
+.habit-date-label {
+  margin: 0 0 12px;
+  color: var(--text-secondary);
+  font-weight: bold;
+}
+
+.habit-progress-wrap {
+  margin-bottom: 8px;
+}
+
+.habit-progress-bar {
+  width: 100%;
+  height: 12px;
+  border-radius: 999px;
+  background: var(--accent-soft-bg);
+  overflow: hidden;
+}
+
+.habit-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #2e9e4f, #6fd08c);
+  border-radius: 999px;
+  transition: width 0.3s ease;
+}
+
+.habit-progress-text {
+  margin: 6px 0 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  text-align: right;
+}
+
+.habit-celebration {
+  margin: 10px 0;
+  padding: 10px;
+  text-align: center;
+  font-weight: bold;
+  color: #1f7a3d;
+  background: linear-gradient(90deg, rgba(46, 158, 79, 0.18), rgba(111, 208, 140, 0.1));
+  border-radius: 10px;
+  animation: habit-celebration-in 0.4s ease;
+}
+
+@keyframes habit-celebration-in {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.habit-list {
+  list-style: none;
+  margin: 0 0 14px;
+  padding: 0;
+}
+
+.habit-empty {
+  color: var(--text-faint);
+  padding: 12px 0;
+  text-align: center;
+}
+
+.habit-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 6px;
+  border-bottom: 1px solid var(--border-list);
+  transition: background 0.2s ease;
+}
+
+.habit-item.done {
+  background: linear-gradient(90deg, rgba(46, 158, 79, 0.14), rgba(46, 158, 79, 0.03));
+  border-radius: 8px;
+}
+
+.habit-check-btn {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 2px solid var(--border-input);
+  background: var(--bg-input);
+  color: transparent;
+  font-size: 1.2rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.habit-check-btn.checked {
+  background: linear-gradient(135deg, #2e9e4f, #6fd08c);
+  border-color: #2e9e4f;
+  color: #fff;
+}
+
+.habit-check-btn.pop {
+  animation: habit-pop 0.4s ease;
+}
+
+@keyframes habit-pop {
+  0% { transform: scale(1); }
+  40% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+.habit-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.habit-name {
+  font-size: 1rem;
+}
+
+.habit-item.done .habit-name {
+  color: var(--text-secondary);
+}
+
+.habit-streak {
+  font-size: 0.8rem;
+  color: #d9822b;
+}
+
+.habit-delete-btn {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  background: none;
+  border: none;
+  color: var(--delete-color);
+  cursor: pointer;
+  font-size: 1.1rem;
+}

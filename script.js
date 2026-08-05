@@ -115,6 +115,156 @@ clearMonthMemoBtn.addEventListener("click", () => {
   localStorage.setItem(FREE_MEMO_KEY, "");
 });
 
+const HABIT_LIST_KEY = "habitListData";
+const HABIT_LOG_KEY = "habitLogData";
+
+const openHabitBtn = document.getElementById("openHabit");
+const habitOverlay = document.getElementById("habitOverlay");
+const habitPanel = document.getElementById("habitPanel");
+const closeHabitPanelBtn = document.getElementById("closeHabitPanel");
+const habitDateLabel = document.getElementById("habitDateLabel");
+const habitList = document.getElementById("habitList");
+const habitNameInput = document.getElementById("habitNameInput");
+const addHabitBtn = document.getElementById("addHabitBtn");
+const habitProgressFill = document.getElementById("habitProgressFill");
+const habitProgressText = document.getElementById("habitProgressText");
+const habitCelebration = document.getElementById("habitCelebration");
+
+function loadHabitList() {
+  const raw = localStorage.getItem(HABIT_LIST_KEY);
+  return raw ? JSON.parse(raw) : [];
+}
+function saveHabitList(list) {
+  localStorage.setItem(HABIT_LIST_KEY, JSON.stringify(list));
+}
+function loadHabitLog() {
+  const raw = localStorage.getItem(HABIT_LOG_KEY);
+  return raw ? JSON.parse(raw) : {};
+}
+function saveHabitLog(log) {
+  localStorage.setItem(HABIT_LOG_KEY, JSON.stringify(log));
+}
+function todayKey() {
+  const t = new Date();
+  return dateKey(t.getFullYear(), t.getMonth(), t.getDate());
+}
+function habitStreak(log, habitId, fromKey) {
+  // fromKeyから遡って連続で達成している日数を数える
+  let count = 0;
+  let d = new Date(fromKey + "T00:00:00");
+  while (true) {
+    const key = dateKey(d.getFullYear(), d.getMonth(), d.getDate());
+    if (log[key] && log[key][habitId]) {
+      count++;
+      d.setDate(d.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+  return count;
+}
+
+function renderHabitPanel() {
+  const list = loadHabitList();
+  const log = loadHabitLog();
+  const today = todayKey();
+  const todayLog = log[today] || {};
+
+  habitDateLabel.textContent = `${currentYearForHabit()}`;
+
+  if (list.length === 0) {
+    habitList.innerHTML = `<li class="habit-empty">まだ習慣が登録されていません。下から追加してください。</li>`;
+  } else {
+    habitList.innerHTML = list.map(h => {
+      const done = !!todayLog[h.id];
+      const streak = habitStreak(log, h.id, today);
+      return `
+        <li class="habit-item${done ? " done" : ""}" data-id="${h.id}">
+          <button type="button" class="habit-check-btn${done ? " checked" : ""}" data-habit-check="${h.id}" aria-label="${h.name}を達成">
+            <span class="habit-check-mark">✓</span>
+          </button>
+          <div class="habit-info">
+            <span class="habit-name">${escapeHtml(h.name)}</span>
+            ${streak > 0 ? `<span class="habit-streak">🔥 ${streak}日連続</span>` : ""}
+          </div>
+          <button type="button" class="habit-delete-btn" data-habit-delete="${h.id}" aria-label="削除">×</button>
+        </li>`;
+    }).join("");
+  }
+
+  const doneCount = list.filter(h => todayLog[h.id]).length;
+  const total = list.length;
+  const pct = total === 0 ? 0 : Math.round((doneCount / total) * 100);
+  habitProgressFill.style.width = `${pct}%`;
+  habitProgressText.textContent = total === 0 ? "" : `${doneCount} / ${total} 達成`;
+  habitCelebration.classList.toggle("hidden", !(total > 0 && doneCount === total));
+}
+
+function currentYearForHabit() {
+  const t = new Date();
+  return `${t.getFullYear()}年${t.getMonth() + 1}月${t.getDate()}日`;
+}
+
+function escapeHtml(str) {
+  return str.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+}
+
+openHabitBtn.addEventListener("click", () => {
+  renderHabitPanel();
+  habitOverlay.classList.remove("hidden");
+  habitPanel.classList.remove("hidden");
+  lockBackgroundScroll();
+});
+
+function closeHabitPanel() {
+  habitOverlay.classList.add("hidden");
+  habitPanel.classList.add("hidden");
+  unlockBackgroundScroll();
+}
+closeHabitPanelBtn.addEventListener("click", closeHabitPanel);
+habitOverlay.addEventListener("click", closeHabitPanel);
+
+habitList.addEventListener("click", (e) => {
+  const checkBtn = e.target.closest("[data-habit-check]");
+  if (checkBtn) {
+    const id = checkBtn.dataset.habitCheck;
+    const log = loadHabitLog();
+    const today = todayKey();
+    log[today] = log[today] || {};
+    log[today][id] = !log[today][id];
+    saveHabitLog(log);
+    if (log[today][id]) {
+      checkBtn.classList.add("pop");
+      setTimeout(() => checkBtn.classList.remove("pop"), 400);
+    }
+    renderHabitPanel();
+    return;
+  }
+  const delBtn = e.target.closest("[data-habit-delete]");
+  if (delBtn) {
+    const id = delBtn.dataset.habitDelete;
+    const list = loadHabitList();
+    const target = list.find(h => h.id === id);
+    const ok = confirm(`「${target ? target.name : "この習慣"}」を削除します。これまでの記録も含めて元に戻せませんが、よろしいですか?`);
+    if (!ok) return;
+    saveHabitList(list.filter(h => h.id !== id));
+    renderHabitPanel();
+  }
+});
+
+addHabitBtn.addEventListener("click", () => {
+  const name = habitNameInput.value.trim();
+  if (!name) return;
+  const list = loadHabitList();
+  list.push({ id: Date.now().toString(), name });
+  saveHabitList(list);
+  habitNameInput.value = "";
+  renderHabitPanel();
+});
+habitNameInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") addHabitBtn.click();
+});
+
 const overlay = document.getElementById("overlay");
 const panel = document.getElementById("panel");
 const panelDate = document.getElementById("panelDate");
@@ -1114,6 +1264,8 @@ resetAllBtn.addEventListener("click", () => {
   localStorage.removeItem(STORAGE_KEY);
   localStorage.removeItem(ARCHIVE_KEY);
   localStorage.removeItem(FREE_MEMO_KEY);
+  localStorage.removeItem(HABIT_LIST_KEY);
+  localStorage.removeItem(HABIT_LOG_KEY);
 
   alert("すべてのデータを削除しました");
   location.reload();
