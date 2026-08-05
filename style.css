@@ -526,21 +526,41 @@ body.panel-open {
   flex: 1 1 30%;
 }
 
-.mark-mode-scroll {
+.mark-mode-row {
+  display: flex;
+  align-items: stretch;
+  gap: 6px;
   margin-bottom: 6px;
+}
+
+.mark-mode-scroll {
+  flex: 1;
+  min-width: 0;
+  margin-bottom: 0;
+  overflow-x: auto;
+}
+
+.mark-mode-row .delete-mode-btn {
+  flex: 0 0 auto;
+  padding: 6px 10px;
+  min-height: 34px;
+  font-size: 0.8rem;
+  border-radius: 999px;
+  white-space: nowrap;
 }
 
 .mark-mode-buttons.compact {
   gap: 4px;
   margin-bottom: 0;
   flex-wrap: nowrap;
-  width: 100%;
+  width: max-content;
+  min-width: 100%;
 }
 
 .mark-mode-buttons.compact .mode-btn {
   flex: 1 1 0;
   width: auto;
-  min-width: 0;
+  min-width: 34px;
   padding: 6px 2px;
   min-height: 34px;
   font-size: 1rem;
@@ -569,8 +589,16 @@ body.panel-open {
 }
 
 .mode-btn[data-mode="delete"] {
-  border-bottom-color: #d94d4d;
-  color: #d94d4d;
+  border-style: solid;
+  border-color: #d94d4d;
+  background: #d94d4d;
+  color: #fff;
+}
+
+.mode-btn[data-mode="delete"].active {
+  background: #b53a3a;
+  border-color: #b53a3a;
+  box-shadow: 0 4px 10px -5px rgba(217, 77, 77, 0.6);
 }
 
 .mode-btn[data-mode="holiday"] {
