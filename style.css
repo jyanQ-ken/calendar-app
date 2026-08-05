@@ -540,7 +540,8 @@ body.panel-open {
   overflow-x: auto;
 }
 
-.mark-mode-row .delete-mode-btn {
+.mark-mode-row .delete-mode-btn,
+.mark-mode-row .off-btn {
   flex: 0 0 auto;
   width: 40px;
   padding: 6px 2px;
@@ -548,6 +549,10 @@ body.panel-open {
   font-size: 1rem;
   border-radius: 999px;
   white-space: nowrap;
+}
+
+.mark-mode-row .off-btn {
+  font-size: 0.6rem;
 }
 
 .mark-mode-buttons.compact {
@@ -568,11 +573,6 @@ body.panel-open {
   border-radius: 999px;
   border-width: 1px;
   border-bottom-width: 3px;
-}
-
-.mark-mode-buttons.compact .off-btn {
-  font-size: 0.6rem;
-  padding: 6px 2px;
 }
 
 .mode-btn[data-mode="off"] {

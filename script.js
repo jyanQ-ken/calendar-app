@@ -240,6 +240,12 @@ const MARK_DEFS = [
   { key: "circle", emoji: "○", label: "○", color: "#2e9e4f" },
   { key: "triangle", emoji: "△", label: "△", color: "#d99a1b" },
   { key: "cross", emoji: "×", label: "×", color: "#d94d4d" },
+  { key: "cafe", emoji: "☕", label: "☕" },
+  { key: "lunch", emoji: "🍱", label: "🍱" },
+  { key: "ribbon", emoji: "🎀", label: "🎀" },
+  { key: "movie", emoji: "🎬", label: "🎬" },
+  { key: "drive", emoji: "🚗", label: "🚗" },
+  { key: "sparkle", emoji: "✨", label: "✨" },
 ];
 
 const MODE_LABELS = { holiday: "休み", national: "祝日" };
