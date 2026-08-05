@@ -216,17 +216,7 @@ body.panel-open {
   gap: 4px;
 }
 
-.month-memo {
-  margin-top: 12px;
-}
-
-.month-memo-label {
-  margin: 0 0 6px;
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-}
-
-.month-memo textarea {
+#monthMemoText {
   width: 100%;
   padding: 8px;
   font-size: 16px;

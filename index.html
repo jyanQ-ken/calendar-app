@@ -40,6 +40,7 @@
   <div class="link-buttons compact">
     <button id="openTaskArchive">タスク</button>
     <button id="openDiaryList">メモ</button>
+    <button id="openMonthMemo">月メモ</button>
     <button id="openExport">書出</button>
     <button id="openHelp">?</button>
   </div>
@@ -51,11 +52,6 @@
   </div>
 
   <div id="calendarGrid" class="calendar-grid"></div>
-
-  <div class="month-memo">
-    <h3 class="month-memo-label">この月のメモ</h3>
-    <textarea id="monthMemoText" rows="3" placeholder="とりあえずメモ、思いついたことを自由に書けます"></textarea>
-  </div>
 </div>
 
 <div id="overlay" class="overlay hidden"></div>
@@ -129,6 +125,18 @@
     <button id="closeDiaryPanel">×</button>
   </div>
   <ul id="diaryListEl" class="diary-list"></ul>
+</div>
+
+<div id="monthMemoOverlay" class="overlay hidden"></div>
+<div id="monthMemoPanel" class="panel hidden">
+  <div class="panel-header">
+    <h2 id="monthMemoTitle">この月のメモ</h2>
+    <button id="closeMonthMemoPanel">×</button>
+  </div>
+  <textarea id="monthMemoText" rows="10" placeholder="とりあえずメモ、思いついたことを自由に書けます"></textarea>
+  <div class="export-buttons">
+    <button id="copyMonthMemoBtn">コピーする</button>
+  </div>
 </div>
 
 <div id="exportOverlay" class="overlay hidden"></div>

@@ -66,7 +66,13 @@ const monthLabel = document.getElementById("monthLabel");
 const calendarGrid = document.getElementById("calendarGrid");
 const prevMonthBtn = document.getElementById("prevMonth");
 const nextMonthBtn = document.getElementById("nextMonth");
+const openMonthMemoBtn = document.getElementById("openMonthMemo");
+const monthMemoOverlay = document.getElementById("monthMemoOverlay");
+const monthMemoPanel = document.getElementById("monthMemoPanel");
+const monthMemoTitle = document.getElementById("monthMemoTitle");
+const closeMonthMemoPanelBtn = document.getElementById("closeMonthMemoPanel");
 const monthMemoText = document.getElementById("monthMemoText");
+const copyMonthMemoBtn = document.getElementById("copyMonthMemoBtn");
 
 const MONTH_MEMO_KEY = "monthMemoData";
 
@@ -84,6 +90,7 @@ function saveMonthMemos(memos) {
 }
 
 function renderMonthMemo() {
+  monthMemoTitle.textContent = `${currentYear}年${currentMonth + 1}月のメモ`;
   const memos = loadMonthMemos();
   monthMemoText.value = memos[monthMemoKey(currentYear, currentMonth)] || "";
 }
@@ -92,6 +99,33 @@ monthMemoText.addEventListener("input", () => {
   const memos = loadMonthMemos();
   memos[monthMemoKey(currentYear, currentMonth)] = monthMemoText.value;
   saveMonthMemos(memos);
+});
+
+openMonthMemoBtn.addEventListener("click", () => {
+  renderMonthMemo();
+  monthMemoOverlay.classList.remove("hidden");
+  monthMemoPanel.classList.remove("hidden");
+  lockBackgroundScroll();
+});
+
+function closeMonthMemoPanel() {
+  monthMemoOverlay.classList.add("hidden");
+  monthMemoPanel.classList.add("hidden");
+  unlockBackgroundScroll();
+}
+
+closeMonthMemoPanelBtn.addEventListener("click", closeMonthMemoPanel);
+monthMemoOverlay.addEventListener("click", closeMonthMemoPanel);
+
+copyMonthMemoBtn.addEventListener("click", async () => {
+  monthMemoText.select();
+  try {
+    await navigator.clipboard.writeText(monthMemoText.value);
+  } catch (e) {
+    document.execCommand("copy");
+  }
+  copyMonthMemoBtn.textContent = "コピーしました";
+  setTimeout(() => { copyMonthMemoBtn.textContent = "コピーする"; }, 1200);
 });
 
 const overlay = document.getElementById("overlay");
