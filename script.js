@@ -246,6 +246,11 @@ const MARK_DEFS = [
   { key: "movie", emoji: "🎬", label: "🎬" },
   { key: "drive", emoji: "🚗", label: "🚗" },
   { key: "sparkle", emoji: "✨", label: "✨" },
+  { key: "beer", emoji: "🍺", label: "🍺" },
+  { key: "event", emoji: "🎉", label: "🎉" },
+  { key: "sleep", emoji: "😴", label: "😴" },
+  { key: "shopping", emoji: "🛍️", label: "🛍️" },
+  { key: "work", emoji: "💼", label: "💼" },
 ];
 
 const MODE_LABELS = { holiday: "休み", national: "祝日" };
