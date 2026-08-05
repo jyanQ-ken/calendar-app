@@ -516,62 +516,28 @@ body.panel-open {
   background: var(--accent-soft-bg);
 }
 
-.mark-mode-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-.mark-mode-buttons .mode-btn {
-  flex: 1 1 30%;
-}
-
 .mark-mode-row {
   display: flex;
   align-items: stretch;
-  gap: 6px;
+  gap: 3px;
   margin-bottom: 6px;
 }
 
-.mark-mode-scroll {
-  flex: 1;
-  min-width: 0;
-  margin-bottom: 0;
-  overflow-x: auto;
-}
-
 .mark-mode-row > .mode-btn {
-  flex: 0 0 auto;
-  width: 34px;
-  padding: 6px 2px;
-  min-height: 34px;
-  font-size: 1rem;
+  flex: 1 1 0;
+  width: auto;
+  min-width: 0;
+  padding: 4px 1px;
+  min-height: 28px;
+  font-size: 0.8rem;
   border-radius: 999px;
+  border-width: 1px;
+  border-bottom-width: 2px;
   white-space: nowrap;
 }
 
 .mark-mode-row .off-btn {
-  font-size: 0.55rem;
-}
-
-.mark-mode-buttons.compact {
-  gap: 4px;
-  margin-bottom: 0;
-  flex-wrap: nowrap;
-  width: max-content;
-  min-width: 100%;
-}
-
-.mark-mode-buttons.compact .mode-btn {
-  flex: 1 1 0;
-  width: auto;
-  min-width: 34px;
-  padding: 6px 2px;
-  min-height: 34px;
-  font-size: 1rem;
-  border-radius: 999px;
-  border-width: 1px;
-  border-bottom-width: 3px;
+  font-size: 0.5rem;
 }
 
 .mode-btn[data-mode="off"] {
