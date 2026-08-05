@@ -516,6 +516,15 @@ body.panel-open {
   background: var(--accent-soft-bg);
 }
 
+.task-list li.past-item {
+  background: var(--bg-page);
+  color: var(--text-faint);
+}
+
+.task-list li.past-item .archive-item-date {
+  color: var(--text-faint);
+}
+
 .mark-mode-row {
   display: flex;
   align-items: stretch;

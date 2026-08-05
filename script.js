@@ -740,6 +740,7 @@ function deleteScheduleFromList(dayKey, index) {
 function appendScheduleItem(dayKey, text, index, todayKey) {
   const li = document.createElement("li");
   if (dayKey === todayKey) li.classList.add("today-item");
+  if (dayKey < todayKey) li.classList.add("past-item");
 
   const dateSpan = document.createElement("span");
   dateSpan.className = "archive-item-date";
