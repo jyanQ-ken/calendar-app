@@ -540,8 +540,7 @@ body.panel-open {
   overflow-x: auto;
 }
 
-.mark-mode-row .delete-mode-btn,
-.mark-mode-row .off-btn {
+.mark-mode-row > .mode-btn {
   flex: 0 0 auto;
   width: 34px;
   padding: 6px 2px;
