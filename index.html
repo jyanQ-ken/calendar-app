@@ -164,10 +164,17 @@
   <ul id="habitList" class="habit-list"></ul>
 
   <div class="task-input-row">
-    <input type="text" id="habitNameInput" placeholder="新しい習慣を追加(例: 水を飲む)">
+    <input type="text" id="habitNameInput" placeholder="新しい習慣を追加(例: 早起き・運動・読書)">
     <button id="addHabitBtn">追加</button>
   </div>
   <p class="export-hint">チェックをタップするだけで記録できます。習慣名の横の×で削除できます。</p>
+
+  <details class="category-editor-wrap">
+    <summary>振り返る(直近30日の記録)</summary>
+    <p class="export-hint">色が濃いほど、その日の達成率が高いことを表します。マスをタップすると詳細が見られます。</p>
+    <div id="habitHistoryGrid" class="habit-history-grid"></div>
+    <p id="habitHistoryDetail" class="habit-history-detail"></p>
+  </details>
 </div>
 
 <div id="exportOverlay" class="overlay hidden"></div>

@@ -198,6 +198,8 @@ function renderHabitPanel() {
   habitProgressFill.style.width = `${pct}%`;
   habitProgressText.textContent = total === 0 ? "" : `${doneCount} / ${total} 達成`;
   habitCelebration.classList.toggle("hidden", !(total > 0 && doneCount === total));
+
+  renderHabitHistory();
 }
 
 function currentYearForHabit() {
@@ -263,6 +265,54 @@ addHabitBtn.addEventListener("click", () => {
 });
 habitNameInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") addHabitBtn.click();
+});
+
+const habitHistoryGrid = document.getElementById("habitHistoryGrid");
+const habitHistoryDetail = document.getElementById("habitHistoryDetail");
+
+function renderHabitHistory() {
+  const list = loadHabitList();
+  const log = loadHabitLog();
+  const total = list.length;
+
+  if (total === 0) {
+    habitHistoryGrid.innerHTML = "";
+    habitHistoryDetail.textContent = "習慣を登録すると、ここに記録が表示されます。";
+    return;
+  }
+
+  const days = [];
+  const d = new Date();
+  for (let i = 29; i >= 0; i--) {
+    const day = new Date(d.getFullYear(), d.getMonth(), d.getDate() - i);
+    days.push(dateKey(day.getFullYear(), day.getMonth(), day.getDate()));
+  }
+
+  habitHistoryGrid.innerHTML = days.map(key => {
+    const dayLog = log[key] || {};
+    const doneCount = list.filter(h => dayLog[h.id]).length;
+    const ratio = doneCount / total;
+    let level = 0;
+    if (ratio > 0 && ratio < 1) level = 1;
+    else if (ratio === 1) level = 2;
+    const dayNum = Number(key.slice(-2));
+    return `<button type="button" class="habit-history-cell level-${level}" data-history-key="${key}" title="${key}: ${doneCount}/${total}達成">${dayNum}</button>`;
+  }).join("");
+
+  habitHistoryDetail.textContent = "";
+}
+
+habitHistoryGrid.addEventListener("click", (e) => {
+  const cell = e.target.closest("[data-history-key]");
+  if (!cell) return;
+  const key = cell.dataset.historyKey;
+  const list = loadHabitList();
+  const log = loadHabitLog();
+  const dayLog = log[key] || {};
+  const doneNames = list.filter(h => dayLog[h.id]).map(h => h.name);
+  habitHistoryDetail.textContent = doneNames.length
+    ? `${key}: ${doneNames.join("・")} を達成`
+    : `${key}: 達成した習慣はありません`;
 });
 
 const overlay = document.getElementById("overlay");
