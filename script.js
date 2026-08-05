@@ -69,40 +69,18 @@ const nextMonthBtn = document.getElementById("nextMonth");
 const openMonthMemoBtn = document.getElementById("openMonthMemo");
 const monthMemoOverlay = document.getElementById("monthMemoOverlay");
 const monthMemoPanel = document.getElementById("monthMemoPanel");
-const monthMemoTitle = document.getElementById("monthMemoTitle");
 const closeMonthMemoPanelBtn = document.getElementById("closeMonthMemoPanel");
 const monthMemoText = document.getElementById("monthMemoText");
 const copyMonthMemoBtn = document.getElementById("copyMonthMemoBtn");
 
-const MONTH_MEMO_KEY = "monthMemoData";
-
-function monthMemoKey(year, month) {
-  return `${year}-${String(month + 1).padStart(2, "0")}`;
-}
-
-function loadMonthMemos() {
-  const raw = localStorage.getItem(MONTH_MEMO_KEY);
-  return raw ? JSON.parse(raw) : {};
-}
-
-function saveMonthMemos(memos) {
-  localStorage.setItem(MONTH_MEMO_KEY, JSON.stringify(memos));
-}
-
-function renderMonthMemo() {
-  monthMemoTitle.textContent = `${currentYear}年${currentMonth + 1}月のメモ`;
-  const memos = loadMonthMemos();
-  monthMemoText.value = memos[monthMemoKey(currentYear, currentMonth)] || "";
-}
+const FREE_MEMO_KEY = "freeMemoData";
 
 monthMemoText.addEventListener("input", () => {
-  const memos = loadMonthMemos();
-  memos[monthMemoKey(currentYear, currentMonth)] = monthMemoText.value;
-  saveMonthMemos(memos);
+  localStorage.setItem(FREE_MEMO_KEY, monthMemoText.value);
 });
 
 openMonthMemoBtn.addEventListener("click", () => {
-  renderMonthMemo();
+  monthMemoText.value = localStorage.getItem(FREE_MEMO_KEY) || "";
   monthMemoOverlay.classList.remove("hidden");
   monthMemoPanel.classList.remove("hidden");
   lockBackgroundScroll();
@@ -385,8 +363,6 @@ function renderCalendar() {
 
     calendarGrid.appendChild(cell);
   }
-
-  renderMonthMemo();
 }
 
 function applyModeToDay(key, mode) {

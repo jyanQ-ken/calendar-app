@@ -22,6 +22,8 @@
 
   <div class="schedule-list-buttons">
     <button id="openScheduleList" class="schedule-list-btn">📋 予定一覧</button>
+    <button id="openTaskArchive" class="schedule-list-btn">✅ タスク</button>
+    <button id="openDiaryList" class="schedule-list-btn">📝 メモ一覧</button>
   </div>
 
   <div class="mark-mode-row">
@@ -37,9 +39,7 @@
   </div>
 
   <div class="link-buttons compact">
-    <button id="openTaskArchive">タスク</button>
-    <button id="openDiaryList">メモ</button>
-    <button id="openMonthMemo">月メモ</button>
+    <button id="openMonthMemo">メモ帳</button>
     <button id="openExport">書出</button>
     <button id="openHelp">?</button>
   </div>
@@ -135,9 +135,10 @@
 <div id="monthMemoOverlay" class="overlay hidden"></div>
 <div id="monthMemoPanel" class="panel hidden">
   <div class="panel-header">
-    <h2 id="monthMemoTitle">この月のメモ</h2>
+    <h2>メモ帳</h2>
     <button id="closeMonthMemoPanel">×</button>
   </div>
+  <p class="export-hint">日付や月にしばられず、思いついたことを自由に書けるメモ帳です。長期的にやりたいことのメモ書きなどにもどうぞ。</p>
   <textarea id="monthMemoText" rows="10" placeholder="とりあえずメモ、思いついたことを自由に書けます"></textarea>
   <div class="export-buttons">
     <button id="copyMonthMemoBtn">コピーする</button>
