@@ -72,6 +72,7 @@ const monthMemoPanel = document.getElementById("monthMemoPanel");
 const closeMonthMemoPanelBtn = document.getElementById("closeMonthMemoPanel");
 const monthMemoText = document.getElementById("monthMemoText");
 const copyMonthMemoBtn = document.getElementById("copyMonthMemoBtn");
+const clearMonthMemoBtn = document.getElementById("clearMonthMemoBtn");
 
 const FREE_MEMO_KEY = "freeMemoData";
 
@@ -104,6 +105,14 @@ copyMonthMemoBtn.addEventListener("click", async () => {
   }
   copyMonthMemoBtn.textContent = "コピーしました";
   setTimeout(() => { copyMonthMemoBtn.textContent = "コピーする"; }, 1200);
+});
+
+clearMonthMemoBtn.addEventListener("click", () => {
+  if (monthMemoText.value === "") return;
+  const ok = confirm("メモ帳の内容をすべて削除します。元に戻せませんが、よろしいですか?");
+  if (!ok) return;
+  monthMemoText.value = "";
+  localStorage.setItem(FREE_MEMO_KEY, "");
 });
 
 const overlay = document.getElementById("overlay");
