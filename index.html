@@ -150,31 +150,31 @@
 <div id="habitOverlay" class="overlay hidden"></div>
 <div id="habitPanel" class="panel hidden">
   <div class="panel-header">
-    <h2>今日の習慣</h2>
+    <h2>習慣</h2>
     <button id="closeHabitPanel">×</button>
   </div>
-  <p id="habitDateLabel" class="habit-date-label"></p>
 
-  <div class="habit-progress-wrap">
+  <div class="habit-month-nav">
+    <button id="habitPrevMonth" class="icon-btn" aria-label="前の月">‹</button>
+    <span id="habitMonthLabel" class="habit-month-label"></span>
+    <button id="habitNextMonth" class="icon-btn" aria-label="次の月">›</button>
+  </div>
+
+  <div id="habitProgressWrap" class="habit-progress-wrap">
     <div class="habit-progress-bar"><div id="habitProgressFill" class="habit-progress-fill"></div></div>
     <p id="habitProgressText" class="habit-progress-text"></p>
   </div>
   <p id="habitCelebration" class="habit-celebration hidden">🎉 今日の習慣、全部できました!</p>
 
-  <ul id="habitList" class="habit-list"></ul>
+  <p class="export-hint">マスをタップしてチェックします。過去の日も、忘れていたらあとからつけられます。</p>
+  <div class="habit-grid-wrap">
+    <table id="habitGrid" class="habit-grid"></table>
+  </div>
 
   <div class="task-input-row">
     <input type="text" id="habitNameInput" placeholder="新しい習慣を追加(例: 早起き・運動・読書)">
     <button id="addHabitBtn">追加</button>
   </div>
-  <p class="export-hint">チェックをタップするだけで記録できます。習慣名の横の×で削除できます。</p>
-
-  <details class="category-editor-wrap">
-    <summary>振り返る(直近30日の記録)</summary>
-    <p class="export-hint">色が濃いほど、その日の達成率が高いことを表します。マスをタップすると詳細が見られます。</p>
-    <div id="habitHistoryGrid" class="habit-history-grid"></div>
-    <p id="habitHistoryDetail" class="habit-history-detail"></p>
-  </details>
 </div>
 
 <div id="exportOverlay" class="overlay hidden"></div>
@@ -224,7 +224,6 @@
   <div class="help-content">
     <h3>どんなアプリ?</h3>
     <p>紙の手帳のような感覚で使える、無料のシンプルなカレンダーです。会員登録や広告はありません。日付をタップして、印つけ・予定・タスク・メモを書き込むだけで使えます。</p>
-    <p>Googleカレンダーのような多機能アプリは便利な反面、機能が多くて操作に迷うこともあります。このアプリはあえて機能を絞り、誰でも直感的に使えることを優先して作っています。</p>
 
     <h3>使い方</h3>
     <ul>

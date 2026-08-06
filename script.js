@@ -122,17 +122,35 @@ const openHabitBtn = document.getElementById("openHabit");
 const habitOverlay = document.getElementById("habitOverlay");
 const habitPanel = document.getElementById("habitPanel");
 const closeHabitPanelBtn = document.getElementById("closeHabitPanel");
-const habitDateLabel = document.getElementById("habitDateLabel");
-const habitList = document.getElementById("habitList");
+const habitPrevMonthBtn = document.getElementById("habitPrevMonth");
+const habitNextMonthBtn = document.getElementById("habitNextMonth");
+const habitMonthLabel = document.getElementById("habitMonthLabel");
+const habitGrid = document.getElementById("habitGrid");
 const habitNameInput = document.getElementById("habitNameInput");
 const addHabitBtn = document.getElementById("addHabitBtn");
+const habitProgressWrap = document.getElementById("habitProgressWrap");
 const habitProgressFill = document.getElementById("habitProgressFill");
 const habitProgressText = document.getElementById("habitProgressText");
 const habitCelebration = document.getElementById("habitCelebration");
 
+let habitViewYear;
+let habitViewMonth; // 0-11
+
 function loadHabitList() {
   const raw = localStorage.getItem(HABIT_LIST_KEY);
-  return raw ? JSON.parse(raw) : [];
+  const list = raw ? JSON.parse(raw) : [];
+  // 過去のバグでIDが重複していた場合に備えて、重複を自動で振り直す
+  const seen = new Set();
+  let fixed = false;
+  list.forEach(h => {
+    if (seen.has(h.id)) {
+      h.id = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+      fixed = true;
+    }
+    seen.add(h.id);
+  });
+  if (fixed) saveHabitList(list);
+  return list;
 }
 function saveHabitList(list) {
   localStorage.setItem(HABIT_LIST_KEY, JSON.stringify(list));
@@ -164,54 +182,72 @@ function habitStreak(log, habitId, fromKey) {
   return count;
 }
 
-function renderHabitPanel() {
-  const list = loadHabitList();
-  const log = loadHabitLog();
-  const today = todayKey();
-  const todayLog = log[today] || {};
-
-  habitDateLabel.textContent = `${currentYearForHabit()}`;
-
-  if (list.length === 0) {
-    habitList.innerHTML = `<li class="habit-empty">まだ習慣が登録されていません。下から追加してください。</li>`;
-  } else {
-    habitList.innerHTML = list.map(h => {
-      const done = !!todayLog[h.id];
-      const streak = habitStreak(log, h.id, today);
-      return `
-        <li class="habit-item${done ? " done" : ""}" data-id="${h.id}">
-          <button type="button" class="habit-check-btn${done ? " checked" : ""}" data-habit-check="${h.id}" aria-label="${h.name}を達成">
-            <span class="habit-check-mark">✓</span>
-          </button>
-          <div class="habit-info">
-            <span class="habit-name">${escapeHtml(h.name)}</span>
-            ${streak > 0 ? `<span class="habit-streak">🔥 ${streak}日連続</span>` : ""}
-          </div>
-          <button type="button" class="habit-delete-btn" data-habit-delete="${h.id}" aria-label="削除">×</button>
-        </li>`;
-    }).join("");
-  }
-
-  const doneCount = list.filter(h => todayLog[h.id]).length;
-  const total = list.length;
-  const pct = total === 0 ? 0 : Math.round((doneCount / total) * 100);
-  habitProgressFill.style.width = `${pct}%`;
-  habitProgressText.textContent = total === 0 ? "" : `${doneCount} / ${total} 達成`;
-  habitCelebration.classList.toggle("hidden", !(total > 0 && doneCount === total));
-
-  renderHabitHistory();
-}
-
-function currentYearForHabit() {
-  const t = new Date();
-  return `${t.getFullYear()}年${t.getMonth() + 1}月${t.getDate()}日`;
-}
-
 function escapeHtml(str) {
   return str.replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
 
+function renderHabitPanel() {
+  const list = loadHabitList();
+  const log = loadHabitLog();
+  const today = todayKey();
+  const now = new Date();
+  const isCurrentMonth = habitViewYear === now.getFullYear() && habitViewMonth === now.getMonth();
+
+  habitMonthLabel.textContent = `${habitViewYear}年${habitViewMonth + 1}月`;
+
+  const daysInMonth = new Date(habitViewYear, habitViewMonth + 1, 0).getDate();
+  const dayKeys = [];
+  for (let d = 1; d <= daysInMonth; d++) dayKeys.push(dateKey(habitViewYear, habitViewMonth, d));
+
+  if (list.length === 0) {
+    habitGrid.innerHTML = "";
+    habitProgressWrap.classList.add("hidden");
+    habitCelebration.classList.add("hidden");
+    return;
+  }
+  habitProgressWrap.classList.remove("hidden");
+
+  const headRow = `<tr><th class="habit-grid-name-head">習慣</th>${
+    dayKeys.map(key => `<th class="habit-grid-day-head${key === today ? " is-today" : ""}">${Number(key.slice(-2))}</th>`).join("")
+  }</tr>`;
+
+  const bodyRows = list.map(h => {
+    const streak = habitStreak(log, h.id, today);
+    const cells = dayKeys.map(key => {
+      const done = !!(log[key] && log[key][h.id]);
+      return `<td><button type="button" class="habit-cell${done ? " done" : ""}${key === today ? " is-today" : ""}" data-habit-check="${h.id}" data-day-key="${key}" aria-label="${escapeHtml(h.name)} ${key}"></button></td>`;
+    }).join("");
+    return `<tr>
+      <th class="habit-grid-name-head">
+        <span class="habit-name">${escapeHtml(h.name)}</span>
+        ${streak > 0 ? `<span class="habit-streak">🔥${streak}</span>` : ""}
+        <button type="button" class="habit-delete-btn" data-habit-delete="${h.id}" aria-label="削除">×</button>
+      </th>
+      ${cells}
+    </tr>`;
+  }).join("");
+
+  habitGrid.innerHTML = `<thead>${headRow}</thead><tbody>${bodyRows}</tbody>`;
+
+  if (isCurrentMonth) {
+    const todayLog = log[today] || {};
+    const doneCount = list.filter(h => todayLog[h.id]).length;
+    const total = list.length;
+    const pct = total === 0 ? 0 : Math.round((doneCount / total) * 100);
+    habitProgressFill.style.width = `${pct}%`;
+    habitProgressText.textContent = `今日: ${doneCount} / ${total} 達成`;
+    habitCelebration.classList.toggle("hidden", !(total > 0 && doneCount === total));
+  } else {
+    habitProgressFill.style.width = "0%";
+    habitProgressText.textContent = "";
+    habitCelebration.classList.add("hidden");
+  }
+}
+
 openHabitBtn.addEventListener("click", () => {
+  const now = new Date();
+  habitViewYear = now.getFullYear();
+  habitViewMonth = now.getMonth();
   renderHabitPanel();
   habitOverlay.classList.remove("hidden");
   habitPanel.classList.remove("hidden");
@@ -226,16 +262,27 @@ function closeHabitPanel() {
 closeHabitPanelBtn.addEventListener("click", closeHabitPanel);
 habitOverlay.addEventListener("click", closeHabitPanel);
 
-habitList.addEventListener("click", (e) => {
+habitPrevMonthBtn.addEventListener("click", () => {
+  habitViewMonth--;
+  if (habitViewMonth < 0) { habitViewMonth = 11; habitViewYear--; }
+  renderHabitPanel();
+});
+habitNextMonthBtn.addEventListener("click", () => {
+  habitViewMonth++;
+  if (habitViewMonth > 11) { habitViewMonth = 0; habitViewYear++; }
+  renderHabitPanel();
+});
+
+habitGrid.addEventListener("click", (e) => {
   const checkBtn = e.target.closest("[data-habit-check]");
   if (checkBtn) {
     const id = checkBtn.dataset.habitCheck;
+    const key = checkBtn.dataset.dayKey;
     const log = loadHabitLog();
-    const today = todayKey();
-    log[today] = log[today] || {};
-    log[today][id] = !log[today][id];
+    log[key] = log[key] || {};
+    log[key][id] = !log[key][id];
     saveHabitLog(log);
-    if (log[today][id]) {
+    if (log[key][id]) {
       checkBtn.classList.add("pop");
       setTimeout(() => checkBtn.classList.remove("pop"), 400);
     }
@@ -258,61 +305,13 @@ addHabitBtn.addEventListener("click", () => {
   const name = habitNameInput.value.trim();
   if (!name) return;
   const list = loadHabitList();
-  list.push({ id: Date.now().toString(), name });
+  list.push({ id: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`, name });
   saveHabitList(list);
   habitNameInput.value = "";
   renderHabitPanel();
 });
 habitNameInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") addHabitBtn.click();
-});
-
-const habitHistoryGrid = document.getElementById("habitHistoryGrid");
-const habitHistoryDetail = document.getElementById("habitHistoryDetail");
-
-function renderHabitHistory() {
-  const list = loadHabitList();
-  const log = loadHabitLog();
-  const total = list.length;
-
-  if (total === 0) {
-    habitHistoryGrid.innerHTML = "";
-    habitHistoryDetail.textContent = "習慣を登録すると、ここに記録が表示されます。";
-    return;
-  }
-
-  const days = [];
-  const d = new Date();
-  for (let i = 29; i >= 0; i--) {
-    const day = new Date(d.getFullYear(), d.getMonth(), d.getDate() - i);
-    days.push(dateKey(day.getFullYear(), day.getMonth(), day.getDate()));
-  }
-
-  habitHistoryGrid.innerHTML = days.map(key => {
-    const dayLog = log[key] || {};
-    const doneCount = list.filter(h => dayLog[h.id]).length;
-    const ratio = doneCount / total;
-    let level = 0;
-    if (ratio > 0 && ratio < 1) level = 1;
-    else if (ratio === 1) level = 2;
-    const dayNum = Number(key.slice(-2));
-    return `<button type="button" class="habit-history-cell level-${level}" data-history-key="${key}" title="${key}: ${doneCount}/${total}達成">${dayNum}</button>`;
-  }).join("");
-
-  habitHistoryDetail.textContent = "";
-}
-
-habitHistoryGrid.addEventListener("click", (e) => {
-  const cell = e.target.closest("[data-history-key]");
-  if (!cell) return;
-  const key = cell.dataset.historyKey;
-  const list = loadHabitList();
-  const log = loadHabitLog();
-  const dayLog = log[key] || {};
-  const doneNames = list.filter(h => dayLog[h.id]).map(h => h.name);
-  habitHistoryDetail.textContent = doneNames.length
-    ? `${key}: ${doneNames.join("・")} を達成`
-    : `${key}: 達成した習慣はありません`;
 });
 
 const overlay = document.getElementById("overlay");
