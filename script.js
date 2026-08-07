@@ -1,8 +1,3 @@
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("sw.js").catch(() => {});
-  });
-}
 
 const STORAGE_KEY = "calendarAppData";
 const ARCHIVE_KEY = "completedTasksData";
@@ -131,7 +126,6 @@ const addHabitBtn = document.getElementById("addHabitBtn");
 const habitProgressWrap = document.getElementById("habitProgressWrap");
 const habitProgressFill = document.getElementById("habitProgressFill");
 const habitProgressText = document.getElementById("habitProgressText");
-const habitCelebration = document.getElementById("habitCelebration");
 
 let habitViewYear;
 let habitViewMonth; // 0-11
@@ -166,18 +160,11 @@ function todayKey() {
   const t = new Date();
   return dateKey(t.getFullYear(), t.getMonth(), t.getDate());
 }
-function habitStreak(log, habitId, fromKey) {
-  // fromKeyから遡って連続で達成している日数を数える
+function habitTotalCount(log, habitId) {
+  // これまでにチェックが付いた日の合計数を数える(連続でなくてもOK)
   let count = 0;
-  let d = new Date(fromKey + "T00:00:00");
-  while (true) {
-    const key = dateKey(d.getFullYear(), d.getMonth(), d.getDate());
-    if (log[key] && log[key][habitId]) {
-      count++;
-      d.setDate(d.getDate() - 1);
-    } else {
-      break;
-    }
+  for (const key in log) {
+    if (log[key] && log[key][habitId]) count++;
   }
   return count;
 }
@@ -202,7 +189,6 @@ function renderHabitPanel() {
   if (list.length === 0) {
     habitGrid.innerHTML = "";
     habitProgressWrap.classList.add("hidden");
-    habitCelebration.classList.add("hidden");
     return;
   }
   habitProgressWrap.classList.remove("hidden");
@@ -212,7 +198,7 @@ function renderHabitPanel() {
   }</tr>`;
 
   const bodyRows = list.map(h => {
-    const streak = habitStreak(log, h.id, today);
+    const total = habitTotalCount(log, h.id);
     const cells = dayKeys.map(key => {
       const done = !!(log[key] && log[key][h.id]);
       return `<td><button type="button" class="habit-cell${done ? " done" : ""}${key === today ? " is-today" : ""}" data-habit-check="${h.id}" data-day-key="${key}" aria-label="${escapeHtml(h.name)} ${key}"></button></td>`;
@@ -220,7 +206,7 @@ function renderHabitPanel() {
     return `<tr>
       <th class="habit-grid-name-head">
         <span class="habit-name">${escapeHtml(h.name)}</span>
-        ${streak > 0 ? `<span class="habit-streak">🔥${streak}</span>` : ""}
+        ${total > 0 ? `<span class="habit-streak">✅${total}</span>` : ""}
         <button type="button" class="habit-delete-btn" data-habit-delete="${h.id}" aria-label="削除">×</button>
       </th>
       ${cells}
@@ -236,11 +222,9 @@ function renderHabitPanel() {
     const pct = total === 0 ? 0 : Math.round((doneCount / total) * 100);
     habitProgressFill.style.width = `${pct}%`;
     habitProgressText.textContent = `今日: ${doneCount} / ${total} 達成`;
-    habitCelebration.classList.toggle("hidden", !(total > 0 && doneCount === total));
   } else {
     habitProgressFill.style.width = "0%";
     habitProgressText.textContent = "";
-    habitCelebration.classList.add("hidden");
   }
 }
 
