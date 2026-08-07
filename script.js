@@ -206,7 +206,7 @@ function renderHabitPanel() {
     return `<tr>
       <th class="habit-grid-name-head">
         <span class="habit-name">${escapeHtml(h.name)}</span>
-        ${total > 0 ? `<span class="habit-streak">✅${total}</span>` : ""}
+        ${total > 0 ? `<span class="habit-streak">✓ ${total}</span>` : ""}
         <button type="button" class="habit-delete-btn" data-habit-delete="${h.id}" aria-label="削除">×</button>
       </th>
       ${cells}
