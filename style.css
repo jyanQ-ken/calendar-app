@@ -26,7 +26,12 @@
   --accent-2: #ff2d78;
   --accent-gradient: var(--accent);
   --accent-soft-bg: #ffe6f0;
-  --holiday-bg: #f0f0f0;
+  --holiday-bg: #e6e6e6;
+  --holiday-grad-a: #ececec;
+  --holiday-grad-b: #d3d3d6;
+  --page-grad-a: #f3f3f5;
+  --panel-grad-a: #fbfbfc;
+  --panel-grad-b: #f0f0f2;
   --national-color: #0a0a0a;
   --national-label-color: #0a0a0a;
   --today-ring: var(--accent);
@@ -63,7 +68,12 @@
     --accent-2: #ff3d8f;
     --accent-gradient: var(--accent);
     --accent-soft-bg: #33101f;
-    --holiday-bg: #141414;
+    --holiday-bg: #262626;
+    --holiday-grad-a: #2c2c2e;
+    --holiday-grad-b: #161618;
+    --page-grad-a: #121214;
+    --panel-grad-a: #0a0a0b;
+    --panel-grad-b: #030303;
     --national-color: #ffffff;
     --national-label-color: #ffffff;
     --today-ring: var(--accent);
@@ -99,7 +109,12 @@
   --accent-2: #ff3d8f;
   --accent-gradient: var(--accent);
   --accent-soft-bg: #33101f;
-  --holiday-bg: #141414;
+  --holiday-bg: #262626;
+  --holiday-grad-a: #2c2c2e;
+  --holiday-grad-b: #161618;
+  --page-grad-a: #121214;
+  --panel-grad-a: #0a0a0b;
+  --panel-grad-b: #030303;
   --national-color: #ffffff;
   --national-label-color: #ffffff;
   --today-ring: var(--accent);
@@ -122,7 +137,7 @@ html, body {
 
 body {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", "Segoe UI", "Meiryo", sans-serif;
-  background: var(--bg-page);
+  background: radial-gradient(circle at 12% -10%, var(--page-grad-a) 0%, var(--bg-page) 55%);
   margin: 0;
   padding: 12px;
   color: var(--text-main);
@@ -137,7 +152,7 @@ body.panel-open {
 .app {
   max-width: 700px;
   margin: 0 auto;
-  background: var(--bg-card);
+  background: linear-gradient(165deg, var(--panel-grad-a), var(--panel-grad-b) 70%);
   border: 1px solid var(--border-soft);
   border-radius: 0;
   padding: 16px;
@@ -266,7 +281,11 @@ body.panel-open {
 }
 
 .day-cell.holiday {
-  background: var(--holiday-bg);
+  background: linear-gradient(135deg, var(--holiday-grad-a), var(--holiday-grad-b));
+}
+
+.day-cell.holiday:hover {
+  background: linear-gradient(135deg, var(--holiday-grad-b), var(--holiday-grad-a));
 }
 
 .day-cell.today {
@@ -345,7 +364,7 @@ body.panel-open {
   bottom: 0;
   top: auto;
   transform: translateX(-50%);
-  background: var(--bg-card);
+  background: linear-gradient(180deg, var(--panel-grad-a), var(--panel-grad-b) 85%);
   color: var(--text-main);
   border: 1px solid var(--border-soft);
   border-bottom: none;
