@@ -41,25 +41,30 @@ themeToggleBtn.addEventListener("click", () => {
 
 applyStoredTheme();
 
-const MARK_COLOR_KEY = "markColorMode";
-const markColorButtons = document.querySelectorAll(".color-mode-btn");
+const COLOR_THEME_KEY = "colorThemeMode";
+const colorThemeToggleBtn = document.getElementById("colorThemeToggle");
 
-function applyStoredMarkColor() {
-  const isColor = localStorage.getItem(MARK_COLOR_KEY) === "color";
-  document.documentElement.setAttribute("data-mark-color", isColor ? "color" : "mono");
-  markColorButtons.forEach(btn => {
-    btn.classList.toggle("active", btn.dataset.colorMode === (isColor ? "color" : "mono"));
-  });
+function isColorTheme() {
+  return localStorage.getItem(COLOR_THEME_KEY) === "color";
 }
 
-markColorButtons.forEach(btn => {
-  btn.addEventListener("click", () => {
-    localStorage.setItem(MARK_COLOR_KEY, btn.dataset.colorMode);
-    applyStoredMarkColor();
-  });
+function updateColorThemeToggleLabel() {
+  const isColor = isColorTheme();
+  colorThemeToggleBtn.textContent = isColor ? "⚪" : "🎨";
+  colorThemeToggleBtn.title = isColor ? "モノトーンに切り替え" : "カラーに切り替え";
+}
+
+function applyStoredColorTheme() {
+  document.documentElement.setAttribute("data-color-theme", isColorTheme() ? "color" : "mono");
+  updateColorThemeToggleLabel();
+}
+
+colorThemeToggleBtn.addEventListener("click", () => {
+  localStorage.setItem(COLOR_THEME_KEY, isColorTheme() ? "mono" : "color");
+  applyStoredColorTheme();
 });
 
-applyStoredMarkColor();
+applyStoredColorTheme();
 
 let openPanelCount = 0;
 function lockBackgroundScroll() {

@@ -49,14 +49,6 @@
   --mark-cross-color: var(--text-main);
 }
 
-html[data-mark-color="color"] {
-  --mark-star-color: #f5b301;
-  --mark-heart-color: #ff5c8a;
-  --mark-circle-color: #2e9e4f;
-  --mark-triangle-color: #d99a1b;
-  --mark-cross-color: #d94d4d;
-}
-
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg-page: #000000;
@@ -137,6 +129,74 @@ html[data-mark-color="color"] {
   --shadow-panel: rgba(0,0,0,0.7);
   --shadow-overlay: rgba(0,0,0,0.75);
   --shadow-lift: rgba(0,0,0,0);
+}
+
+/* ==========================================================================
+   カラーテーマ: マリメッコ/ムーミン絵本的な配色
+   暖かいクリーム地に、コーラル・マスタード・ティール・コーンフラワー・ベリーの
+   はっきりした色を重ねる。角も少し丸めて、やわらかく親しみやすい雰囲気に。
+   ライト/ダーク設定に関わらず、このクリーム基調の配色に統一する。
+   ========================================================================== */
+html[data-color-theme="color"] {
+  --bg-page: #fbf3e6;
+  --bg-card: #fffdf8;
+  --bg-input: #fffdf8;
+  --bg-btn: #fffdf8;
+  --bg-btn-hover: #ed6a5a;
+  --bg-hover-accent: #fdebd9;
+  --bg-toolbar: #fbe8d2;
+  --text-main: #2e2a25;
+  --text-secondary: #79705f;
+  --text-hint: #9c927e;
+  --text-faint: #b7ad99;
+  --text-info: #79705f;
+  --text-strong-secondary: #4a4238;
+  --border-color: #ecdfc4;
+  --border-input: #e3d5b8;
+  --border-soft: #f0e5d0;
+  --border-medium: #e3d5b8;
+  --border-list: #f3e9d6;
+  --accent: #ed6a5a;
+  --accent-2: #f4a93b;
+  --accent-gradient: linear-gradient(135deg, #ed6a5a, #f4a93b 55%, #4f86c6);
+  --accent-soft-bg: #fbe0d6;
+  --holiday-bg: #f0a6a6;
+  --holiday-grad-a: #f6c9c0;
+  --holiday-grad-b: #ed6a5a;
+  --page-grad-a: #fdebd9;
+  --panel-grad-a: #fffdf8;
+  --panel-grad-b: #fbead3;
+  --national-color: #a64c79;
+  --national-label-color: #a64c79;
+  --today-ring: #1e8a7a;
+  --delete-color: #ed6a5a;
+  --schedule-color: #4f86c6;
+  --shadow-soft: rgba(120,70,20,0.08);
+  --shadow-panel: rgba(90,45,15,0.22);
+  --shadow-overlay: rgba(60,30,10,0.45);
+  --shadow-lift: rgba(237,106,90,0.28);
+  --mark-star-color: #f4a93b;
+  --mark-heart-color: #ed6a5a;
+  --mark-circle-color: #1e8a7a;
+  --mark-triangle-color: #4f86c6;
+  --mark-cross-color: #a64c79;
+}
+
+html[data-color-theme="color"] .app,
+html[data-color-theme="color"] .day-cell,
+html[data-color-theme="color"] .icon-btn,
+html[data-color-theme="color"] .mode-btn,
+html[data-color-theme="color"] .schedule-list-btn,
+html[data-color-theme="color"] .panel,
+html[data-color-theme="color"] .link-buttons.compact button,
+html[data-color-theme="color"] input,
+html[data-color-theme="color"] textarea,
+html[data-color-theme="color"] button {
+  border-radius: 12px;
+}
+
+html[data-color-theme="color"] .panel {
+  border-radius: 20px 20px 0 0;
 }
 
 * {
@@ -617,34 +677,6 @@ body.panel-open {
 
 .task-list li.past-item .archive-item-date {
   color: var(--text-faint);
-}
-
-.color-mode-row {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 6px;
-}
-
-.color-mode-label {
-  font-size: 0.7rem;
-  color: var(--text-hint);
-}
-
-.color-mode-btn {
-  padding: 4px 12px;
-  min-height: 26px;
-  font-size: 0.75rem;
-  border: 1px solid var(--border-medium);
-  background: var(--bg-btn);
-  color: var(--text-secondary);
-  cursor: pointer;
-}
-
-.color-mode-btn.active {
-  background: var(--text-main);
-  color: var(--bg-page);
-  border-color: var(--text-main);
 }
 
 .mark-mode-row {
