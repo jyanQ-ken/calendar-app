@@ -217,8 +217,8 @@ html[data-color-theme="color"][data-theme="dark"] {
   --page-grad-a: #26234a;
   --panel-grad-a: #232244;
   --panel-grad-b: #1b1a30;
-  --national-color: #e36da0;
-  --national-label-color: #e36da0;
+  --national-color: #ff8fc9;
+  --national-label-color: #ff8fc9;
   --holiday-label-color: #fff3d6;
   --today-ring: #2fd9c4;
   --delete-color: #ff7a63;
@@ -264,8 +264,8 @@ html[data-color-theme="color"][data-theme="dark"] {
     --page-grad-a: #26234a;
     --panel-grad-a: #232244;
     --panel-grad-b: #1b1a30;
-    --national-color: #e36da0;
-    --national-label-color: #e36da0;
+    --national-color: #ff8fc9;
+    --national-label-color: #ff8fc9;
     --holiday-label-color: #fff3d6;
     --today-ring: #2fd9c4;
     --delete-color: #ff7a63;
@@ -496,6 +496,11 @@ body.panel-open {
   text-underline-offset: 2px;
 }
 
+.day-cell.holiday.national .day-number,
+.day-cell.holiday .national-label {
+  text-shadow: 0 0 3px var(--bg-card), 0 0 3px var(--bg-card);
+}
+
 .day-cell .holiday-label {
   font-size: 0.65rem;
   color: var(--holiday-label-color);
@@ -517,13 +522,14 @@ body.panel-open {
   -webkit-text-stroke: 0.65px currentColor;
 }
 
-.mark-row [data-mark-key="star"],
-.mark-checks [data-mark-key="star"],
 .mark-symbol {
+  font-size: 1.15rem;
   font-weight: bold;
-  -webkit-text-stroke: 0.65px currentColor;
+  -webkit-text-stroke: 0.9px currentColor;
 }
 
+.mark-row [data-mark-key="star"],
+.mark-checks [data-mark-key="star"],
 .mode-btn[data-mode="star"] .mark-symbol {
   color: var(--mark-star-color);
 }
