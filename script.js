@@ -405,11 +405,11 @@ cancelDeleteSelectionBtn.addEventListener("click", () => {
 });
 
 const MARK_DEFS = [
-  { key: "star", emoji: "⭐", label: "⭐" },
-  { key: "heart", emoji: "💗", label: "💗" },
-  { key: "circle", emoji: "○", label: "○", color: "#2e9e4f" },
-  { key: "triangle", emoji: "△", label: "△", color: "#d99a1b" },
-  { key: "cross", emoji: "×", label: "×", color: "#d94d4d" },
+  { key: "star", emoji: "☆", label: "☆" },
+  { key: "heart", emoji: "♡", label: "♡" },
+  { key: "circle", emoji: "○", label: "○" },
+  { key: "triangle", emoji: "△", label: "△" },
+  { key: "cross", emoji: "×", label: "×" },
 ];
 
 const MODE_LABELS = { holiday: "休み", national: "祝日" };
@@ -582,7 +582,7 @@ function setActiveMode(mode) {
     btn.classList.toggle("active", btnIsActive);
   });
   if (activeMode === "national") {
-    modeHintLabel.textContent = "選択中: 祝日 ／ このアプリは祝日を自動判定しません。日本の暦を見ながら、祝日の日付を自分でタップして赤字にしてください";
+    modeHintLabel.textContent = "選択中: 祝日 ／ このアプリは祝日を自動判定しません。日本の暦を見ながら、祝日の日付を自分でタップして線をつけてください";
     modeHint.classList.remove("hidden");
   } else if (activeMode === "delete") {
     modeHintLabel.textContent = "選択中: 削除 ／ 削除したい日付をタップして選び(複数選択可)、下の「選択した日を削除」ボタンを押してください";

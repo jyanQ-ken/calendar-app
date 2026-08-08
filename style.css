@@ -327,9 +327,12 @@ body.panel-open {
 }
 
 .mark-row {
-  font-size: 0.65rem;
+  font-size: 0.85rem;
   line-height: 1.3;
   overflow: hidden;
+  color: var(--text-main);
+  font-weight: bold;
+  -webkit-text-stroke: 0.4px currentColor;
 }
 
 .day-cell .day-info {
@@ -445,6 +448,9 @@ body.panel-open {
   gap: 6px;
   font-size: 1.2rem;
   padding: 6px 0;
+  color: var(--text-main);
+  font-weight: bold;
+  -webkit-text-stroke: 0.4px currentColor;
 }
 
 .mark-checks input,
