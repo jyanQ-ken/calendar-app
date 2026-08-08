@@ -405,11 +405,11 @@ cancelDeleteSelectionBtn.addEventListener("click", () => {
 });
 
 const MARK_DEFS = [
-  { key: "star", emoji: "☆", label: "☆" },
-  { key: "heart", emoji: "♡", label: "♡" },
-  { key: "circle", emoji: "○", label: "○" },
-  { key: "triangle", emoji: "△", label: "△" },
-  { key: "cross", emoji: "×", label: "×" },
+  { key: "star", emoji: "☆︎", label: "☆︎" },
+  { key: "heart", emoji: "♡︎", label: "♡︎" },
+  { key: "circle", emoji: "○︎", label: "○︎" },
+  { key: "triangle", emoji: "△︎", label: "△︎" },
+  { key: "cross", emoji: "×︎", label: "×︎" },
 ];
 
 const MODE_LABELS = { holiday: "休み", national: "祝日" };
