@@ -133,9 +133,10 @@
 
 /* ==========================================================================
    カラーテーマ: マリメッコ/ムーミン絵本的な配色
-   暖かいクリーム地に、コーラル・マスタード・ティール・コーンフラワー・ベリーの
+   コーラル・マスタード・ティール・コーンフラワー・ベリー・ラベンダー・ライムの
    はっきりした色を重ねる。角も少し丸めて、やわらかく親しみやすい雰囲気に。
-   ライト/ダーク設定に関わらず、このクリーム基調の配色に統一する。
+   ライト/ダークの太陽・月切り替えは、カラーテーマの中でも引き続き効く
+   (昼=クリーム地の配色 / 夜=紺色地に色がくっきり浮かぶ配色)。
    ========================================================================== */
 html[data-color-theme="color"] {
   --bg-page: #fbf3e6;
@@ -158,17 +159,17 @@ html[data-color-theme="color"] {
   --border-list: #f3e9d6;
   --accent: #ed6a5a;
   --accent-2: #f4a93b;
-  --accent-gradient: linear-gradient(135deg, #ed6a5a, #f4a93b 55%, #4f86c6);
+  --accent-gradient: linear-gradient(135deg, #ed6a5a, #f4a93b 45%, #1e8a7a 75%, #4f86c6);
   --accent-soft-bg: #fbe0d6;
-  --holiday-bg: #f0a6a6;
-  --holiday-grad-a: #f6c9c0;
-  --holiday-grad-b: #ed6a5a;
+  --holiday-bg: #c9a6e0;
+  --holiday-grad-a: #ddc2ee;
+  --holiday-grad-b: #a86fd1;
   --page-grad-a: #fdebd9;
   --panel-grad-a: #fffdf8;
   --panel-grad-b: #fbead3;
   --national-color: #a64c79;
   --national-label-color: #a64c79;
-  --today-ring: #1e8a7a;
+  --today-ring: #8fb339;
   --delete-color: #ed6a5a;
   --schedule-color: #4f86c6;
   --shadow-soft: rgba(120,70,20,0.08);
@@ -180,6 +181,98 @@ html[data-color-theme="color"] {
   --mark-circle-color: #1e8a7a;
   --mark-triangle-color: #4f86c6;
   --mark-cross-color: #a64c79;
+}
+
+html[data-color-theme="color"][data-theme="dark"] {
+  --bg-page: #1b1a2e;
+  --bg-card: #232244;
+  --bg-input: #232244;
+  --bg-btn: #232244;
+  --bg-btn-hover: #ff7a63;
+  --bg-hover-accent: #2c2a52;
+  --bg-toolbar: #201f3a;
+  --text-main: #f7ecd9;
+  --text-secondary: #c9bfa8;
+  --text-hint: #a89f8a;
+  --text-faint: #8a8171;
+  --text-info: #c9bfa8;
+  --text-strong-secondary: #efe3cc;
+  --border-color: #3a3868;
+  --border-input: #423f78;
+  --border-soft: #302e58;
+  --border-medium: #423f78;
+  --border-list: #2b2950;
+  --accent: #ff7a63;
+  --accent-2: #ffc857;
+  --accent-gradient: linear-gradient(135deg, #ff7a63, #ffc857 45%, #3ddbc4 75%, #6fa8e0);
+  --accent-soft-bg: #3a2038;
+  --holiday-bg: #7a4fa0;
+  --holiday-grad-a: #93619f;
+  --holiday-grad-b: #5c3480;
+  --page-grad-a: #26234a;
+  --panel-grad-a: #232244;
+  --panel-grad-b: #1b1a30;
+  --national-color: #e07bb0;
+  --national-label-color: #e07bb0;
+  --today-ring: #c7e05a;
+  --delete-color: #ff7a63;
+  --schedule-color: #6fa8e0;
+  --shadow-soft: rgba(0,0,0,0.4);
+  --shadow-panel: rgba(0,0,0,0.6);
+  --shadow-overlay: rgba(0,0,0,0.7);
+  --shadow-lift: rgba(255,122,99,0.35);
+  --mark-star-color: #ffc857;
+  --mark-heart-color: #ff7a63;
+  --mark-circle-color: #3ddbc4;
+  --mark-triangle-color: #6fa8e0;
+  --mark-cross-color: #e07bb0;
+}
+
+@media (prefers-color-scheme: dark) {
+  html[data-color-theme="color"]:not([data-theme="light"]) {
+    --bg-page: #1b1a2e;
+    --bg-card: #232244;
+    --bg-input: #232244;
+    --bg-btn: #232244;
+    --bg-btn-hover: #ff7a63;
+    --bg-hover-accent: #2c2a52;
+    --bg-toolbar: #201f3a;
+    --text-main: #f7ecd9;
+    --text-secondary: #c9bfa8;
+    --text-hint: #a89f8a;
+    --text-faint: #8a8171;
+    --text-info: #c9bfa8;
+    --text-strong-secondary: #efe3cc;
+    --border-color: #3a3868;
+    --border-input: #423f78;
+    --border-soft: #302e58;
+    --border-medium: #423f78;
+    --border-list: #2b2950;
+    --accent: #ff7a63;
+    --accent-2: #ffc857;
+    --accent-gradient: linear-gradient(135deg, #ff7a63, #ffc857 45%, #3ddbc4 75%, #6fa8e0);
+    --accent-soft-bg: #3a2038;
+    --holiday-bg: #7a4fa0;
+    --holiday-grad-a: #93619f;
+    --holiday-grad-b: #5c3480;
+    --page-grad-a: #26234a;
+    --panel-grad-a: #232244;
+    --panel-grad-b: #1b1a30;
+    --national-color: #e07bb0;
+    --national-label-color: #e07bb0;
+    --today-ring: #c7e05a;
+    --delete-color: #ff7a63;
+    --schedule-color: #6fa8e0;
+    --shadow-soft: rgba(0,0,0,0.4);
+    --shadow-panel: rgba(0,0,0,0.6);
+    --shadow-overlay: rgba(0,0,0,0.7);
+    --shadow-lift: rgba(255,122,99,0.35);
+    --mark-star-color: #ffc857;
+    --mark-heart-color: #ff7a63;
+    --mark-circle-color: #3ddbc4;
+    --mark-triangle-color: #6fa8e0;
+    --mark-cross-color: #e07bb0;
+  }
 }
 
 html[data-color-theme="color"] .app,
@@ -259,6 +352,9 @@ body.panel-open {
 }
 
 .icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 6px 10px;
   min-width: 40px;
   min-height: 40px;
@@ -280,6 +376,12 @@ body.panel-open {
 
 .icon-btn:active {
   opacity: 0.8;
+}
+
+.icon-btn.active {
+  background: var(--text-main);
+  color: var(--bg-page);
+  border-color: var(--text-main);
 }
 
 .weekdays {
