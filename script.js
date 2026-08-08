@@ -3,6 +3,18 @@ const STORAGE_KEY = "calendarAppData";
 const ARCHIVE_KEY = "completedTasksData";
 const THEME_KEY = "themePreference";
 
+// 保存データが何らかの理由で壊れていても、アプリ全体が止まらないようにするための安全な読み込み関数。
+// 壊れていた場合はfallbackの値(空配列/空オブジェクト)を返す。
+function safeParse(raw, fallback) {
+  if (!raw) return fallback;
+  try {
+    return JSON.parse(raw);
+  } catch (e) {
+    console.error("保存データの読み込みに失敗しました。初期状態として扱います。", e);
+    return fallback;
+  }
+}
+
 [
   "moneyEntriesData", "moneyCategoriesData",
   "habitEntriesData", "habitNamesData",
@@ -162,7 +174,7 @@ let habitViewMonth; // 0-11
 
 function loadHabitList() {
   const raw = localStorage.getItem(HABIT_LIST_KEY);
-  const list = raw ? JSON.parse(raw) : [];
+  const list = safeParse(raw, []);
   // 過去のバグでIDが重複していた場合に備えて、重複を自動で振り直す
   const seen = new Set();
   let fixed = false;
@@ -181,7 +193,7 @@ function saveHabitList(list) {
 }
 function loadHabitLog() {
   const raw = localStorage.getItem(HABIT_LOG_KEY);
-  return raw ? JSON.parse(raw) : {};
+  return safeParse(raw, {});
 }
 function saveHabitLog(log) {
   localStorage.setItem(HABIT_LOG_KEY, JSON.stringify(log));
@@ -451,7 +463,7 @@ markChecks.innerHTML = MARK_DEFS.map(def =>
 
 function loadData() {
   const raw = localStorage.getItem(STORAGE_KEY);
-  return raw ? JSON.parse(raw) : {};
+  return safeParse(raw, {});
 }
 
 function saveData(data) {
@@ -480,7 +492,7 @@ function getDayData(data, key) {
 
 function loadArchive() {
   const raw = localStorage.getItem(ARCHIVE_KEY);
-  return raw ? JSON.parse(raw) : [];
+  return safeParse(raw, []);
 }
 
 function saveArchive(list) {
