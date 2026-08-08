@@ -132,55 +132,56 @@
 }
 
 /* ==========================================================================
-   カラーテーマ: マリメッコ/ムーミン絵本的な配色
-   コーラル・マスタード・ティール・コーンフラワー・ベリー・ラベンダー・ライムの
-   はっきりした色を重ねる。角も少し丸めて、やわらかく親しみやすい雰囲気に。
+   カラーテーマ: マリメッコ/ムーミン絵本的な配色(v2・作り直し)
+   芯となる6色 コーラル・マリーゴールド・ティール・スカイブルー・ベリー・
+   バター(休み用の淡い黄) だけを、印・祝日・今日のリング・予定色など
+   すべての要素で使い回して、色がちぐはぐにならないよう統一している。
    ライト/ダークの太陽・月切り替えは、カラーテーマの中でも引き続き効く
-   (昼=クリーム地の配色 / 夜=紺色地に色がくっきり浮かぶ配色)。
+   (昼=クリーム地 / 夜=紺色地に同じ6色が明るく浮かぶ)。
    ========================================================================== */
 html[data-color-theme="color"] {
-  --bg-page: #fbf3e6;
-  --bg-card: #fffdf8;
-  --bg-input: #fffdf8;
-  --bg-btn: #fffdf8;
-  --bg-btn-hover: #ed6a5a;
-  --bg-hover-accent: #fdebd9;
-  --bg-toolbar: #fbe8d2;
-  --text-main: #2e2a25;
-  --text-secondary: #79705f;
+  --bg-page: #fbf2e3;
+  --bg-card: #fffbf3;
+  --bg-input: #fffbf3;
+  --bg-btn: #fffbf3;
+  --bg-btn-hover: #e8604c;
+  --bg-hover-accent: #fbe6d4;
+  --bg-toolbar: #f7e6cd;
+  --text-main: #2b2622;
+  --text-secondary: #7a705f;
   --text-hint: #9c927e;
   --text-faint: #b7ad99;
-  --text-info: #79705f;
-  --text-strong-secondary: #4a4238;
+  --text-info: #7a705f;
+  --text-strong-secondary: #453d33;
   --border-color: #ecdfc4;
   --border-input: #e3d5b8;
   --border-soft: #f0e5d0;
   --border-medium: #e3d5b8;
   --border-list: #f3e9d6;
-  --accent: #ed6a5a;
-  --accent-2: #f4a93b;
-  --accent-gradient: linear-gradient(135deg, #ed6a5a, #f4a93b 45%, #1e8a7a 75%, #4f86c6);
-  --accent-soft-bg: #fbe0d6;
-  --holiday-bg: #a8d5ba;
-  --holiday-grad-a: #cbe8d3;
-  --holiday-grad-b: #7ec294;
-  --page-grad-a: #fdebd9;
-  --panel-grad-a: #fffdf8;
-  --panel-grad-b: #fbead3;
-  --national-color: #a64c79;
-  --national-label-color: #a64c79;
-  --today-ring: #8fb339;
-  --delete-color: #ed6a5a;
-  --schedule-color: #4f86c6;
+  --accent: #e8604c;
+  --accent-2: #f0a202;
+  --accent-gradient: linear-gradient(135deg, #e8604c, #f0a202 45%, #12756b 75%, #3e7cb1);
+  --accent-soft-bg: #fbdccf;
+  --holiday-bg: #f6d8a8;
+  --holiday-grad-a: #fbe7c6;
+  --holiday-grad-b: #eabf76;
+  --page-grad-a: #fbe6d4;
+  --panel-grad-a: #fffbf3;
+  --panel-grad-b: #fbe9cf;
+  --national-color: #8c3061;
+  --national-label-color: #8c3061;
+  --today-ring: #12756b;
+  --delete-color: #e8604c;
+  --schedule-color: #3e7cb1;
   --shadow-soft: rgba(120,70,20,0.08);
   --shadow-panel: rgba(90,45,15,0.22);
   --shadow-overlay: rgba(60,30,10,0.45);
-  --shadow-lift: rgba(237,106,90,0.28);
-  --mark-star-color: #f4a93b;
-  --mark-heart-color: #ed6a5a;
-  --mark-circle-color: #1e8a7a;
-  --mark-triangle-color: #4f86c6;
-  --mark-cross-color: #a64c79;
+  --shadow-lift: rgba(232,96,76,0.28);
+  --mark-star-color: #f0a202;
+  --mark-heart-color: #e8604c;
+  --mark-circle-color: #12756b;
+  --mark-triangle-color: #3e7cb1;
+  --mark-cross-color: #8c3061;
 }
 
 html[data-color-theme="color"][data-theme="dark"] {
@@ -203,29 +204,29 @@ html[data-color-theme="color"][data-theme="dark"] {
   --border-medium: #423f78;
   --border-list: #2b2950;
   --accent: #ff7a63;
-  --accent-2: #ffc857;
-  --accent-gradient: linear-gradient(135deg, #ff7a63, #ffc857 45%, #3ddbc4 75%, #6fa8e0);
+  --accent-2: #ffc145;
+  --accent-gradient: linear-gradient(135deg, #ff7a63, #ffc145 45%, #2fd9c4 75%, #6fb3e0);
   --accent-soft-bg: #3a2038;
-  --holiday-bg: #3f7a5c;
-  --holiday-grad-a: #4f8f6c;
-  --holiday-grad-b: #2c5940;
+  --holiday-bg: #8a6a35;
+  --holiday-grad-a: #a3843f;
+  --holiday-grad-b: #6b4f22;
   --page-grad-a: #26234a;
   --panel-grad-a: #232244;
   --panel-grad-b: #1b1a30;
-  --national-color: #e07bb0;
-  --national-label-color: #e07bb0;
-  --today-ring: #c7e05a;
+  --national-color: #e36da0;
+  --national-label-color: #e36da0;
+  --today-ring: #2fd9c4;
   --delete-color: #ff7a63;
-  --schedule-color: #6fa8e0;
+  --schedule-color: #6fb3e0;
   --shadow-soft: rgba(0,0,0,0.4);
   --shadow-panel: rgba(0,0,0,0.6);
   --shadow-overlay: rgba(0,0,0,0.7);
   --shadow-lift: rgba(255,122,99,0.35);
-  --mark-star-color: #ffc857;
+  --mark-star-color: #ffc145;
   --mark-heart-color: #ff7a63;
-  --mark-circle-color: #3ddbc4;
-  --mark-triangle-color: #6fa8e0;
-  --mark-cross-color: #e07bb0;
+  --mark-circle-color: #2fd9c4;
+  --mark-triangle-color: #6fb3e0;
+  --mark-cross-color: #e36da0;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -249,29 +250,29 @@ html[data-color-theme="color"][data-theme="dark"] {
     --border-medium: #423f78;
     --border-list: #2b2950;
     --accent: #ff7a63;
-    --accent-2: #ffc857;
-    --accent-gradient: linear-gradient(135deg, #ff7a63, #ffc857 45%, #3ddbc4 75%, #6fa8e0);
+    --accent-2: #ffc145;
+    --accent-gradient: linear-gradient(135deg, #ff7a63, #ffc145 45%, #2fd9c4 75%, #6fb3e0);
     --accent-soft-bg: #3a2038;
-    --holiday-bg: #3f7a5c;
-    --holiday-grad-a: #4f8f6c;
-    --holiday-grad-b: #2c5940;
+    --holiday-bg: #8a6a35;
+    --holiday-grad-a: #a3843f;
+    --holiday-grad-b: #6b4f22;
     --page-grad-a: #26234a;
     --panel-grad-a: #232244;
     --panel-grad-b: #1b1a30;
-    --national-color: #e07bb0;
-    --national-label-color: #e07bb0;
-    --today-ring: #c7e05a;
+    --national-color: #e36da0;
+    --national-label-color: #e36da0;
+    --today-ring: #2fd9c4;
     --delete-color: #ff7a63;
-    --schedule-color: #6fa8e0;
+    --schedule-color: #6fb3e0;
     --shadow-soft: rgba(0,0,0,0.4);
     --shadow-panel: rgba(0,0,0,0.6);
     --shadow-overlay: rgba(0,0,0,0.7);
     --shadow-lift: rgba(255,122,99,0.35);
-    --mark-star-color: #ffc857;
+    --mark-star-color: #ffc145;
     --mark-heart-color: #ff7a63;
-    --mark-circle-color: #3ddbc4;
-    --mark-triangle-color: #6fa8e0;
-    --mark-cross-color: #e07bb0;
+    --mark-circle-color: #2fd9c4;
+    --mark-triangle-color: #6fb3e0;
+    --mark-cross-color: #e36da0;
   }
 }
 
