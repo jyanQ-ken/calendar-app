@@ -582,7 +582,7 @@ function setActiveMode(mode) {
     btn.classList.toggle("active", btnIsActive);
   });
   if (activeMode === "national") {
-    modeHintLabel.textContent = "選択中: 祝日 ／ このアプリは祝日を自動判定しません。日本の暦を見ながら、祝日の日付を自分でタップして線をつけてください";
+    modeHintLabel.textContent = "選択中: 祝日 ／ このアプリは祝日を自動判定しません。日本の暦を見ながら、祝日の日付を自分でタップして祝マークをつけてください";
     modeHint.classList.remove("hidden");
   } else if (activeMode === "delete") {
     modeHintLabel.textContent = "選択中: 削除 ／ 削除したい日付をタップして選び(複数選択可)、下の「選択した日を削除」ボタンを押してください";
