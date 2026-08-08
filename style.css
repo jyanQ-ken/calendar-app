@@ -558,6 +558,10 @@ body.panel-open {
   color: var(--mark-cross-color);
 }
 
+.mode-btn.active .mark-symbol {
+  color: var(--bg-page);
+}
+
 .day-cell .day-info {
   margin-top: auto;
   font-size: 0.7rem;
