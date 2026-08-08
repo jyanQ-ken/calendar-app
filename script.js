@@ -427,7 +427,7 @@ function toggleDeleteSelection(key) {
     deleteSelection.add(key);
   }
   updateDeleteActionBar();
-  renderCalendar();
+  updateDayCell(key);
 }
 
 deleteSelectedBtn.addEventListener("click", () => {
@@ -500,6 +500,93 @@ function saveArchive(list) {
   localStorage.setItem(ARCHIVE_KEY, JSON.stringify(list));
 }
 
+function buildDayCell(key, day, dayData, todayKey) {
+  const cell = document.createElement("div");
+  cell.className = "day-cell"
+    + (dayData.holiday ? " holiday" : "")
+    + (dayData.national ? " national" : "")
+    + (key === todayKey ? " today" : "");
+  cell.dataset.key = key;
+
+  const numberEl = document.createElement("div");
+  numberEl.className = "day-number";
+  numberEl.textContent = day;
+  cell.appendChild(numberEl);
+
+  if (dayData.holiday) {
+    const holidayLabel = document.createElement("div");
+    holidayLabel.className = "holiday-label";
+    holidayLabel.textContent = "休み";
+    cell.appendChild(holidayLabel);
+  }
+
+  if (dayData.national) {
+    const nationalLabel = document.createElement("div");
+    nationalLabel.className = "national-label";
+    nationalLabel.textContent = "祝日";
+    cell.appendChild(nationalLabel);
+  }
+
+  const activeMarks = MARK_DEFS.filter(def => dayData.marks[def.key]);
+  if (activeMarks.length > 0) {
+    const markRow = document.createElement("div");
+    markRow.className = "mark-row";
+    activeMarks.forEach((def, index) => {
+      const span = document.createElement("span");
+      span.textContent = def.emoji;
+      span.dataset.markKey = def.key;
+      markRow.appendChild(span);
+      if (index < activeMarks.length - 1) markRow.appendChild(document.createTextNode(" "));
+    });
+    cell.appendChild(markRow);
+  }
+
+  if (activeMode === "delete" && deleteSelection.has(key)) {
+    cell.classList.add("selected-for-delete");
+  }
+
+  cell.addEventListener("click", () => {
+    if (activeMode === "delete") {
+      toggleDeleteSelection(key);
+    } else if (activeMode) {
+      applyModeToDay(key, activeMode);
+    } else {
+      openPanel(key);
+    }
+  });
+
+  if (dayData.schedule && dayData.schedule.length > 0) {
+    const scheduleEl = document.createElement("div");
+    scheduleEl.className = "day-schedule";
+    const first = dayData.schedule[0];
+    const truncated = first.length > 8 ? first.slice(0, 8) + "…" : first;
+    const extra = dayData.schedule.length > 1 ? ` 他${dayData.schedule.length - 1}件` : "";
+    scheduleEl.textContent = truncated + extra;
+    cell.appendChild(scheduleEl);
+  }
+
+  const infoParts = [];
+  if (dayData.tasks && dayData.tasks.length > 0) {
+    infoParts.push(`タスク ${dayData.tasks.length}`);
+  }
+  if (dayData.memo && dayData.memo.trim() !== "") {
+    infoParts.push("メモあり");
+  }
+  if (infoParts.length > 0) {
+    const infoEl = document.createElement("div");
+    infoEl.className = "day-info";
+    infoEl.textContent = infoParts.join(" / ");
+    cell.appendChild(infoEl);
+  }
+
+  return cell;
+}
+
+function todayKeyString() {
+  const now = new Date();
+  return dateKey(now.getFullYear(), now.getMonth(), now.getDate());
+}
+
 function renderCalendar() {
   monthLabel.textContent = `${currentYear}年 ${currentMonth + 1}月`;
   calendarGrid.innerHTML = "";
@@ -507,7 +594,7 @@ function renderCalendar() {
   const data = loadData();
   const firstDayOfWeek = new Date(currentYear, currentMonth, 1).getDay();
   const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-  const todayKey = dateKey(new Date().getFullYear(), new Date().getMonth(), new Date().getDate());
+  const todayKey = todayKeyString();
 
   for (let i = 0; i < firstDayOfWeek; i++) {
     const empty = document.createElement("div");
@@ -518,86 +605,23 @@ function renderCalendar() {
   for (let day = 1; day <= daysInMonth; day++) {
     const key = dateKey(currentYear, currentMonth, day);
     const dayData = getDayData(data, key);
-
-    const cell = document.createElement("div");
-    cell.className = "day-cell"
-      + (dayData.holiday ? " holiday" : "")
-      + (dayData.national ? " national" : "")
-      + (key === todayKey ? " today" : "");
-
-    const numberEl = document.createElement("div");
-    numberEl.className = "day-number";
-    numberEl.textContent = day;
-    cell.appendChild(numberEl);
-
-    if (dayData.holiday) {
-      const holidayLabel = document.createElement("div");
-      holidayLabel.className = "holiday-label";
-      holidayLabel.textContent = "休み";
-      cell.appendChild(holidayLabel);
-    }
-
-    if (dayData.national) {
-      const nationalLabel = document.createElement("div");
-      nationalLabel.className = "national-label";
-      nationalLabel.textContent = "祝日";
-      cell.appendChild(nationalLabel);
-    }
-
-    const activeMarks = MARK_DEFS.filter(def => dayData.marks[def.key]);
-    if (activeMarks.length > 0) {
-      const markRow = document.createElement("div");
-      markRow.className = "mark-row";
-      activeMarks.forEach((def, index) => {
-        const span = document.createElement("span");
-        span.textContent = def.emoji;
-        span.dataset.markKey = def.key;
-        markRow.appendChild(span);
-        if (index < activeMarks.length - 1) markRow.appendChild(document.createTextNode(" "));
-      });
-      cell.appendChild(markRow);
-    }
-
-    if (activeMode === "delete" && deleteSelection.has(key)) {
-      cell.classList.add("selected-for-delete");
-    }
-
-    cell.addEventListener("click", () => {
-      if (activeMode === "delete") {
-        toggleDeleteSelection(key);
-      } else if (activeMode) {
-        applyModeToDay(key, activeMode);
-      } else {
-        openPanel(key);
-      }
-    });
-
-    if (dayData.schedule && dayData.schedule.length > 0) {
-      const scheduleEl = document.createElement("div");
-      scheduleEl.className = "day-schedule";
-      const first = dayData.schedule[0];
-      const truncated = first.length > 8 ? first.slice(0, 8) + "…" : first;
-      const extra = dayData.schedule.length > 1 ? ` 他${dayData.schedule.length - 1}件` : "";
-      scheduleEl.textContent = truncated + extra;
-      cell.appendChild(scheduleEl);
-    }
-
-    const infoParts = [];
-    if (dayData.tasks && dayData.tasks.length > 0) {
-      infoParts.push(`タスク ${dayData.tasks.length}`);
-    }
-    if (dayData.memo && dayData.memo.trim() !== "") {
-      infoParts.push("メモあり");
-    }
-    if (infoParts.length > 0) {
-      const infoEl = document.createElement("div");
-      infoEl.className = "day-info";
-      infoEl.textContent = infoParts.join(" / ");
-      cell.appendChild(infoEl);
-    }
-
-    calendarGrid.appendChild(cell);
+    calendarGrid.appendChild(buildDayCell(key, day, dayData, todayKey));
   }
+}
+
+// 印つけモード・削除モードでの連続タップ用に、カレンダー全体を作り直さず
+// タップされたそのマス1つだけを差し替える(全体再構築より軽く、反応が速い)
+function updateDayCell(key) {
+  const oldCell = calendarGrid.querySelector(`.day-cell[data-key="${key}"]`);
+  if (!oldCell) {
+    renderCalendar();
+    return;
+  }
+  const day = Number(key.slice(-2));
+  const data = loadData();
+  const dayData = getDayData(data, key);
+  const newCell = buildDayCell(key, day, dayData, todayKeyString());
+  oldCell.replaceWith(newCell);
 }
 
 function applyModeToDay(key, mode) {
@@ -612,7 +636,7 @@ function applyModeToDay(key, mode) {
   }
   data[key] = dayData;
   saveData(data);
-  renderCalendar();
+  updateDayCell(key);
 }
 
 function setActiveMode(mode) {
