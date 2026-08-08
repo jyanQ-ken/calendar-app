@@ -34,6 +34,7 @@
   --panel-grad-b: #f0f0f2;
   --national-color: #0a0a0a;
   --national-label-color: #0a0a0a;
+  --holiday-label-color: #0a0a0a;
   --today-ring: var(--accent);
   --delete-color: #0a0a0a;
   --schedule-color: #0a0a0a;
@@ -81,6 +82,7 @@
     --panel-grad-b: #030303;
     --national-color: #ffffff;
     --national-label-color: #ffffff;
+    --holiday-label-color: #ffffff;
     --today-ring: var(--accent);
     --delete-color: #ffffff;
     --schedule-color: #ffffff;
@@ -122,6 +124,7 @@
   --panel-grad-b: #030303;
   --national-color: #ffffff;
   --national-label-color: #ffffff;
+  --holiday-label-color: #ffffff;
   --today-ring: var(--accent);
   --delete-color: #ffffff;
   --schedule-color: #ffffff;
@@ -170,6 +173,7 @@ html[data-color-theme="color"] {
   --panel-grad-b: #fbe9cf;
   --national-color: #8c3061;
   --national-label-color: #8c3061;
+  --holiday-label-color: #7a5a1e;
   --today-ring: #12756b;
   --delete-color: #e8604c;
   --schedule-color: #3e7cb1;
@@ -215,6 +219,7 @@ html[data-color-theme="color"][data-theme="dark"] {
   --panel-grad-b: #1b1a30;
   --national-color: #e36da0;
   --national-label-color: #e36da0;
+  --holiday-label-color: #fff3d6;
   --today-ring: #2fd9c4;
   --delete-color: #ff7a63;
   --schedule-color: #6fb3e0;
@@ -261,6 +266,7 @@ html[data-color-theme="color"][data-theme="dark"] {
     --panel-grad-b: #1b1a30;
     --national-color: #e36da0;
     --national-label-color: #e36da0;
+    --holiday-label-color: #fff3d6;
     --today-ring: #2fd9c4;
     --delete-color: #ff7a63;
     --schedule-color: #6fb3e0;
@@ -492,7 +498,7 @@ body.panel-open {
 
 .day-cell .holiday-label {
   font-size: 0.65rem;
-  color: var(--national-label-color);
+  color: var(--holiday-label-color);
   font-weight: bold;
 }
 
