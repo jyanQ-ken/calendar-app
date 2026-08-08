@@ -597,34 +597,20 @@ body.panel-open {
 
 .panel {
   position: fixed;
+  inset: 0;
   left: 50%;
-  bottom: 0;
-  top: auto;
   transform: translateX(-50%);
   background: linear-gradient(180deg, var(--panel-grad-a), var(--panel-grad-b) 85%);
   color: var(--text-main);
-  border: 1px solid var(--border-soft);
-  border-bottom: none;
+  border: none;
   border-radius: 0;
-  padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
+  padding: calc(16px + env(safe-area-inset-top)) 16px calc(16px + env(safe-area-inset-bottom));
   width: 100%;
-  max-width: 480px;
-  max-height: 85vh;
-  max-height: 85dvh;
+  max-width: 700px;
+  height: 100dvh;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
-  box-shadow: 0 -8px 30px -6px var(--shadow-panel);
-}
-
-.panel::before {
-  content: "";
-  display: block;
-  width: 36px;
-  height: 2px;
-  border-radius: 0;
-  background: var(--border-medium);
-  margin: -4px auto 12px;
 }
 
 .overlay {
