@@ -42,6 +42,19 @@
   --shadow-overlay: rgba(0,0,0,0.55);
   --shadow-lift: rgba(0,0,0,0);
   --radius: 0px;
+  --mark-star-color: var(--text-main);
+  --mark-heart-color: var(--text-main);
+  --mark-circle-color: var(--text-main);
+  --mark-triangle-color: var(--text-main);
+  --mark-cross-color: var(--text-main);
+}
+
+html[data-mark-color="color"] {
+  --mark-star-color: #f5b301;
+  --mark-heart-color: #ff5c8a;
+  --mark-circle-color: #2e9e4f;
+  --mark-triangle-color: #d99a1b;
+  --mark-cross-color: #d94d4d;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -335,6 +348,36 @@ body.panel-open {
   -webkit-text-stroke: 0.4px currentColor;
 }
 
+.mark-row [data-mark-key="star"],
+.mark-checks [data-mark-key="star"],
+.mode-btn[data-mode="star"] .mark-symbol {
+  color: var(--mark-star-color);
+}
+
+.mark-row [data-mark-key="heart"],
+.mark-checks [data-mark-key="heart"],
+.mode-btn[data-mode="heart"] .mark-symbol {
+  color: var(--mark-heart-color);
+}
+
+.mark-row [data-mark-key="circle"],
+.mark-checks [data-mark-key="circle"],
+.mode-btn[data-mode="circle"] .mark-symbol {
+  color: var(--mark-circle-color);
+}
+
+.mark-row [data-mark-key="triangle"],
+.mark-checks [data-mark-key="triangle"],
+.mode-btn[data-mode="triangle"] .mark-symbol {
+  color: var(--mark-triangle-color);
+}
+
+.mark-row [data-mark-key="cross"],
+.mark-checks [data-mark-key="cross"],
+.mode-btn[data-mode="cross"] .mark-symbol {
+  color: var(--mark-cross-color);
+}
+
 .day-cell .day-info {
   margin-top: auto;
   font-size: 0.7rem;
@@ -574,6 +617,34 @@ body.panel-open {
 
 .task-list li.past-item .archive-item-date {
   color: var(--text-faint);
+}
+
+.color-mode-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+
+.color-mode-label {
+  font-size: 0.7rem;
+  color: var(--text-hint);
+}
+
+.color-mode-btn {
+  padding: 4px 12px;
+  min-height: 26px;
+  font-size: 0.75rem;
+  border: 1px solid var(--border-medium);
+  background: var(--bg-btn);
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.color-mode-btn.active {
+  background: var(--text-main);
+  color: var(--bg-page);
+  border-color: var(--text-main);
 }
 
 .mark-mode-row {

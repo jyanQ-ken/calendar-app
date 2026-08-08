@@ -41,6 +41,26 @@ themeToggleBtn.addEventListener("click", () => {
 
 applyStoredTheme();
 
+const MARK_COLOR_KEY = "markColorMode";
+const markColorButtons = document.querySelectorAll(".color-mode-btn");
+
+function applyStoredMarkColor() {
+  const isColor = localStorage.getItem(MARK_COLOR_KEY) === "color";
+  document.documentElement.setAttribute("data-mark-color", isColor ? "color" : "mono");
+  markColorButtons.forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.colorMode === (isColor ? "color" : "mono"));
+  });
+}
+
+markColorButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+    localStorage.setItem(MARK_COLOR_KEY, btn.dataset.colorMode);
+    applyStoredMarkColor();
+  });
+});
+
+applyStoredMarkColor();
+
 let openPanelCount = 0;
 function lockBackgroundScroll() {
   openPanelCount++;
@@ -416,7 +436,7 @@ const MODE_LABELS = { holiday: "休み", national: "祝日" };
 MARK_DEFS.forEach(def => { MODE_LABELS[def.key] = def.label; });
 
 markChecks.innerHTML = MARK_DEFS.map(def =>
-  `<label><input type="checkbox" data-mark="${def.key}"> <span${def.color ? ` style="color:${def.color}"` : ""}>${def.emoji}</span></label>`
+  `<label><input type="checkbox" data-mark="${def.key}"> <span data-mark-key="${def.key}">${def.emoji}</span></label>`
 ).join("");
 
 function loadData() {
@@ -508,7 +528,7 @@ function renderCalendar() {
       activeMarks.forEach((def, index) => {
         const span = document.createElement("span");
         span.textContent = def.emoji;
-        if (def.color) span.style.color = def.color;
+        span.dataset.markKey = def.key;
         markRow.appendChild(span);
         if (index < activeMarks.length - 1) markRow.appendChild(document.createTextNode(" "));
       });
