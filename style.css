@@ -304,6 +304,10 @@ html[data-color-theme="color"] .panel {
   -webkit-tap-highlight-color: transparent;
 }
 
+button {
+  touch-action: manipulation;
+}
+
 html, body {
   height: 100%;
 }
@@ -442,6 +446,7 @@ body.panel-open {
   min-height: 70px;
   height: 100%;
   overflow: hidden;
+  touch-action: manipulation;
   border: none;
   border-radius: 0;
   padding: 4px;
