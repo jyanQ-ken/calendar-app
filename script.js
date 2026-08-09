@@ -705,6 +705,10 @@ function openPanel(key) {
   const dayData = getDayData(data, key);
 
   panelDate.textContent = key;
+  // 確定せずに残っていた入力(未追加の予定・タスク)が別の日に紛れ込まないようクリアする。
+  // 時間欄だけは、同じ時間を続けて別の日に入力しやすいようあえて残す。
+  scheduleInput.value = "";
+  taskInput.value = "";
   holidayCheck.checked = dayData.holiday;
   nationalCheck.checked = dayData.national;
   markChecks.querySelectorAll("input[data-mark]").forEach(input => {
