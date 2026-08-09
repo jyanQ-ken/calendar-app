@@ -27,7 +27,6 @@ const ICON_SUN = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" st
 const ICON_MOON = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.5A8.5 8.5 0 1 1 9.5 4a7 7 0 0 0 10.5 10.5Z"/></svg>';
 const ICON_PALETTE = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 1 0 0 18c1.1 0 2-.9 2-2 0-.5-.2-.9-.5-1.3-.3-.4-.5-.8-.5-1.2 0-.9.7-1.5 1.5-1.5H16a5 5 0 0 0 5-5c0-3.9-4-7-9-7Z"/><circle cx="7.5" cy="10.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="9.5" cy="7" r="1.2" fill="currentColor" stroke="none"/><circle cx="14" cy="6.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="17" cy="10" r="1.2" fill="currentColor" stroke="none"/></svg>';
 const ICON_MONO = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 1 0 18Z" fill="currentColor" stroke="none"/></svg>';
-const ICON_EYE = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
 
 function effectiveTheme() {
   const stored = localStorage.getItem(THEME_KEY);
@@ -60,37 +59,26 @@ themeToggleBtn.addEventListener("click", () => {
 applyStoredTheme();
 
 const COLOR_THEME_KEY = "colorThemeMode";
-// mono(白黒) → color(装飾的なカラー) → practical(実務向け・見やすさ重視) → mono …と循環する
-const COLOR_THEME_ORDER = ["mono", "color", "practical"];
-const COLOR_THEME_META = {
-  mono: { icon: ICON_PALETTE, title: "カラーに切り替え" },
-  color: { icon: ICON_EYE, title: "実務向け(見やすさ重視)に切り替え" },
-  practical: { icon: ICON_MONO, title: "モノトーンに切り替え" },
-};
 const colorThemeToggleBtn = document.getElementById("colorThemeToggle");
 
-function getColorThemeMode() {
-  const stored = localStorage.getItem(COLOR_THEME_KEY);
-  return COLOR_THEME_ORDER.includes(stored) ? stored : "mono";
+function isColorTheme() {
+  return localStorage.getItem(COLOR_THEME_KEY) === "color";
 }
 
 function updateColorThemeToggleLabel() {
-  const mode = getColorThemeMode();
-  const meta = COLOR_THEME_META[mode];
-  colorThemeToggleBtn.innerHTML = meta.icon;
-  colorThemeToggleBtn.classList.toggle("active", mode !== "mono");
-  colorThemeToggleBtn.title = meta.title;
+  const isColor = isColorTheme();
+  colorThemeToggleBtn.innerHTML = isColor ? ICON_MONO : ICON_PALETTE;
+  colorThemeToggleBtn.classList.toggle("active", isColor);
+  colorThemeToggleBtn.title = isColor ? "モノトーンに切り替え" : "カラーに切り替え";
 }
 
 function applyStoredColorTheme() {
-  document.documentElement.setAttribute("data-color-theme", getColorThemeMode());
+  document.documentElement.setAttribute("data-color-theme", isColorTheme() ? "color" : "mono");
   updateColorThemeToggleLabel();
 }
 
 colorThemeToggleBtn.addEventListener("click", () => {
-  const currentIndex = COLOR_THEME_ORDER.indexOf(getColorThemeMode());
-  const next = COLOR_THEME_ORDER[(currentIndex + 1) % COLOR_THEME_ORDER.length];
-  localStorage.setItem(COLOR_THEME_KEY, next);
+  localStorage.setItem(COLOR_THEME_KEY, isColorTheme() ? "mono" : "color");
   applyStoredColorTheme();
 });
 
