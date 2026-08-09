@@ -282,6 +282,152 @@ html[data-color-theme="color"][data-theme="dark"] {
   }
 }
 
+/* ==========================================================================
+   カラーテーマ: 実務向け(見やすさ重視)
+   おしゃれさよりも視認性を優先した配色。形はモノトーンと同じ(角丸なし)。
+   赤=休み/祝日、青=土曜・予定、緑=今日、という紙のカレンダーに近い配色に統一し、
+   印(☆♡○△×)も色分けせず文字色と同じにして、誰が見ても迷わないようにしている。
+   ========================================================================== */
+html[data-color-theme="practical"] {
+  --bg-page: #ffffff;
+  --bg-card: #ffffff;
+  --bg-input: #ffffff;
+  --bg-btn: #ffffff;
+  --bg-btn-hover: #0b3d91;
+  --bg-hover-accent: #eef3fb;
+  --bg-toolbar: #f5f7fa;
+  --text-main: #111827;
+  --text-secondary: #4b5563;
+  --text-hint: #6b7280;
+  --text-faint: #9ca3af;
+  --text-info: #4b5563;
+  --text-strong-secondary: #1f2937;
+  --border-color: #d1d5db;
+  --border-input: #9ca3af;
+  --border-soft: #e5e7eb;
+  --border-medium: #cbd5e1;
+  --border-list: #e5e7eb;
+  --accent: #0b5fff;
+  --accent-2: #0b5fff;
+  --accent-gradient: var(--accent);
+  --accent-soft-bg: #e0ebff;
+  --holiday-bg: #fde2e2;
+  --holiday-grad-a: #fde2e2;
+  --holiday-grad-b: #fbc8c8;
+  --page-grad-a: #f3f4f6;
+  --panel-grad-a: #ffffff;
+  --panel-grad-b: #f3f4f6;
+  --national-color: #c1121f;
+  --national-label-color: #c1121f;
+  --holiday-label-color: #b91c1c;
+  --today-ring: #0f9d58;
+  --delete-color: #c1121f;
+  --schedule-color: #0b5fff;
+  --shadow-soft: rgba(0,0,0,0.06);
+  --shadow-panel: rgba(0,0,0,0.18);
+  --shadow-overlay: rgba(0,0,0,0.5);
+  --shadow-lift: rgba(0,0,0,0);
+  --mark-star-color: var(--text-main);
+  --mark-heart-color: var(--text-main);
+  --mark-circle-color: var(--text-main);
+  --mark-triangle-color: var(--text-main);
+  --mark-cross-color: var(--text-main);
+}
+
+html[data-color-theme="practical"][data-theme="dark"] {
+  --bg-page: #0b0f14;
+  --bg-card: #0b0f14;
+  --bg-input: #10161d;
+  --bg-btn: #10161d;
+  --bg-btn-hover: #3b82f6;
+  --bg-hover-accent: #14202b;
+  --bg-toolbar: #0f151b;
+  --text-main: #f3f4f6;
+  --text-secondary: #9ca3af;
+  --text-hint: #8a94a6;
+  --text-faint: #6b7280;
+  --text-info: #9ca3af;
+  --text-strong-secondary: #e5e7eb;
+  --border-color: #2a333d;
+  --border-input: #3a4550;
+  --border-soft: #1c232b;
+  --border-medium: #333e48;
+  --border-list: #1c232b;
+  --accent: #3b82f6;
+  --accent-2: #3b82f6;
+  --accent-gradient: var(--accent);
+  --accent-soft-bg: #16233a;
+  --holiday-bg: #3a1f22;
+  --holiday-grad-a: #442327;
+  --holiday-grad-b: #2c1517;
+  --page-grad-a: #0e141b;
+  --panel-grad-a: #0b0f14;
+  --panel-grad-b: #060809;
+  --national-color: #ff6b6b;
+  --national-label-color: #ff6b6b;
+  --holiday-label-color: #ff8a8a;
+  --today-ring: #22c55e;
+  --delete-color: #ff6b6b;
+  --schedule-color: #60a5fa;
+  --shadow-soft: rgba(0,0,0,0.4);
+  --shadow-panel: rgba(0,0,0,0.7);
+  --shadow-overlay: rgba(0,0,0,0.75);
+  --shadow-lift: rgba(0,0,0,0);
+  --mark-star-color: var(--text-main);
+  --mark-heart-color: var(--text-main);
+  --mark-circle-color: var(--text-main);
+  --mark-triangle-color: var(--text-main);
+  --mark-cross-color: var(--text-main);
+}
+
+@media (prefers-color-scheme: dark) {
+  html[data-color-theme="practical"]:not([data-theme="light"]) {
+    --bg-page: #0b0f14;
+    --bg-card: #0b0f14;
+    --bg-input: #10161d;
+    --bg-btn: #10161d;
+    --bg-btn-hover: #3b82f6;
+    --bg-hover-accent: #14202b;
+    --bg-toolbar: #0f151b;
+    --text-main: #f3f4f6;
+    --text-secondary: #9ca3af;
+    --text-hint: #8a94a6;
+    --text-faint: #6b7280;
+    --text-info: #9ca3af;
+    --text-strong-secondary: #e5e7eb;
+    --border-color: #2a333d;
+    --border-input: #3a4550;
+    --border-soft: #1c232b;
+    --border-medium: #333e48;
+    --border-list: #1c232b;
+    --accent: #3b82f6;
+    --accent-2: #3b82f6;
+    --accent-gradient: var(--accent);
+    --accent-soft-bg: #16233a;
+    --holiday-bg: #3a1f22;
+    --holiday-grad-a: #442327;
+    --holiday-grad-b: #2c1517;
+    --page-grad-a: #0e141b;
+    --panel-grad-a: #0b0f14;
+    --panel-grad-b: #060809;
+    --national-color: #ff6b6b;
+    --national-label-color: #ff6b6b;
+    --holiday-label-color: #ff8a8a;
+    --today-ring: #22c55e;
+    --delete-color: #ff6b6b;
+    --schedule-color: #60a5fa;
+    --shadow-soft: rgba(0,0,0,0.4);
+    --shadow-panel: rgba(0,0,0,0.7);
+    --shadow-overlay: rgba(0,0,0,0.75);
+    --shadow-lift: rgba(0,0,0,0);
+    --mark-star-color: var(--text-main);
+    --mark-heart-color: var(--text-main);
+    --mark-circle-color: var(--text-main);
+    --mark-triangle-color: var(--text-main);
+    --mark-cross-color: var(--text-main);
+  }
+}
+
 html[data-color-theme="color"] .app,
 html[data-color-theme="color"] .day-cell,
 html[data-color-theme="color"] .icon-btn,
