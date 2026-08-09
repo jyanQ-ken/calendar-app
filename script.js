@@ -444,6 +444,7 @@ deleteSelectedBtn.addEventListener("click", () => {
 
 cancelDeleteSelectionBtn.addEventListener("click", () => {
   deleteSelection.clear();
+  updateDeleteActionBar();
   renderCalendar();
 });
 
