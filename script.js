@@ -660,6 +660,9 @@ const SCHEDULE_QUICK_SLOT_COUNT = 3;
 const scheduleQuickMarksEl = document.getElementById("scheduleQuickMarks");
 const scheduleQuickEditBtn = document.getElementById("scheduleQuickEditBtn");
 let scheduleQuickEditMode = false;
+// prompt()をEnterキーで閉じた直後、そのEnterが予定欄に漏れて誤って予定が
+// 追加されてしまうのを防ぐためのガード(scheduleInput/scheduleTimeInputのkeydownで参照)
+let suppressScheduleEnter = false;
 
 function loadScheduleQuickText() {
   const raw = localStorage.getItem(SCHEDULE_QUICK_TEXT_KEY);
@@ -684,22 +687,23 @@ function renderScheduleQuickMarks() {
       const current = loadScheduleQuickText();
       const currentExisting = current[slot] || "";
       if (scheduleQuickEditMode || !currentExisting) {
+        suppressScheduleEnter = true;
+        setTimeout(() => { suppressScheduleEnter = false; }, 500);
         const next = prompt("よく使う予定の文字を登録してください(空にすると登録解除)", currentExisting);
-        if (next === null) return; // キャンセル
-        const trimmed = next.trim();
-        if (trimmed === "") {
-          delete current[slot];
-        } else {
-          current[slot] = trimmed;
+        const trimmed = next === null ? null : next.trim();
+        if (trimmed !== null) {
+          if (trimmed === "") {
+            delete current[slot];
+          } else {
+            current[slot] = trimmed;
+          }
+          saveScheduleQuickText(current);
         }
-        saveScheduleQuickText(current);
         scheduleQuickEditMode = false;
         scheduleQuickEditBtn.classList.remove("active");
-        if (trimmed !== "") {
+        if (trimmed) {
           scheduleInput.value = trimmed;
-          // prompt()をEnterキーで閉じた直後だと、そのEnterがここでフォーカスした予定欄に
-          // 漏れて「Enterで追加」が誤発火することがあるため、少し遅らせてからフォーカスする。
-          setTimeout(() => scheduleInput.focus(), 0);
+          scheduleInput.focus();
         }
         renderScheduleQuickMarks();
         return;
@@ -1101,11 +1105,15 @@ addScheduleBtn.addEventListener("click", () => {
 });
 
 scheduleTimeInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") addScheduleBtn.click();
+  if (e.key !== "Enter") return;
+  if (suppressScheduleEnter) { suppressScheduleEnter = false; return; }
+  addScheduleBtn.click();
 });
 
 scheduleInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") addScheduleBtn.click();
+  if (e.key !== "Enter") return;
+  if (suppressScheduleEnter) { suppressScheduleEnter = false; return; }
+  addScheduleBtn.click();
 });
 
 holidayCheck.addEventListener("change", () => {
