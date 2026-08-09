@@ -349,6 +349,7 @@ const holidayCheck = document.getElementById("holidayCheck");
 const nationalCheck = document.getElementById("nationalCheck");
 const markChecks = document.getElementById("markChecks");
 const scheduleInput = document.getElementById("scheduleInput");
+const scheduleTimeInput = document.getElementById("scheduleTimeInput");
 const addScheduleBtn = document.getElementById("addSchedule");
 const scheduleList = document.getElementById("scheduleList");
 const taskInput = document.getElementById("taskInput");
@@ -492,6 +493,25 @@ function getDayData(data, key) {
   };
 }
 
+// 予定は文字列(旧形式)と{text, time}(新形式)が混在しうるので、常にこの形に揃えて扱う
+function normalizeScheduleItem(item) {
+  if (typeof item === "string") return { text: item, time: "" };
+  return { text: item.text || "", time: item.time || "" };
+}
+
+// 時間ありの予定だけを時系列で並べ、時間なしの予定は先頭に元の順番のまま残す。
+// 削除・完了などは元の配列のインデックスで行うため、{item, index}のペアで返す。
+function sortScheduleEntries(schedule) {
+  return schedule
+    .map((raw, index) => ({ item: normalizeScheduleItem(raw), index }))
+    .sort((a, b) => {
+      if (!a.item.time && !b.item.time) return 0;
+      if (!a.item.time) return -1;
+      if (!b.item.time) return 1;
+      return a.item.time < b.item.time ? -1 : a.item.time > b.item.time ? 1 : 0;
+    });
+}
+
 function loadArchive() {
   const raw = localStorage.getItem(ARCHIVE_KEY);
   return safeParse(raw, []);
@@ -559,10 +579,11 @@ function buildDayCell(key, day, dayData, todayKey) {
   if (dayData.schedule && dayData.schedule.length > 0) {
     const scheduleEl = document.createElement("div");
     scheduleEl.className = "day-schedule";
-    const first = dayData.schedule[0];
-    const truncated = first.length > 8 ? first.slice(0, 8) + "…" : first;
+    const first = normalizeScheduleItem(dayData.schedule[0]);
+    const truncated = first.text.length > 8 ? first.text.slice(0, 8) + "…" : first.text;
+    const prefix = first.time ? `${first.time} ` : "";
     const extra = dayData.schedule.length > 1 ? ` 他${dayData.schedule.length - 1}件` : "";
-    scheduleEl.textContent = truncated + extra;
+    scheduleEl.textContent = prefix + truncated + extra;
     cell.appendChild(scheduleEl);
   }
 
@@ -708,11 +729,18 @@ function closePanel() {
 
 function renderScheduleList(schedule) {
   scheduleList.innerHTML = "";
-  schedule.forEach((text, index) => {
+  sortScheduleEntries(schedule).forEach(({ item, index }) => {
     const li = document.createElement("li");
 
+    if (item.time) {
+      const timeSpan = document.createElement("span");
+      timeSpan.className = "schedule-item-time";
+      timeSpan.textContent = item.time;
+      li.appendChild(timeSpan);
+    }
+
     const span = document.createElement("span");
-    span.textContent = text;
+    span.textContent = item.text;
 
     const deleteBtn = document.createElement("button");
     deleteBtn.className = "delete-task";
@@ -802,11 +830,17 @@ taskInput.addEventListener("keydown", (e) => {
 addScheduleBtn.addEventListener("click", () => {
   const text = scheduleInput.value.trim();
   if (text === "") return;
+  const time = scheduleTimeInput.value; // 未入力なら ""(時間なしの予定として扱う)
   const dayData = updateSelectedDay(d => {
-    d.schedule.push(text);
+    d.schedule.push({ text, time });
   });
   renderScheduleList(dayData.schedule);
   scheduleInput.value = "";
+  scheduleTimeInput.value = "";
+});
+
+scheduleTimeInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") addScheduleBtn.click();
 });
 
 scheduleInput.addEventListener("keydown", (e) => {
@@ -1000,17 +1034,17 @@ function deleteScheduleFromList(dayKey, index) {
   renderScheduleListAll();
 }
 
-function appendScheduleItem(dayKey, text, index, todayKey) {
+function appendScheduleItem(dayKey, item, index, todayKey) {
   const li = document.createElement("li");
   if (dayKey === todayKey) li.classList.add("today-item");
   if (dayKey < todayKey) li.classList.add("past-item");
 
   const dateSpan = document.createElement("span");
   dateSpan.className = "archive-item-date";
-  dateSpan.textContent = dayKey;
+  dateSpan.textContent = item.time ? `${dayKey} ${item.time}` : dayKey;
 
   const textSpan = document.createElement("span");
-  textSpan.textContent = text;
+  textSpan.textContent = item.text;
 
   const deleteBtn = document.createElement("button");
   deleteBtn.className = "delete-task";
@@ -1040,7 +1074,7 @@ function renderScheduleListAll() {
       const schedule = data[key].schedule;
       if (!schedule || schedule.length === 0) return false;
       if (!keyword) return true;
-      return schedule.some(text => text.includes(keyword));
+      return schedule.some(raw => normalizeScheduleItem(raw).text.includes(keyword));
     })
     .sort((a, b) => a.localeCompare(b));
 
@@ -1054,10 +1088,10 @@ function renderScheduleListAll() {
   let hasUpcoming = false;
   entries.forEach(dayKey => {
     if (dayKey < todayKey) return;
-    data[dayKey].schedule.forEach((text, index) => {
-      if (keyword && !text.includes(keyword)) return;
+    sortScheduleEntries(data[dayKey].schedule).forEach(({ item, index }) => {
+      if (keyword && !item.text.includes(keyword)) return;
       hasUpcoming = true;
-      appendScheduleItem(dayKey, text, index, todayKey);
+      appendScheduleItem(dayKey, item, index, todayKey);
     });
   });
   if (!hasUpcoming) {
@@ -1076,10 +1110,10 @@ function renderScheduleListAll() {
     .filter(dayKey => dayKey < todayKey)
     .sort((a, b) => b.localeCompare(a))
     .forEach(dayKey => {
-      data[dayKey].schedule.forEach((text, index) => {
-        if (keyword && !text.includes(keyword)) return;
+      sortScheduleEntries(data[dayKey].schedule).forEach(({ item, index }) => {
+        if (keyword && !item.text.includes(keyword)) return;
         hasPast = true;
-        appendScheduleItem(dayKey, text, index, todayKey);
+        appendScheduleItem(dayKey, item, index, todayKey);
       });
     });
   if (!hasPast) {
@@ -1233,7 +1267,9 @@ function generateCsv(options) {
 
   Array.from(allKeys).sort().forEach(key => {
     const dayData = getDayData(data, key);
-    const schedule = includeSchedule ? (dayData.schedule || []).join(" / ") : "";
+    const schedule = includeSchedule
+      ? sortScheduleEntries(dayData.schedule || []).map(({ item }) => item.time ? `${item.time} ${item.text}` : item.text).join(" / ")
+      : "";
     const memo = includeMemo ? (dayData.memo || "") : "";
 
     const pendingTasks = includeTask ? (dayData.tasks || []).map(t => t.text).join(" / ") : "";

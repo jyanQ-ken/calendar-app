@@ -17,7 +17,7 @@
 <meta name="twitter:title" content="かんたんカレンダー">
 <meta name="twitter:description" content="余計な連携機能を削り、シンプルさだけを追求した無料のカレンダー">
 <meta name="twitter:image" content="https://jyanq-ken.github.io/calendar-app/og-image.png">
-<link rel="stylesheet" href="style.css?v=12">
+<link rel="stylesheet" href="style.css?v=13">
 </head>
 <body>
 
@@ -93,6 +93,7 @@
     <h3>SCHEDULE</h3>
     <div class="task-input-row">
       <input type="text" id="scheduleInput" placeholder="新しい予定を入力">
+      <input type="time" id="scheduleTimeInput" class="schedule-time-input" aria-label="時間(任意)">
       <button id="addSchedule">ADD</button>
     </div>
     <ul id="scheduleList" class="task-list"></ul>
@@ -271,6 +272,6 @@
   </div>
 </div>
 
-<script src="script.js?v=5"></script>
+<script src="script.js?v=6"></script>
 </body>
 </html>

@@ -975,6 +975,18 @@ body.panel-open {
   color: var(--text-main);
 }
 
+.schedule-time-input {
+  flex: 0 0 auto;
+  width: 6.5em;
+}
+
+.schedule-item-time {
+  font-variant-numeric: tabular-nums;
+  color: var(--schedule-color);
+  font-weight: bold;
+  margin-right: 6px;
+}
+
 .task-input-row input:focus,
 textarea:focus,
 input[type="text"]:focus,
