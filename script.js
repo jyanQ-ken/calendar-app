@@ -702,12 +702,9 @@ function renderScheduleQuickMarks() {
         renderScheduleQuickMarks();
         return;
       }
-      // 登録済みのボタンは、予定欄に入れるだけでなくそのまま追加まで行う(手動でADDを押す手間を省く)
+      // 予定欄に文字を入れるところまで。時間を選んでからADDで確定してもらう。
       scheduleInput.value = currentExisting;
-      addScheduleBtn.click();
-      const original = btn.textContent;
-      btn.textContent = "追加しました";
-      setTimeout(() => { btn.textContent = original; }, 900);
+      scheduleInput.focus();
     });
     scheduleQuickMarksEl.appendChild(btn);
   }
