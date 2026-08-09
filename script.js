@@ -654,8 +654,10 @@ markChecks.innerHTML = MARK_DEFS.map(def =>
   `<label><input type="checkbox" data-mark="${def.key}"> <span data-mark-key="${def.key}">${def.emoji}</span></label>`
 ).join("");
 
-// 予定入力のクイック定型文(例: △をタップすると「バイト」が予定欄に入る)
+// 予定入力のクイック定型文(例: Aをタップすると「バイト」が予定欄に入る)
+// 日付の印(☆♡○△×)とは連動しない、別枠のA〜E登録なのでキーも独立させている。
 const SCHEDULE_QUICK_TEXT_KEY = "scheduleQuickTextData";
+const SCHEDULE_QUICK_SLOTS = ["A", "B", "C", "D", "E"];
 const scheduleQuickMarksEl = document.getElementById("scheduleQuickMarks");
 const scheduleQuickEditBtn = document.getElementById("scheduleQuickEditBtn");
 let scheduleQuickEditMode = false;
@@ -671,23 +673,23 @@ function saveScheduleQuickText(map) {
 function renderScheduleQuickMarks() {
   const map = loadScheduleQuickText();
   scheduleQuickMarksEl.innerHTML = "";
-  MARK_DEFS.forEach(def => {
+  SCHEDULE_QUICK_SLOTS.forEach(slot => {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "schedule-quick-mark-btn";
-    btn.innerHTML = `<span class="mark-symbol" data-mark-key="${def.key}">${def.emoji}</span>`;
-    btn.title = map[def.key] ? `予定欄に「${map[def.key]}」と入力` : "タップして定型文を登録";
+    btn.textContent = slot;
+    btn.title = map[slot] ? `予定欄に「${map[slot]}」と入力` : "タップして定型文を登録";
     btn.addEventListener("click", () => {
       const current = loadScheduleQuickText();
-      const existing = current[def.key] || "";
+      const existing = current[slot] || "";
       if (scheduleQuickEditMode || !existing) {
-        const next = prompt(`この印(${def.emoji})でよく使う予定の文字を登録してください(空にすると登録解除)`, existing);
+        const next = prompt(`この「${slot}」でよく使う予定の文字を登録してください(空にすると登録解除)`, existing);
         if (next === null) return; // キャンセル
         const trimmed = next.trim();
         if (trimmed === "") {
-          delete current[def.key];
+          delete current[slot];
         } else {
-          current[def.key] = trimmed;
+          current[slot] = trimmed;
         }
         saveScheduleQuickText(current);
         scheduleQuickEditMode = false;

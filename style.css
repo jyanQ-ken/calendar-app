@@ -541,35 +541,30 @@ body.panel-open {
 
 .mark-row [data-mark-key="star"],
 .mark-checks [data-mark-key="star"],
-.schedule-quick-mark-btn [data-mark-key="star"],
 .mode-btn[data-mode="star"] .mark-symbol {
   color: var(--mark-star-color);
 }
 
 .mark-row [data-mark-key="heart"],
 .mark-checks [data-mark-key="heart"],
-.schedule-quick-mark-btn [data-mark-key="heart"],
 .mode-btn[data-mode="heart"] .mark-symbol {
   color: var(--mark-heart-color);
 }
 
 .mark-row [data-mark-key="circle"],
 .mark-checks [data-mark-key="circle"],
-.schedule-quick-mark-btn [data-mark-key="circle"],
 .mode-btn[data-mode="circle"] .mark-symbol {
   color: var(--mark-circle-color);
 }
 
 .mark-row [data-mark-key="triangle"],
 .mark-checks [data-mark-key="triangle"],
-.schedule-quick-mark-btn [data-mark-key="triangle"],
 .mode-btn[data-mode="triangle"] .mark-symbol {
   color: var(--mark-triangle-color);
 }
 
 .mark-row [data-mark-key="cross"],
 .mark-checks [data-mark-key="cross"],
-.schedule-quick-mark-btn [data-mark-key="cross"],
 .mode-btn[data-mode="cross"] .mark-symbol {
   color: var(--mark-cross-color);
 }
@@ -1007,7 +1002,8 @@ body.panel-open {
   background: var(--bg-btn);
   color: var(--text-main);
   cursor: pointer;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
+  font-weight: 700;
 }
 
 .schedule-quick-edit-btn {
