@@ -697,7 +697,9 @@ function renderScheduleQuickMarks() {
         scheduleQuickEditBtn.classList.remove("active");
         if (trimmed !== "") {
           scheduleInput.value = trimmed;
-          scheduleInput.focus();
+          // prompt()をEnterキーで閉じた直後だと、そのEnterがここでフォーカスした予定欄に
+          // 漏れて「Enterで追加」が誤発火することがあるため、少し遅らせてからフォーカスする。
+          setTimeout(() => scheduleInput.focus(), 0);
         }
         renderScheduleQuickMarks();
         return;
