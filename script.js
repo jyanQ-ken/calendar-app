@@ -236,7 +236,7 @@ function renderHabitPanel() {
   }
   habitProgressWrap.classList.remove("hidden");
 
-  const headRow = `<tr><th class="habit-grid-name-head">習慣</th>${
+  const headRow = `<tr><th class="habit-grid-name-head"></th>${
     dayKeys.map(key => `<th class="habit-grid-day-head${key === today ? " is-today" : ""}">${Number(key.slice(-2))}</th>`).join("")
   }</tr>`;
 
