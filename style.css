@@ -1436,7 +1436,21 @@ input[type="date"]:focus {
 .list-manage-row {
   display: flex;
   justify-content: flex-end;
+  gap: 8px;
   margin: 4px 0;
+}
+
+.copy-list-btn {
+  padding: 6px 10px;
+  border: 1px solid var(--text-main);
+  background: none;
+  color: var(--text-main);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.copy-list-btn.hidden {
+  display: none;
 }
 
 .delete-list-btn {

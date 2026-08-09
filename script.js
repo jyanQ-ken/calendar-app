@@ -352,6 +352,7 @@ const listTabs = document.getElementById("listTabs");
 const listItemInput = document.getElementById("listItemInput");
 const addListItemBtn = document.getElementById("addListItemBtn");
 const listItemsEl = document.getElementById("listItemsEl");
+const copyListBtn = document.getElementById("copyListBtn");
 const deleteListBtn = document.getElementById("deleteListBtn");
 const newListNameInput = document.getElementById("newListNameInput");
 const addListBtn = document.getElementById("addListBtn");
@@ -392,6 +393,7 @@ function renderListPanel() {
   const activeList = lists.find(l => l.id === activeListId);
   listItemInput.disabled = !activeList;
   addListItemBtn.disabled = !activeList;
+  copyListBtn.classList.toggle("hidden", !activeList);
   deleteListBtn.classList.toggle("hidden", !activeList);
 
   listItemsEl.innerHTML = "";
@@ -479,6 +481,28 @@ addListBtn.addEventListener("click", () => {
 });
 newListNameInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") addListBtn.click();
+});
+
+copyListBtn.addEventListener("click", async () => {
+  const lists = loadLists();
+  const l = lists.find(x => x.id === activeListId);
+  if (!l) return;
+  const lines = [l.name, ...l.items.map(it => `${it.done ? "[x]" : "[ ]"} ${it.text}`)];
+  const text = lines.join("\n");
+  try {
+    await navigator.clipboard.writeText(text);
+  } catch (e) {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand("copy");
+    document.body.removeChild(ta);
+  }
+  copyListBtn.textContent = "コピーしました";
+  setTimeout(() => { copyListBtn.textContent = "COPY"; }, 1200);
 });
 
 deleteListBtn.addEventListener("click", () => {
