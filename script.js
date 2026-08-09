@@ -654,6 +654,65 @@ markChecks.innerHTML = MARK_DEFS.map(def =>
   `<label><input type="checkbox" data-mark="${def.key}"> <span data-mark-key="${def.key}">${def.emoji}</span></label>`
 ).join("");
 
+// 予定入力のクイック定型文(例: △をタップすると「バイト」が予定欄に入る)
+const SCHEDULE_QUICK_TEXT_KEY = "scheduleQuickTextData";
+const scheduleQuickMarksEl = document.getElementById("scheduleQuickMarks");
+const scheduleQuickEditBtn = document.getElementById("scheduleQuickEditBtn");
+let scheduleQuickEditMode = false;
+
+function loadScheduleQuickText() {
+  const raw = localStorage.getItem(SCHEDULE_QUICK_TEXT_KEY);
+  return safeParse(raw, {});
+}
+function saveScheduleQuickText(map) {
+  localStorage.setItem(SCHEDULE_QUICK_TEXT_KEY, JSON.stringify(map));
+}
+
+function renderScheduleQuickMarks() {
+  const map = loadScheduleQuickText();
+  scheduleQuickMarksEl.innerHTML = "";
+  MARK_DEFS.forEach(def => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "schedule-quick-mark-btn";
+    btn.innerHTML = `<span class="mark-symbol" data-mark-key="${def.key}">${def.emoji}</span>`;
+    btn.title = map[def.key] ? `予定欄に「${map[def.key]}」と入力` : "タップして定型文を登録";
+    btn.addEventListener("click", () => {
+      const current = loadScheduleQuickText();
+      const existing = current[def.key] || "";
+      if (scheduleQuickEditMode || !existing) {
+        const next = prompt(`この印(${def.emoji})でよく使う予定の文字を登録してください(空にすると登録解除)`, existing);
+        if (next === null) return; // キャンセル
+        const trimmed = next.trim();
+        if (trimmed === "") {
+          delete current[def.key];
+        } else {
+          current[def.key] = trimmed;
+        }
+        saveScheduleQuickText(current);
+        scheduleQuickEditMode = false;
+        scheduleQuickEditBtn.classList.remove("active");
+        if (trimmed !== "") {
+          scheduleInput.value = trimmed;
+          scheduleInput.focus();
+        }
+        renderScheduleQuickMarks();
+        return;
+      }
+      scheduleInput.value = existing;
+      scheduleInput.focus();
+    });
+    scheduleQuickMarksEl.appendChild(btn);
+  });
+}
+
+scheduleQuickEditBtn.addEventListener("click", () => {
+  scheduleQuickEditMode = !scheduleQuickEditMode;
+  scheduleQuickEditBtn.classList.toggle("active", scheduleQuickEditMode);
+});
+
+renderScheduleQuickMarks();
+
 function loadData() {
   const raw = localStorage.getItem(STORAGE_KEY);
   return safeParse(raw, {});
@@ -918,6 +977,8 @@ function closePanel() {
   panel.classList.add("hidden");
   unlockBackgroundScroll();
   selectedDateKey = null;
+  scheduleQuickEditMode = false;
+  scheduleQuickEditBtn.classList.remove("active");
   renderCalendar();
 }
 
@@ -1601,6 +1662,7 @@ resetAllBtn.addEventListener("click", () => {
   localStorage.removeItem(HABIT_LIST_KEY);
   localStorage.removeItem(HABIT_LOG_KEY);
   localStorage.removeItem(LIST_KEY);
+  localStorage.removeItem(SCHEDULE_QUICK_TEXT_KEY);
 
   alert("すべてのデータを削除しました");
   location.reload();
