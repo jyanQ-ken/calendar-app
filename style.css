@@ -299,6 +299,71 @@ html[data-color-theme="color"] .panel {
   border-radius: 20px 20px 0 0;
 }
 
+/* ==========================================================================
+   隠しコマンド的な「実務向け」配色(月表示タップで切り替え)
+   モノ/カラーのどちらとも独立した、視認性だけを重視する固定配色。
+   昼夜切り替えはなく、!importantで他のテーマの配色を確実に上書きする。
+   赤=休み/祝日、青=土曜・予定、緑=今日、印は色分けせず文字色と同じにする。
+   ========================================================================== */
+html.practical-mode {
+  --bg-page: #ffffff !important;
+  --bg-card: #ffffff !important;
+  --bg-input: #ffffff !important;
+  --bg-btn: #ffffff !important;
+  --bg-btn-hover: #0b3d91 !important;
+  --bg-hover-accent: #eef3fb !important;
+  --bg-toolbar: #f5f7fa !important;
+  --text-main: #111827 !important;
+  --text-secondary: #4b5563 !important;
+  --text-hint: #6b7280 !important;
+  --text-faint: #9ca3af !important;
+  --text-info: #4b5563 !important;
+  --text-strong-secondary: #1f2937 !important;
+  --border-color: #d1d5db !important;
+  --border-input: #9ca3af !important;
+  --border-soft: #e5e7eb !important;
+  --border-medium: #cbd5e1 !important;
+  --border-list: #e5e7eb !important;
+  --accent: #0b5fff !important;
+  --accent-2: #0b5fff !important;
+  --accent-gradient: #0b5fff !important;
+  --accent-soft-bg: #e0ebff !important;
+  --holiday-bg: #fde2e2 !important;
+  --holiday-grad-a: #fde2e2 !important;
+  --holiday-grad-b: #fbc8c8 !important;
+  --page-grad-a: #f3f4f6 !important;
+  --panel-grad-a: #ffffff !important;
+  --panel-grad-b: #f3f4f6 !important;
+  --national-color: #c1121f !important;
+  --national-label-color: #c1121f !important;
+  --holiday-label-color: #b91c1c !important;
+  --today-ring: #0f9d58 !important;
+  --delete-color: #c1121f !important;
+  --schedule-color: #0b5fff !important;
+  --shadow-soft: rgba(0,0,0,0.06) !important;
+  --shadow-panel: rgba(0,0,0,0.18) !important;
+  --shadow-overlay: rgba(0,0,0,0.5) !important;
+  --shadow-lift: rgba(0,0,0,0) !important;
+  --mark-star-color: #111827 !important;
+  --mark-heart-color: #111827 !important;
+  --mark-circle-color: #111827 !important;
+  --mark-triangle-color: #111827 !important;
+  --mark-cross-color: #111827 !important;
+}
+
+html.practical-mode .app,
+html.practical-mode .day-cell,
+html.practical-mode .icon-btn,
+html.practical-mode .mode-btn,
+html.practical-mode .schedule-list-btn,
+html.practical-mode .panel,
+html.practical-mode .link-buttons.compact button,
+html.practical-mode input,
+html.practical-mode textarea,
+html.practical-mode button {
+  border-radius: 0 !important;
+}
+
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
@@ -390,6 +455,17 @@ body.panel-open {
 
 .icon-btn:active {
   opacity: 0.8;
+}
+
+.icon-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.icon-btn:disabled:hover {
+  background: var(--bg-btn);
+  color: var(--text-main);
+  border-color: var(--border-input);
 }
 
 .icon-btn.active {

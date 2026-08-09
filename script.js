@@ -78,11 +78,36 @@ function applyStoredColorTheme() {
 }
 
 colorThemeToggleBtn.addEventListener("click", () => {
+  if (isPracticalMode()) {
+    // 実務向けモード中にパレットボタンを押したら、まずそれを解除するだけにする
+    // (モノ/カラーの切り替え自体は次のクリックから)
+    setPracticalMode(false);
+    return;
+  }
   localStorage.setItem(COLOR_THEME_KEY, isColorTheme() ? "mono" : "color");
   applyStoredColorTheme();
 });
 
 applyStoredColorTheme();
+
+// 隠しコマンド的な「実務向け」配色: 月表示(例: 2026年 8月)をタップすると入り、
+// モノ/カラーどちらとも混ざらない、視認性重視の固定配色になる(昼夜切り替えなし)。
+// 解除は、もう一度月表示をタップするか、上のパレットボタンを押す。
+const PRACTICAL_MODE_KEY = "practicalModeOn";
+
+function isPracticalMode() {
+  return localStorage.getItem(PRACTICAL_MODE_KEY) === "1";
+}
+
+function setPracticalMode(on) {
+  localStorage.setItem(PRACTICAL_MODE_KEY, on ? "1" : "0");
+  document.documentElement.classList.toggle("practical-mode", on);
+  // 実務向け配色は固定色で昼夜切り替えの効果が出ないため、押しても色が変わらず
+  // 誤解を招かないよう、有効な間は昼夜ボタン自体を押せなくする。
+  themeToggleBtn.disabled = on;
+}
+
+setPracticalMode(isPracticalMode());
 
 let openPanelCount = 0;
 function lockBackgroundScroll() {
@@ -101,6 +126,9 @@ let currentMonth; // 0-11
 let selectedDateKey = null;
 
 const monthLabel = document.getElementById("monthLabel");
+monthLabel.addEventListener("click", () => {
+  setPracticalMode(!isPracticalMode());
+});
 const calendarGrid = document.getElementById("calendarGrid");
 const prevMonthBtn = document.getElementById("prevMonth");
 const nextMonthBtn = document.getElementById("nextMonth");
