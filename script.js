@@ -660,9 +660,6 @@ const SCHEDULE_QUICK_SLOT_COUNT = 3;
 const scheduleQuickMarksEl = document.getElementById("scheduleQuickMarks");
 const scheduleQuickEditBtn = document.getElementById("scheduleQuickEditBtn");
 let scheduleQuickEditMode = false;
-// prompt()をEnterキーで閉じた直後、そのEnterが予定欄に漏れて誤って予定が
-// 追加されてしまうのを防ぐためのガード(scheduleInput/scheduleTimeInputのkeydownで参照)
-let suppressScheduleEnter = false;
 
 function loadScheduleQuickText() {
   const raw = localStorage.getItem(SCHEDULE_QUICK_TEXT_KEY);
@@ -687,8 +684,6 @@ function renderScheduleQuickMarks() {
       const current = loadScheduleQuickText();
       const currentExisting = current[slot] || "";
       if (scheduleQuickEditMode || !currentExisting) {
-        suppressScheduleEnter = true;
-        setTimeout(() => { suppressScheduleEnter = false; }, 500);
         const next = prompt("よく使う予定の文字を登録してください(空にすると登録解除)", currentExisting);
         const trimmed = next === null ? null : next.trim();
         if (trimmed !== null) {
@@ -701,9 +696,10 @@ function renderScheduleQuickMarks() {
         }
         scheduleQuickEditMode = false;
         scheduleQuickEditBtn.classList.remove("active");
+        // 登録直後に予定欄へ自動でフォーカスすると、prompt()を閉じたEnterキーが
+        // 漏れて予定が誤って追加されることがあるため、あえてフォーカスは移さない。
         if (trimmed) {
           scheduleInput.value = trimmed;
-          scheduleInput.focus();
         }
         renderScheduleQuickMarks();
         return;
@@ -1105,15 +1101,11 @@ addScheduleBtn.addEventListener("click", () => {
 });
 
 scheduleTimeInput.addEventListener("keydown", (e) => {
-  if (e.key !== "Enter") return;
-  if (suppressScheduleEnter) { suppressScheduleEnter = false; return; }
-  addScheduleBtn.click();
+  if (e.key === "Enter") addScheduleBtn.click();
 });
 
 scheduleInput.addEventListener("keydown", (e) => {
-  if (e.key !== "Enter") return;
-  if (suppressScheduleEnter) { suppressScheduleEnter = false; return; }
-  addScheduleBtn.click();
+  if (e.key === "Enter") addScheduleBtn.click();
 });
 
 holidayCheck.addEventListener("change", () => {
