@@ -341,6 +341,172 @@ habitNameInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") addHabitBtn.click();
 });
 
+// 複数ジャンルのリスト(買い物リストなど)
+const LIST_KEY = "checklistListsData";
+
+const openListBtn = document.getElementById("openList");
+const listOverlay = document.getElementById("listOverlay");
+const listPanel = document.getElementById("listPanel");
+const closeListPanelBtn = document.getElementById("closeListPanel");
+const listTabs = document.getElementById("listTabs");
+const listItemInput = document.getElementById("listItemInput");
+const addListItemBtn = document.getElementById("addListItemBtn");
+const listItemsEl = document.getElementById("listItemsEl");
+const deleteListBtn = document.getElementById("deleteListBtn");
+const newListNameInput = document.getElementById("newListNameInput");
+const addListBtn = document.getElementById("addListBtn");
+
+let activeListId = null;
+
+function makeId() {
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function loadLists() {
+  const raw = localStorage.getItem(LIST_KEY);
+  return safeParse(raw, []);
+}
+function saveLists(lists) {
+  localStorage.setItem(LIST_KEY, JSON.stringify(lists));
+}
+
+function renderListPanel() {
+  const lists = loadLists();
+  if (!lists.find(l => l.id === activeListId)) {
+    activeListId = lists.length > 0 ? lists[0].id : null;
+  }
+
+  listTabs.innerHTML = "";
+  lists.forEach(list => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "list-tab" + (list.id === activeListId ? " active" : "");
+    btn.textContent = list.name;
+    btn.addEventListener("click", () => {
+      activeListId = list.id;
+      renderListPanel();
+    });
+    listTabs.appendChild(btn);
+  });
+
+  const activeList = lists.find(l => l.id === activeListId);
+  listItemInput.disabled = !activeList;
+  addListItemBtn.disabled = !activeList;
+  deleteListBtn.classList.toggle("hidden", !activeList);
+
+  listItemsEl.innerHTML = "";
+
+  if (!activeList) {
+    const li = document.createElement("li");
+    li.textContent = lists.length === 0
+      ? "まだリストがありません。下から新しいリストを作ってください"
+      : "リストを選んでください";
+    listItemsEl.appendChild(li);
+    return;
+  }
+
+  if (activeList.items.length === 0) {
+    const li = document.createElement("li");
+    li.textContent = "項目はまだありません";
+    listItemsEl.appendChild(li);
+    return;
+  }
+
+  activeList.items.forEach(item => {
+    const li = document.createElement("li");
+    if (item.done) li.classList.add("done");
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = item.done;
+    checkbox.addEventListener("change", () => {
+      const current = loadLists();
+      const l = current.find(x => x.id === activeListId);
+      const it = l && l.items.find(x => x.id === item.id);
+      if (!it) return;
+      it.done = checkbox.checked;
+      saveLists(current);
+      renderListPanel();
+    });
+
+    const span = document.createElement("span");
+    span.textContent = item.text;
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.className = "delete-task";
+    deleteBtn.textContent = "削除";
+    deleteBtn.addEventListener("click", () => {
+      const current = loadLists();
+      const l = current.find(x => x.id === activeListId);
+      if (!l) return;
+      l.items = l.items.filter(x => x.id !== item.id);
+      saveLists(current);
+      renderListPanel();
+    });
+
+    li.appendChild(checkbox);
+    li.appendChild(span);
+    li.appendChild(deleteBtn);
+    listItemsEl.appendChild(li);
+  });
+}
+
+addListItemBtn.addEventListener("click", () => {
+  const text = listItemInput.value.trim();
+  if (!text || !activeListId) return;
+  const lists = loadLists();
+  const l = lists.find(x => x.id === activeListId);
+  if (!l) return;
+  l.items.push({ id: makeId(), text, done: false });
+  saveLists(lists);
+  listItemInput.value = "";
+  renderListPanel();
+});
+listItemInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") addListItemBtn.click();
+});
+
+addListBtn.addEventListener("click", () => {
+  const name = newListNameInput.value.trim();
+  if (!name) return;
+  const lists = loadLists();
+  const newList = { id: makeId(), name, items: [] };
+  lists.push(newList);
+  saveLists(lists);
+  activeListId = newList.id;
+  newListNameInput.value = "";
+  renderListPanel();
+});
+newListNameInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") addListBtn.click();
+});
+
+deleteListBtn.addEventListener("click", () => {
+  const lists = loadLists();
+  const l = lists.find(x => x.id === activeListId);
+  if (!l) return;
+  const ok = confirm(`「${l.name}」を削除します。中の項目も含めて元に戻せませんが、よろしいですか?`);
+  if (!ok) return;
+  saveLists(lists.filter(x => x.id !== activeListId));
+  activeListId = null;
+  renderListPanel();
+});
+
+openListBtn.addEventListener("click", () => {
+  renderListPanel();
+  listOverlay.classList.remove("hidden");
+  listPanel.classList.remove("hidden");
+  lockBackgroundScroll();
+});
+
+function closeListPanel() {
+  listOverlay.classList.add("hidden");
+  listPanel.classList.add("hidden");
+  unlockBackgroundScroll();
+}
+closeListPanelBtn.addEventListener("click", closeListPanel);
+listOverlay.addEventListener("click", closeListPanel);
+
 const overlay = document.getElementById("overlay");
 const panel = document.getElementById("panel");
 const panelDate = document.getElementById("panelDate");
@@ -1400,7 +1566,7 @@ bulkDeleteBtn.addEventListener("click", () => {
 const resetAllBtn = document.getElementById("resetAllBtn");
 
 resetAllBtn.addEventListener("click", () => {
-  const ok1 = confirm("休み・祝日・マーク・予定・タスク・メモ・メモ帳など、このアプリのデータをすべて削除して初期状態に戻します。元に戻せませんが、よろしいですか?");
+  const ok1 = confirm("休み・祝日・マーク・予定・タスク・メモ・メモ帳・リストなど、このアプリのデータをすべて削除して初期状態に戻します。元に戻せませんが、よろしいですか?");
   if (!ok1) return;
   const ok2 = confirm("本当によろしいですか?この操作は取り消せません。");
   if (!ok2) return;
@@ -1410,6 +1576,7 @@ resetAllBtn.addEventListener("click", () => {
   localStorage.removeItem(FREE_MEMO_KEY);
   localStorage.removeItem(HABIT_LIST_KEY);
   localStorage.removeItem(HABIT_LOG_KEY);
+  localStorage.removeItem(LIST_KEY);
 
   alert("すべてのデータを削除しました");
   location.reload();

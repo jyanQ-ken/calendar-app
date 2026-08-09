@@ -17,7 +17,7 @@
 <meta name="twitter:title" content="かんたんカレンダー">
 <meta name="twitter:description" content="余計な連携機能を削り、シンプルさだけを追求した無料のカレンダー">
 <meta name="twitter:image" content="https://jyanq-ken.github.io/calendar-app/og-image.png">
-<link rel="stylesheet" href="style.css?v=13">
+<link rel="stylesheet" href="style.css?v=14">
 </head>
 <body>
 
@@ -50,6 +50,7 @@
 
   <div class="link-buttons compact">
     <button id="openHabit">HABIT</button>
+    <button id="openList">LIST</button>
     <button id="openMonthMemo">NOTEPAD</button>
     <button id="openExport">EXPORT</button>
     <button id="openHelp">?</button>
@@ -186,6 +187,35 @@
   </div>
 </div>
 
+<div id="listOverlay" class="overlay hidden"></div>
+<div id="listPanel" class="panel hidden">
+  <div class="panel-header">
+    <h2>LIST</h2>
+    <button id="closeListPanel">×</button>
+  </div>
+  <p class="export-hint">買い物・持ち物など、ジャンルごとに自由な項目のリストを作れます。チェックした項目は打ち消し線になって残ります。</p>
+
+  <div id="listTabs" class="list-tabs"></div>
+
+  <div class="task-input-row">
+    <input type="text" id="listItemInput" placeholder="項目を追加(例: 牛乳)">
+    <button id="addListItemBtn">ADD</button>
+  </div>
+  <ul id="listItemsEl" class="task-list"></ul>
+
+  <div class="list-manage-row">
+    <button id="deleteListBtn" class="delete-list-btn hidden" type="button">このリストを削除</button>
+  </div>
+
+  <div class="section">
+    <h3>新しいリストを作る</h3>
+    <div class="task-input-row">
+      <input type="text" id="newListNameInput" placeholder="リスト名を入力(例: 買い物)">
+      <button id="addListBtn">ADD LIST</button>
+    </div>
+  </div>
+</div>
+
 <div id="exportOverlay" class="overlay hidden"></div>
 <div id="exportPanel" class="panel hidden">
   <div class="panel-header">
@@ -218,7 +248,7 @@
 
   <details class="category-editor-wrap">
     <summary>すべてのデータを削除して初期状態に戻す</summary>
-    <p class="export-hint">休み・祝日・マーク・予定・タスク・メモ・メモ帳など、このアプリに保存されているデータを全部消して、初めて使ったときの状態に戻します。元に戻せません。</p>
+    <p class="export-hint">休み・祝日・マーク・予定・タスク・メモ・メモ帳・リストなど、このアプリに保存されているデータを全部消して、初めて使ったときの状態に戻します。元に戻せません。</p>
     <button id="resetAllBtn" class="reset-all-btn" type="button">RESET ALL DATA</button>
   </details>
 </div>
@@ -272,6 +302,6 @@
   </div>
 </div>
 
-<script src="script.js?v=7"></script>
+<script src="script.js?v=8"></script>
 </body>
 </html>

@@ -1404,3 +1404,50 @@ input[type="date"]:focus {
   50% { transform: scale(1.15); }
   100% { transform: scale(1); }
 }
+
+/* 複数ジャンルのリスト */
+.list-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  margin-bottom: 10px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.list-tab {
+  flex: 0 0 auto;
+  padding: 8px 14px;
+  min-height: 36px;
+  border: 1px solid var(--border-input);
+  background: var(--bg-btn);
+  color: var(--text-main);
+  border-radius: 0;
+  cursor: pointer;
+  white-space: nowrap;
+  font-size: 0.85rem;
+}
+
+.list-tab.active {
+  background: var(--text-main);
+  color: var(--bg-page);
+  border-color: var(--text-main);
+}
+
+.list-manage-row {
+  display: flex;
+  justify-content: flex-end;
+  margin: 4px 0;
+}
+
+.delete-list-btn {
+  padding: 6px 10px;
+  border: none;
+  background: none;
+  color: var(--delete-color);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.delete-list-btn.hidden {
+  display: none;
+}
