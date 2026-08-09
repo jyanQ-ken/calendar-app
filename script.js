@@ -121,7 +121,7 @@ function setPracticalMode(on, opts) {
   // 誤解を招かないよう、有効な間は昼夜ボタン自体を押せなくする。
   themeToggleBtn.disabled = on;
   if (opts && opts.notify) {
-    showPracticalToast(on ? "実務向け配色を固定しました" : "実務向け配色を解除しました");
+    showPracticalToast(on ? "CLEARに切り替えました" : "CLEARを解除しました");
   }
 }
 
