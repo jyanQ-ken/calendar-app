@@ -996,14 +996,23 @@ body.panel-open {
 
 .schedule-quick-mark-btn {
   min-width: 40px;
+  max-width: 9em;
   min-height: 36px;
   padding: 4px 10px;
   border: 1px solid var(--border-input);
   background: var(--bg-btn);
   color: var(--text-main);
   cursor: pointer;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.schedule-quick-mark-btn.empty {
+  color: var(--text-hint);
+  font-weight: normal;
 }
 
 .schedule-quick-edit-btn {
