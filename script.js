@@ -81,7 +81,7 @@ colorThemeToggleBtn.addEventListener("click", () => {
   if (isPracticalMode()) {
     // 実務向けモード中にパレットボタンを押したら、まずそれを解除するだけにする
     // (モノ/カラーの切り替え自体は次のクリックから)
-    setPracticalMode(false);
+    setPracticalMode(false, { notify: true });
     return;
   }
   localStorage.setItem(COLOR_THEME_KEY, isColorTheme() ? "mono" : "color");
@@ -94,17 +94,35 @@ applyStoredColorTheme();
 // モノ/カラーどちらとも混ざらない、視認性重視の固定配色になる(昼夜切り替えなし)。
 // 解除は、もう一度月表示をタップするか、上のパレットボタンを押す。
 const PRACTICAL_MODE_KEY = "practicalModeOn";
+const practicalModeToast = document.getElementById("practicalModeToast");
+let practicalToastTimer = null;
+
+function showPracticalToast(message) {
+  clearTimeout(practicalToastTimer);
+  practicalModeToast.textContent = message;
+  practicalModeToast.classList.remove("hidden");
+  // hiddenを外した直後に即opacityを変えても遷移(transition)が効かないことがあるため、
+  // 次の描画フレームでshowを付ける
+  requestAnimationFrame(() => practicalModeToast.classList.add("show"));
+  practicalToastTimer = setTimeout(() => {
+    practicalModeToast.classList.remove("show");
+    setTimeout(() => practicalModeToast.classList.add("hidden"), 200);
+  }, 1600);
+}
 
 function isPracticalMode() {
   return localStorage.getItem(PRACTICAL_MODE_KEY) === "1";
 }
 
-function setPracticalMode(on) {
+function setPracticalMode(on, opts) {
   localStorage.setItem(PRACTICAL_MODE_KEY, on ? "1" : "0");
   document.documentElement.classList.toggle("practical-mode", on);
   // 実務向け配色は固定色で昼夜切り替えの効果が出ないため、押しても色が変わらず
   // 誤解を招かないよう、有効な間は昼夜ボタン自体を押せなくする。
   themeToggleBtn.disabled = on;
+  if (opts && opts.notify) {
+    showPracticalToast(on ? "実務向け配色を固定しました" : "実務向け配色を解除しました");
+  }
 }
 
 setPracticalMode(isPracticalMode());
@@ -127,7 +145,7 @@ let selectedDateKey = null;
 
 const monthLabel = document.getElementById("monthLabel");
 monthLabel.addEventListener("click", () => {
-  setPracticalMode(!isPracticalMode());
+  setPracticalMode(!isPracticalMode(), { notify: true });
 });
 const calendarGrid = document.getElementById("calendarGrid");
 const prevMonthBtn = document.getElementById("prevMonth");

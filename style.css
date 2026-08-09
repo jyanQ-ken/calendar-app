@@ -310,45 +310,45 @@ html.practical-mode {
   --bg-card: #ffffff !important;
   --bg-input: #ffffff !important;
   --bg-btn: #ffffff !important;
-  --bg-btn-hover: #0b3d91 !important;
-  --bg-hover-accent: #eef3fb !important;
-  --bg-toolbar: #f5f7fa !important;
-  --text-main: #111827 !important;
-  --text-secondary: #4b5563 !important;
-  --text-hint: #6b7280 !important;
-  --text-faint: #9ca3af !important;
-  --text-info: #4b5563 !important;
-  --text-strong-secondary: #1f2937 !important;
-  --border-color: #d1d5db !important;
-  --border-input: #9ca3af !important;
-  --border-soft: #e5e7eb !important;
-  --border-medium: #cbd5e1 !important;
-  --border-list: #e5e7eb !important;
-  --accent: #0b5fff !important;
-  --accent-2: #0b5fff !important;
-  --accent-gradient: #0b5fff !important;
-  --accent-soft-bg: #e0ebff !important;
-  --holiday-bg: #fde2e2 !important;
-  --holiday-grad-a: #fde2e2 !important;
-  --holiday-grad-b: #fbc8c8 !important;
-  --page-grad-a: #f3f4f6 !important;
+  --bg-btn-hover: #1a73e8 !important;
+  --bg-hover-accent: #e8f0fe !important;
+  --bg-toolbar: #e8f0fe !important;
+  --text-main: #202124 !important;
+  --text-secondary: #5f6368 !important;
+  --text-hint: #5f6368 !important;
+  --text-faint: #80868b !important;
+  --text-info: #5f6368 !important;
+  --text-strong-secondary: #3c4043 !important;
+  --border-color: #dadce0 !important;
+  --border-input: #dadce0 !important;
+  --border-soft: #e8eaed !important;
+  --border-medium: #dadce0 !important;
+  --border-list: #e8eaed !important;
+  --accent: #1a73e8 !important;
+  --accent-2: #1a73e8 !important;
+  --accent-gradient: #1a73e8 !important;
+  --accent-soft-bg: #d2e3fc !important;
+  --holiday-bg: #fce8e6 !important;
+  --holiday-grad-a: #fce8e6 !important;
+  --holiday-grad-b: #f6c6c2 !important;
+  --page-grad-a: #e8f0fe !important;
   --panel-grad-a: #ffffff !important;
-  --panel-grad-b: #f3f4f6 !important;
-  --national-color: #c1121f !important;
-  --national-label-color: #c1121f !important;
-  --holiday-label-color: #b91c1c !important;
-  --today-ring: #0f9d58 !important;
-  --delete-color: #c1121f !important;
-  --schedule-color: #0b5fff !important;
-  --shadow-soft: rgba(0,0,0,0.06) !important;
-  --shadow-panel: rgba(0,0,0,0.18) !important;
-  --shadow-overlay: rgba(0,0,0,0.5) !important;
+  --panel-grad-b: #f3f6fd !important;
+  --national-color: #d93025 !important;
+  --national-label-color: #d93025 !important;
+  --holiday-label-color: #c5221f !important;
+  --today-ring: #1a73e8 !important;
+  --delete-color: #d93025 !important;
+  --schedule-color: #1a73e8 !important;
+  --shadow-soft: rgba(60,64,67,0.08) !important;
+  --shadow-panel: rgba(60,64,67,0.2) !important;
+  --shadow-overlay: rgba(60,64,67,0.5) !important;
   --shadow-lift: rgba(0,0,0,0) !important;
-  --mark-star-color: #111827 !important;
-  --mark-heart-color: #111827 !important;
-  --mark-circle-color: #111827 !important;
-  --mark-triangle-color: #111827 !important;
-  --mark-cross-color: #111827 !important;
+  --mark-star-color: #f9ab00 !important;
+  --mark-heart-color: #d93025 !important;
+  --mark-circle-color: #1e8e3e !important;
+  --mark-triangle-color: #1a73e8 !important;
+  --mark-cross-color: #9334e6 !important;
 }
 
 html.practical-mode .app,
@@ -362,6 +362,67 @@ html.practical-mode input,
 html.practical-mode textarea,
 html.practical-mode button {
   border-radius: 0 !important;
+}
+
+html.practical-mode .app {
+  border-color: #1a73e8 !important;
+  border-width: 2px !important;
+}
+
+/* 「黒インク」を使い回している要素は、実務向けではGoogleカレンダー風の青に統一する */
+html.practical-mode .schedule-list-btn,
+html.practical-mode .mode-btn.active,
+html.practical-mode .icon-btn.active,
+html.practical-mode .day-cell.selected-for-delete,
+html.practical-mode .task-input-row button,
+html.practical-mode #saveDiary,
+html.practical-mode .export-buttons button,
+html.practical-mode .bulk-delete-row button,
+html.practical-mode .delete-action-bar button:not(#cancelDeleteSelectionBtn),
+html.practical-mode .copy-list-btn,
+html.practical-mode .schedule-quick-edit-btn.active {
+  background: #1a73e8 !important;
+  border-color: #1a73e8 !important;
+  color: #ffffff !important;
+}
+
+html.practical-mode .day-cell.selected-for-delete .day-number {
+  color: #ffffff !important;
+}
+
+html.practical-mode .schedule-list-btn:hover {
+  background: #185abc !important;
+}
+
+html.practical-mode .day-cell.today {
+  background: #d2e3fc !important;
+}
+
+.practical-toast {
+  position: fixed;
+  left: 50%;
+  bottom: calc(24px + env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  background: var(--text-main);
+  color: var(--bg-page);
+  padding: 10px 18px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  z-index: 50;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  max-width: calc(100% - 32px);
+  text-align: center;
+}
+
+.practical-toast.show {
+  opacity: 1;
+}
+
+.practical-toast.hidden {
+  display: none;
 }
 
 * {
