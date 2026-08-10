@@ -90,10 +90,11 @@ colorThemeToggleBtn.addEventListener("click", () => {
 
 applyStoredColorTheme();
 
-// 隠しコマンド的な「実務向け」配色: 月表示(例: 2026年 8月)をタップすると入り、
-// モノ/カラーどちらとも混ざらない、視認性重視の固定配色になる(昼夜切り替えなし)。
-// 解除は、もう一度月表示をタップするか、上のパレットボタンを押す。
+// 「BASIC」配色: Bボタンで入り、モノ/カラーどちらとも混ざらない、
+// 視認性重視の固定配色になる(昼夜切り替えなし)。
+// 解除は、もう一度Bボタンを押すか、パレットボタンを押す。
 const PRACTICAL_MODE_KEY = "practicalModeOn";
+const basicModeToggleBtn = document.getElementById("basicModeToggle");
 const practicalModeToast = document.getElementById("practicalModeToast");
 let practicalToastTimer = null;
 
@@ -117,13 +118,19 @@ function isPracticalMode() {
 function setPracticalMode(on, opts) {
   localStorage.setItem(PRACTICAL_MODE_KEY, on ? "1" : "0");
   document.documentElement.classList.toggle("practical-mode", on);
-  // 実務向け配色は固定色で昼夜切り替えの効果が出ないため、押しても色が変わらず
+  basicModeToggleBtn.classList.toggle("active", on);
+  basicModeToggleBtn.title = on ? "BASICを解除" : "BASIC配色に切り替え";
+  // BASIC配色は固定色で昼夜切り替えの効果が出ないため、押しても色が変わらず
   // 誤解を招かないよう、有効な間は昼夜ボタン自体を押せなくする。
   themeToggleBtn.disabled = on;
   if (opts && opts.notify) {
-    showPracticalToast(on ? "CLEARに切り替えました" : "CLEARを解除しました");
+    showPracticalToast(on ? "BASICモードに切り替えました" : "BASICモードを解除しました");
   }
 }
+
+basicModeToggleBtn.addEventListener("click", () => {
+  setPracticalMode(!isPracticalMode(), { notify: true });
+});
 
 setPracticalMode(isPracticalMode());
 
@@ -144,9 +151,6 @@ let currentMonth; // 0-11
 let selectedDateKey = null;
 
 const monthLabel = document.getElementById("monthLabel");
-monthLabel.addEventListener("click", () => {
-  setPracticalMode(!isPracticalMode(), { notify: true });
-});
 const calendarGrid = document.getElementById("calendarGrid");
 const prevMonthBtn = document.getElementById("prevMonth");
 const nextMonthBtn = document.getElementById("nextMonth");

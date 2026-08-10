@@ -468,14 +468,19 @@ body.panel-open {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
+  gap: 4px;
   margin-bottom: 14px;
   padding-bottom: 10px;
   border-bottom: 1px solid var(--border-medium);
 }
 
+.header .icon-btn {
+  padding: 6px 8px;
+  min-width: 36px;
+}
+
 .header h1 {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: 800;
   letter-spacing: 0.06em;
   margin: 0;
