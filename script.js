@@ -915,7 +915,7 @@ function todayKeyString() {
 }
 
 function renderCalendar() {
-  monthLabel.textContent = `${currentYear}年 ${currentMonth + 1}月`;
+  monthLabel.innerHTML = `<span class="month-label-year">${currentYear}年</span> <span class="month-label-month">${currentMonth + 1}月</span>`;
   calendarGrid.innerHTML = "";
 
   const data = loadData();
