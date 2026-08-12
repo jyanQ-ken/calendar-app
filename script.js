@@ -623,13 +623,20 @@ const exportPanel = document.getElementById("exportPanel");
 const closeExportPanelBtn = document.getElementById("closeExportPanel");
 const exportText = document.getElementById("exportText");
 const copyExportBtn = document.getElementById("copyExportBtn");
-const downloadExportBtn = document.getElementById("downloadExportBtn");
+const exportRangeFrom = document.getElementById("exportRangeFrom");
+const exportRangeTo = document.getElementById("exportRangeTo");
 const bulkDeleteFrom = document.getElementById("bulkDeleteFrom");
 const bulkDeleteTo = document.getElementById("bulkDeleteTo");
 const bulkDeleteBtn = document.getElementById("bulkDeleteBtn");
 const exportCheckSchedule = document.getElementById("exportCheckSchedule");
 const exportCheckMemo = document.getElementById("exportCheckMemo");
 const exportCheckTask = document.getElementById("exportCheckTask");
+const exportCheckHoliday = document.getElementById("exportCheckHoliday");
+const exportCheckMarkStar = document.getElementById("exportCheckMarkStar");
+const exportCheckMarkHeart = document.getElementById("exportCheckMarkHeart");
+const exportCheckMarkCircle = document.getElementById("exportCheckMarkCircle");
+const exportCheckMarkTriangle = document.getElementById("exportCheckMarkTriangle");
+const exportCheckMarkCross = document.getElementById("exportCheckMarkCross");
 
 function closeMenuPanel() {
   // ハンバーガーメニューは廃止済み。各パネルを開く前の後始末として呼ばれるため関数だけ残している。
@@ -1551,9 +1558,13 @@ function csvEscape(value) {
 
 function generateCsv(options) {
   const opts = options || {};
-  const includeSchedule = opts.schedule !== false;
-  const includeMemo = opts.memo !== false;
-  const includeTask = opts.task !== false;
+  const includeSchedule = !!opts.schedule;
+  const includeMemo = !!opts.memo;
+  const includeTask = !!opts.task;
+  const includeHoliday = !!opts.holiday;
+  const includeMarks = opts.marks || {};
+  const from = opts.from || "";
+  const to = opts.to || "";
 
   const data = loadData();
   const archive = includeTask ? loadArchive() : [];
@@ -1569,14 +1580,21 @@ function generateCsv(options) {
     ...Object.keys(archiveByDate),
   ]);
 
+  const activeMarkDefs = MARK_DEFS.filter(def => includeMarks[def.key]);
+
   const header = ["日付"];
   if (includeSchedule) header.push("予定");
   if (includeMemo) header.push("メモ");
   if (includeTask) header.push("タスク(未完了)");
   if (includeTask) header.push("タスク(完了済み)");
+  if (includeHoliday) header.push("休み");
+  activeMarkDefs.forEach(def => header.push(def.label));
   const rows = [header.join(",")];
 
   Array.from(allKeys).sort().forEach(key => {
+    if (from && key < from) return;
+    if (to && key > to) return;
+
     const dayData = getDayData(data, key);
     const schedule = includeSchedule
       ? sortScheduleEntries(dayData.schedule || []).map(({ item }) => item.time ? `${item.time} ${item.text}` : item.text).join(" / ")
@@ -1585,14 +1603,20 @@ function generateCsv(options) {
 
     const pendingTasks = includeTask ? (dayData.tasks || []).map(t => t.text).join(" / ") : "";
     const doneTasks = includeTask ? (archiveByDate[key] || []).join(" / ") : "";
+    const holidayMark = includeHoliday && dayData.holiday ? "○" : "";
+    const markCells = activeMarkDefs.map(def => (dayData.marks[def.key] ? "○" : ""));
 
-    if (!schedule && !memo.trim() && !pendingTasks && !doneTasks) return;
+    const hasAnyContent = schedule || memo.trim() || pendingTasks || doneTasks
+      || holidayMark || markCells.some(v => v);
+    if (!hasAnyContent) return;
 
     const row = [csvEscape(key)];
     if (includeSchedule) row.push(csvEscape(schedule));
     if (includeMemo) row.push(csvEscape(memo));
     if (includeTask) row.push(csvEscape(pendingTasks));
     if (includeTask) row.push(csvEscape(doneTasks));
+    if (includeHoliday) row.push(csvEscape(holidayMark));
+    markCells.forEach(v => row.push(csvEscape(v)));
     rows.push(row.join(","));
   });
   return rows.join("\n");
@@ -1603,6 +1627,16 @@ function currentExportOptions() {
     schedule: exportCheckSchedule.checked,
     memo: exportCheckMemo.checked,
     task: exportCheckTask.checked,
+    holiday: exportCheckHoliday.checked,
+    marks: {
+      star: exportCheckMarkStar.checked,
+      heart: exportCheckMarkHeart.checked,
+      circle: exportCheckMarkCircle.checked,
+      triangle: exportCheckMarkTriangle.checked,
+      cross: exportCheckMarkCross.checked,
+    },
+    from: exportRangeFrom.value,
+    to: exportRangeTo.value,
   };
 }
 
@@ -1610,8 +1644,13 @@ function refreshExportText() {
   exportText.value = generateCsv(currentExportOptions());
 }
 
-[exportCheckSchedule, exportCheckMemo, exportCheckTask].forEach(cb => {
-  cb.addEventListener("change", refreshExportText);
+[
+  exportCheckSchedule, exportCheckMemo, exportCheckTask,
+  exportCheckHoliday,
+  exportCheckMarkStar, exportCheckMarkHeart, exportCheckMarkCircle, exportCheckMarkTriangle, exportCheckMarkCross,
+  exportRangeFrom, exportRangeTo,
+].forEach(el => {
+  el.addEventListener("change", refreshExportText);
 });
 
 openExportBtn.addEventListener("click", () => {
@@ -1640,19 +1679,6 @@ copyExportBtn.addEventListener("click", async () => {
   }
   copyExportBtn.textContent = "コピーしました";
   setTimeout(() => { copyExportBtn.textContent = "コピーする"; }, 1200);
-});
-
-downloadExportBtn.addEventListener("click", () => {
-  const bom = "﻿";
-  const blob = new Blob([bom + exportText.value], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "calendar-data.csv";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
 });
 
 bulkDeleteBtn.addEventListener("click", () => {

@@ -229,17 +229,30 @@
     <h2>EXPORT (CSV)</h2>
     <button id="closeExportPanel">×</button>
   </div>
-  <p class="export-hint">書き出す項目を選べます(不要な項目は外せます)。全部まとめてよりも、必要な項目だけに絞って書き出すほうが、あとで見返したときに分かりやすくなります。</p>
+  <p class="export-hint">書き出したい項目にチェックを入れてください。チェックした項目が何もない日は書き出されないので、例えば「休み」だけチェックすれば、休みの日だけを抜き出せます。</p>
   <div class="export-item-checks">
-    <label><input type="checkbox" id="exportCheckSchedule" checked> SCHEDULE(予定)</label>
-    <label><input type="checkbox" id="exportCheckMemo" checked> MEMO(メモ)</label>
-    <label><input type="checkbox" id="exportCheckTask" checked> TASK(タスク)</label>
+    <label><input type="checkbox" id="exportCheckSchedule"> SCHEDULE(予定)</label>
+    <label><input type="checkbox" id="exportCheckMemo"> MEMO(メモ)</label>
+    <label><input type="checkbox" id="exportCheckTask"> TASK(タスク)</label>
+    <label><input type="checkbox" id="exportCheckHoliday"> 休み</label>
+    <label><input type="checkbox" id="exportCheckMarkStar"> ☆</label>
+    <label><input type="checkbox" id="exportCheckMarkHeart"> ♡</label>
+    <label><input type="checkbox" id="exportCheckMarkCircle"> ○</label>
+    <label><input type="checkbox" id="exportCheckMarkTriangle"> △</label>
+    <label><input type="checkbox" id="exportCheckMarkCross"> ×</label>
   </div>
+
+  <div class="bulk-delete-row">
+    <input type="date" id="exportRangeFrom">
+    <span>〜</span>
+    <input type="date" id="exportRangeTo">
+  </div>
+  <p class="export-hint">期間を指定すると、その範囲だけ書き出せます(空欄なら全期間)。</p>
+
   <p class="export-hint">CSV形式のデータなので、コピーしてスプレッドシートに貼り付ければ表形式で保存できます。</p>
   <textarea id="exportText" rows="10" readonly></textarea>
   <div class="export-buttons">
     <button id="copyExportBtn">COPY</button>
-    <button id="downloadExportBtn">SAVE FILE</button>
   </div>
 
   <details class="category-editor-wrap">
@@ -250,7 +263,7 @@
       <input type="date" id="bulkDeleteTo">
       <button id="bulkDeleteBtn">DELETE</button>
     </div>
-    <p class="export-hint">指定した期間(両端を含む)の予定・メモ・完了済みタスクが、まとめて削除されます。元に戻せないので、先に上のコピー・ファイル保存で控えを残してから行うと安心です。</p>
+    <p class="export-hint">指定した期間(両端を含む)の予定・メモ・完了済みタスクが、まとめて削除されます。元に戻せないので、先に上のコピーで控えを残してから行うと安心です。</p>
   </details>
 
   <details class="category-editor-wrap">
@@ -311,6 +324,6 @@
 
 <div id="practicalModeToast" class="practical-toast hidden"></div>
 
-<script src="script.js?v=29"></script>
+<script src="script.js?v=31"></script>
 </body>
 </html>
