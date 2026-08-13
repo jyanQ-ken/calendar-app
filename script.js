@@ -1567,20 +1567,16 @@ function csvEscape(value) {
 
 const WEEKDAY_LABELS_JA = ["日", "月", "火", "水", "木", "金", "土"];
 
-function formatExportDate(key, lastYear) {
+function formatExportDate(key) {
   // key: "YYYY-MM-DD"
   const [yearStr, monthStr, dayStr] = key.split("-");
   const month = Number(monthStr);
   const day = Number(dayStr);
   const weekday = WEEKDAY_LABELS_JA[new Date(`${key}T00:00:00`).getDay()];
-  const shortYear = yearStr.slice(-2);
-  const showYear = shortYear !== lastYear;
   return {
-    year: showYear ? shortYear : "",
-    month: String(month),
-    day: String(day),
+    year: yearStr,
+    monthDay: `${month}.${day}`,
     weekday,
-    yearKey: shortYear,
   };
 }
 
@@ -1610,7 +1606,7 @@ function generateCsv(options) {
 
   const activeMarkDefs = MARK_DEFS.filter(def => includeMarks[def.key]);
 
-  const header = ["年", "月", "日", "曜日"];
+  const header = ["日付", "曜日"];
   if (includeSchedule) header.push("予定");
   if (includeMemo) header.push("メモ");
   if (includeTask) header.push("タスク(未完了)");
@@ -1639,10 +1635,13 @@ function generateCsv(options) {
       || holidayMark || markCells.some(v => v);
     if (!hasAnyContent) return;
 
-    const { year, month, day, weekday, yearKey } = formatExportDate(key, lastYear);
-    lastYear = yearKey;
+    const { year, monthDay, weekday } = formatExportDate(key);
+    if (year !== lastYear) {
+      rows.push(csvEscape(year));
+      lastYear = year;
+    }
 
-    const row = [csvEscape(year), csvEscape(month), csvEscape(day), csvEscape(weekday)];
+    const row = [csvEscape(monthDay), csvEscape(weekday)];
     if (includeSchedule) row.push(csvEscape(schedule));
     if (includeMemo) row.push(csvEscape(memo));
     if (includeTask) row.push(csvEscape(pendingTasks));
