@@ -1,4 +1,13 @@
 
+// オフラインでも開けるように、Service Workerを登録する(未対応ブラウザでは何もしない)
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("sw.js").catch((e) => {
+      console.error("Service Workerの登録に失敗しました", e);
+    });
+  });
+}
+
 const STORAGE_KEY = "calendarAppData";
 const ARCHIVE_KEY = "completedTasksData";
 const THEME_KEY = "themePreference";
