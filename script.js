@@ -646,6 +646,7 @@ const exportCheckMarkHeart = document.getElementById("exportCheckMarkHeart");
 const exportCheckMarkCircle = document.getElementById("exportCheckMarkCircle");
 const exportCheckMarkTriangle = document.getElementById("exportCheckMarkTriangle");
 const exportCheckMarkCross = document.getElementById("exportCheckMarkCross");
+const exportQuickChecksEl = document.getElementById("exportQuickChecks");
 
 function closeMenuPanel() {
   // ハンバーガーメニューは廃止済み。各パネルを開く前の後始末として呼ばれるため関数だけ残している。
@@ -768,6 +769,7 @@ function renderScheduleQuickMarks() {
           scheduleInput.value = trimmed;
         }
         renderScheduleQuickMarks();
+        renderExportQuickChecks();
         return;
       }
       // 予定欄に文字を入れるところまで。時間を選んでからADDで確定してもらう。
@@ -784,6 +786,29 @@ scheduleQuickEditBtn.addEventListener("click", () => {
 });
 
 renderScheduleQuickMarks();
+
+const QUICK_SLOT_LABELS = ["A", "B", "C"];
+
+function renderExportQuickChecks() {
+  const map = loadScheduleQuickText();
+  exportQuickChecksEl.innerHTML = "";
+  for (let i = 0; i < SCHEDULE_QUICK_SLOT_COUNT; i++) {
+    const slot = String(i);
+    const text = map[slot] || "";
+    const label = document.createElement("label");
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.id = `exportCheckQuick${i}`;
+    checkbox.dataset.quickSlot = slot;
+    if (!text) checkbox.disabled = true;
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode(
+      ` ${QUICK_SLOT_LABELS[i]}(${text || "未登録"})`
+    ));
+    checkbox.addEventListener("change", refreshExportText);
+    exportQuickChecksEl.appendChild(label);
+  }
+}
 
 function loadData() {
   const raw = localStorage.getItem(STORAGE_KEY);
@@ -1589,6 +1614,11 @@ function generateCsv(options) {
   const includeMarks = opts.marks || {};
   const from = opts.from || "";
   const to = opts.to || "";
+  const quickSlots = opts.quickSlots || [];
+  const quickTextMap = loadScheduleQuickText();
+  const activeQuickSlots = quickSlots
+    .filter(slot => quickTextMap[slot])
+    .map(slot => ({ slot, text: quickTextMap[slot] }));
 
   const data = loadData();
   const archive = includeTask ? loadArchive() : [];
@@ -1613,6 +1643,7 @@ function generateCsv(options) {
   if (includeTask) header.push("タスク(完了済み)");
   if (includeHoliday) header.push("休み");
   activeMarkDefs.forEach(def => header.push(def.label));
+  activeQuickSlots.forEach(({ text }) => header.push(text));
   const rows = [header.join(",")];
 
   let lastYear = "";
@@ -1630,9 +1661,16 @@ function generateCsv(options) {
     const doneTasks = includeTask ? (archiveByDate[key] || []).join(" / ") : "";
     const holidayMark = includeHoliday && dayData.holiday ? "○" : "";
     const markCells = activeMarkDefs.map(def => (dayData.marks[def.key] ? "○" : ""));
+    const quickCells = activeQuickSlots.map(({ text }) =>
+      (dayData.schedule || [])
+        .map(raw => normalizeScheduleItem(raw))
+        .filter(item => item.text === text)
+        .map(item => item.time || "○")
+        .join(" / ")
+    );
 
     const hasAnyContent = schedule || memo.trim() || pendingTasks || doneTasks
-      || holidayMark || markCells.some(v => v);
+      || holidayMark || markCells.some(v => v) || quickCells.some(v => v);
     if (!hasAnyContent) return;
 
     const { year, monthDay, weekday } = formatExportDate(key);
@@ -1648,6 +1686,7 @@ function generateCsv(options) {
     if (includeTask) row.push(csvEscape(doneTasks));
     if (includeHoliday) row.push(csvEscape(holidayMark));
     markCells.forEach(v => row.push(csvEscape(v)));
+    quickCells.forEach(v => row.push(csvEscape(v)));
     rows.push(row.join(","));
   });
   return rows.join("\n");
@@ -1668,6 +1707,11 @@ function currentExportOptions() {
     },
     from: exportRangeFrom.value,
     to: exportRangeTo.value,
+    quickSlots: Array.from(
+      exportQuickChecksEl.querySelectorAll("input[data-quick-slot]")
+    )
+      .filter(el => el.checked)
+      .map(el => el.dataset.quickSlot),
   };
 }
 
@@ -1686,6 +1730,7 @@ function refreshExportText() {
 
 openExportBtn.addEventListener("click", () => {
   closeMenuPanel();
+  renderExportQuickChecks();
   refreshExportText();
   exportOverlay.classList.remove("hidden");
   exportPanel.classList.remove("hidden");
