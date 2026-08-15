@@ -736,6 +736,8 @@ function saveScheduleQuickText(map) {
   localStorage.setItem(SCHEDULE_QUICK_TEXT_KEY, JSON.stringify(map));
 }
 
+const QUICK_SLOT_LABELS = ["A", "B", "C"];
+
 function renderScheduleQuickMarks() {
   const map = loadScheduleQuickText();
   scheduleQuickMarksEl.innerHTML = "";
@@ -745,8 +747,8 @@ function renderScheduleQuickMarks() {
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "schedule-quick-mark-btn" + (existing ? "" : " empty");
-    btn.textContent = existing || "＋";
-    btn.title = existing ? `予定欄に「${existing}」と入力` : "タップして、よく使う予定の文字を登録";
+    btn.textContent = existing || QUICK_SLOT_LABELS[i];
+    btn.title = existing ? `予定欄に「${existing}」と入力` : `タップして、よく使う予定の文字を登録(${QUICK_SLOT_LABELS[i]})`;
     btn.addEventListener("click", () => {
       const current = loadScheduleQuickText();
       const currentExisting = current[slot] || "";
@@ -786,8 +788,6 @@ scheduleQuickEditBtn.addEventListener("click", () => {
 });
 
 renderScheduleQuickMarks();
-
-const QUICK_SLOT_LABELS = ["A", "B", "C"];
 
 function renderExportQuickChecks() {
   const map = loadScheduleQuickText();
