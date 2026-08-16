@@ -736,6 +736,16 @@ function saveScheduleQuickText(map) {
   localStorage.setItem(SCHEDULE_QUICK_TEXT_KEY, JSON.stringify(map));
 }
 
+// 予定の文字列が、クイック登録(A/B/C)のどれかと一致するかを調べる。
+// 一致すれば枠番号(0,1,2)を、しなければnullを返す。
+function findQuickSlotByText(text) {
+  const map = loadScheduleQuickText();
+  for (let i = 0; i < SCHEDULE_QUICK_SLOT_COUNT; i++) {
+    if (map[String(i)] === text) return i;
+  }
+  return null;
+}
+
 const QUICK_SLOT_LABELS = ["A", "B", "C"];
 
 function renderScheduleQuickMarks() {
@@ -926,10 +936,16 @@ function buildDayCell(key, day, dayData, todayKey) {
     const scheduleEl = document.createElement("div");
     scheduleEl.className = "day-schedule";
     const first = normalizeScheduleItem(dayData.schedule[0]);
-    const truncated = first.text.length > 8 ? first.text.slice(0, 8) + "…" : first.text;
-    const prefix = first.time ? `${first.time} ` : "";
     const extra = dayData.schedule.length > 1 ? ` 他${dayData.schedule.length - 1}件` : "";
-    scheduleEl.textContent = prefix + truncated + extra;
+    const quickSlot = findQuickSlotByText(first.text);
+    if (quickSlot !== null) {
+      // クイック登録(A/B/C)に登録した予定は、内容を伏せてA/B/Cの文字だけ表示する
+      scheduleEl.textContent = QUICK_SLOT_LABELS[quickSlot] + extra;
+    } else {
+      const truncated = first.text.length > 8 ? first.text.slice(0, 8) + "…" : first.text;
+      const prefix = first.time ? `${first.time} ` : "";
+      scheduleEl.textContent = prefix + truncated + extra;
+    }
     cell.appendChild(scheduleEl);
   }
 
